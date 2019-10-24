@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>组件相关</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <div id="app">
+        <moya-component message="имформатион"></moya-component>
+    </div>
+<!--    <Card style="width: 350px">-->
+<!--        <p slot="title">与&nbsp;弗拉基米尔·伊里奇·乌里扬诺夫&nbsp;谈判</p>-->
+<!--        <a href="#" slot="extra">-->
+<!--            <Icon type="android-close" size="18"></Icon>-->
+<!--        </a>-->
+<!--        <div style="height: 100px;">-->
+
+<!--        </div>-->
+<!--        <div>-->
+<!--            <Row :gutter="16">-->
+<!--                <i-col span="17">-->
+<!--                    <i-input v-model="value" placeholder="请输入..."></i-input>-->
+<!--                </i-col>-->
+<!--                <i-col span="4">-->
+<!--                    <i-button type="primary" icon="paper-airplane">发送</i-button>-->
+<!--                </i-col>-->
+<!--            </Row>-->
+<!--        </div>-->
+<!--    </Card>-->
+    <script src="js/vue.min.js"></script>
+    <script>
+        var data = {
+          msg: '这是一条消息'
+        };
+        var bus = new Vue();
+        Vue.component('moya-component', {
+            props: ['message'],
+            template: '\
+                     <div>\
+                        <p>这是一个自定义组件</p>\
+                        <p>来自父级的数据：{{ message }}</p>\
+                        <p>这是来自组件自己的数据：{{ msga }}</p>\
+                    </div>',
+            data: function () {
+                return {
+                    msga: '这也是一条消息'
+                };
+            }
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+            }
+        });
+    </script>
+    <script src="js/jquery-3.3.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

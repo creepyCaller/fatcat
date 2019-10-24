@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>Vue.js内置指令</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <div id="app">
+        <p v-if="cond == true">cond: true</p>
+        <p v-else-if="cond == false">cond: false</p>
+        <p v-else>cond is not a boolean type</p>
+        <hr/>
+        <template v-if="cond==true">
+            <p>这是第一行</p>
+            <p>在v-if里想多行输出要让这些东西成为template的子类,渲染时不会包括template</p>
+        </template>
+        <hr/>
+        <ul>
+            <li v-for="(item, i) of items">{{ i }}.&nbsp;《{{ item.name }}》-&nbsp;{{ item.price }}￥</li>
+        </ul>
+        <hr/>
+        <template v-for="(item, i) in items">
+            <span>序号：{{ i }}</span><br/>
+            <span>书名：《{{ item.name }}》</span><br/>
+            <span>价格：{{ item.price }}￥</span><br/>
+            <hr/>
+        </template>
+        <p>过滤器：</p>
+        <template v-for="(item, i) in filterItems">
+            <span>序号：{{ i }}</span><br/>
+            <span>书名：《{{ item.name }}》</span><br/>
+            <span>价格：{{ item.price }}￥</span><br/>
+            <hr/>
+        </template>
+        <p>遍历对象属性：</p>
+        <template v-for="(v, k, i) in man">
+            <span>i={{ i }};k={{ k }};v={{ v }}</span>
+            <hr/>
+        </template>
+        <hr/>
+        <p>点击次数：{{ counter }}</p>
+        <button @click="handleAddN(1)" class="btn btn-outline-secondary btn-lg">+1</button>
+        <button @click="handleAddN(new Date().getMilliseconds())" class="btn btn-outline-secondary btn-lg">+N</button>
+        <button @click="counter=0" class="btn btn-outline-primary btn-lg">C</button>
+        <hr/>
+
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                cond: true,
+                items: [
+                    { name: '算法导论', price: 10 },
+                    { name: '深入理解计算机系统', price: 11 },
+                    { name: '程序设计导论', price: 12 }
+                ],
+                man: {
+                    name: '王宇洋',
+                    gender: '男',
+                    age: '19'
+                },
+                counter: 0
+            },
+            computed: {
+                filterItems: function () {
+                    return this.items.filter(function (item) {
+                        return item.name.match((/I/));
+                    });
+                }
+            },
+            methods: {
+                handleAddN: function (count) {
+                    this.counter += count;
+                }
+            }
+        });
+        app.items.push( { name: 'SICP', price: 13 } );
+        app.items.push( { name: 'IEEE', price: 14 } );
+    </script>
+    <script src="js/jquery-3.3.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

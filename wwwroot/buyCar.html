@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <!-- 一个根元素，用来挂载Vue实例 -->
+    <div id="app" v-cloak class="jumbotron">
+        <h1>购物车</h1>
+        <template v-if="list.length">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>商品数量</th>
+                        <th>商品单价</th>
+                        <th>购买数量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, i) in list">
+                        <td><input type="checkbox" :checked="item.pick" @click="handleCheckbox(i)"></td>
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}￥</td>
+                        <td>
+                            <button class="btn btn-outline-primary" @click="handleReduce(i)" :disabled="item.count === 0">-</button>
+                            {{ item.count }}
+                            <button class="btn btn-outline-primary" @click="handleAdd(i)">+</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger" @click="handleRemove(i)">×</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div>总价：{{ total }}￥</div>
+        </template>
+        <div v-else>购物车为空</div>
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/jquery-3.3.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
