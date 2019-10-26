@@ -19,10 +19,10 @@ public class ResponseMessageUtil {
         switch (subffix) {
             case "html":
                 return "text/html";
-            case "js":
-                return "application/javascript";
             case "css":
                 return "text/css";
+            case "js":
+                return "application/javascript";
             case "json":
                 return "application/json";
             case "png":

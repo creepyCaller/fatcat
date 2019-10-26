@@ -31,6 +31,8 @@ public class ResponseMessage {
 
     private String contentType;
 
+    private String charSet;
+
     private String contentLanguage;
 
     // **BODY**
@@ -41,13 +43,23 @@ public class ResponseMessage {
     public String toString() {
         return protocol + " " + code + " " + status + "\r\n" +
                 "Connection: " + connection + "\r\n" +
-                "Content-Type: " + contentType + "\r\n" +
+                "Content-Type: " + contentType + (charSet == null ? "" : ";charset=" + charSet) + "\r\n" +
                 "Content-Language: " + contentLanguage + "\r\n" +
                 "\r\n" +
                 (body == null ? "" : body);
     }
 
     // **CONSTRUCTORS**
+
+    public ResponseMessage(String protocol, Integer code, String status, String connection, String contentType, String contentLanguage, String body) {
+        this.protocol = protocol;
+        this.code = code;
+        this.status = status;
+        this.connection = connection;
+        this.contentType = contentType;
+        this.contentLanguage = contentLanguage;
+        this.body = body;
+    }
 
     public ResponseMessage(Integer code, String status, String contentType, String body) {
         this.code = code;

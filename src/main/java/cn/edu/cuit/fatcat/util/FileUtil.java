@@ -10,7 +10,7 @@ package cn.edu.cuit.fatcat.util;
 public class FileUtil {
 
     /**
-     * 获取一个文件名的后缀名，即最后一个点的左边内容
+     * 获取一个文件名的后缀名，即最后一个点的右边内容
      *
      * @param FileName 传入文件名
      * @return 文件的后缀名

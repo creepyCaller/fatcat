@@ -1,4 +1,4 @@
-package cn.edu.cuit.fatcat.html;
+package cn.edu.cuit.fatcat.page;
 
 /**
  * 自带的错误页，在指定的错误页无法读取时候使用
@@ -7,7 +7,7 @@ package cn.edu.cuit.fatcat.html;
  * @date 2019/10/24
  * @since Fatcat 0.0.1
  */
-public class ErrorPages {
+public class ErrorPage {
 
     public static String getEmbeddedErrorPage(String title, int statusCode, String statusDescription, String request, String response) {
         return  "<!DOCTYPE html>\r\n" +

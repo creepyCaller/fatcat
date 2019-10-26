@@ -10,6 +10,7 @@ package cn.edu.cuit.fatcat;
 public class Main {
 
     public static void main(String[] args) {
+        // "-port 8080"
         try {
             (new Thread(new Server(8080))).start();
         } catch (Exception e) {

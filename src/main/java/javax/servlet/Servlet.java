@@ -17,6 +17,8 @@
 
 package javax.servlet;
 
+import java.io.IOException;
+
 /**
  * Servlet
  *
@@ -26,4 +28,23 @@ package javax.servlet;
  * @see 	javax.servlet.http.HttpServlet
  */
 public interface Servlet {
+
+    /**
+     * 在调用service()前调用，进行Servlet初始化
+     */
+    public void init() throws IOException;
+
+    /**
+     * 对request进行处理并构造response
+     *
+     * @param request  HTTP请求报文
+     * @param response HTTP响应报文
+     */
+    public void service(String request, String response);
+
+    /**
+     * 将实例交给GC前调用，关闭各种流
+     */
+    public void destroy() throws IOException;
+
 }

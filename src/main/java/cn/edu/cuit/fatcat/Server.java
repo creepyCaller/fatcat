@@ -30,9 +30,10 @@ public class Server implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("正在监听, Port = " + port);
+            int i = 0;
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("ACCEPT: " + socket.toString());
+                System.out.println("[Thread-" + ++i + "]ACCEPT: " + socket.toString());
                 (new Thread(new ServerThread(socket))).start();
             }
         } catch (IOException e) {
