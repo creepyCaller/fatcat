@@ -1,5 +1,7 @@
 package cn.edu.cuit.fatcat.page;
 
+import cn.edu.cuit.fatcat.setting.Web;
+
 /**
  * 自带的错误页，在指定的错误页无法读取时候使用
  *
@@ -9,8 +11,8 @@ package cn.edu.cuit.fatcat.page;
  */
 public class ErrorPage {
 
-    public static String getEmbeddedErrorPage(String title, int statusCode, String statusDescription, String request, String response) {
-        return  "<!DOCTYPE html>\r\n" +
+    public static byte[] getEmbeddedErrorPageBytes(String title, int statusCode, String statusDescription, String request, String response) {
+        return  ("<!DOCTYPE html>\r\n" +
                 "<html lang=\"zh-CN\">\r\n" +
                 "<head>\r\n" +
                 "\t<meta charset=\"UTF-8\">\r\n" +
@@ -23,12 +25,12 @@ public class ErrorPage {
                 "\t<p>请求报文：</p>\r\n" +
                 "\t<span>" + request.replaceAll("\r\n", "<br/>") + "</span>\r\n" +
                 "\t<hr/>" +
-                "\t<p>响应报文：</p>\r\n" +
+                "\t<p>响应报文头：</p>\r\n" +
                 "\t<span>" + response.replaceAll("\r\n", "<br/>") + "</span>\r\n" +
                 "\t<hr/>" +
                 "\t<p>警告：这是fatcat自带的错误页,请看到此页后自行配置自定义错误页.</p>\r\n" +
                 "</body>\r\n" +
-                "</html>";
+                "</html>").getBytes(Web.CHARSET);
     }
 
 }

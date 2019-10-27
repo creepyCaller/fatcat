@@ -14,8 +14,6 @@ public class FileUtil {
      *
      * @param FileName 传入文件名
      * @return 文件的后缀名
-     * @author fpc
-     * @date 2019/10/24
      */
     public static String getFileSuffix(String FileName) {
         String[] a = FileName.split("\\.");

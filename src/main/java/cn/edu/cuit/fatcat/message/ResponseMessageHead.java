@@ -1,10 +1,12 @@
 package cn.edu.cuit.fatcat.message;
 
 import cn.edu.cuit.fatcat.http.*;
+import cn.edu.cuit.fatcat.setting.Web;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.nio.charset.Charset;
 
 /**
  * 响应报文实体
@@ -15,9 +17,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseMessage {
+public class ResponseMessageHead {
 
     // **HEAD**
 
@@ -35,43 +36,31 @@ public class ResponseMessage {
 
     private String contentLanguage;
 
-    // **BODY**
-
-    private String body;
-
     @Override
     public String toString() {
         return protocol + " " + code + " " + status + "\r\n" +
                 "Connection: " + connection + "\r\n" +
                 "Content-Type: " + contentType + (charSet == null ? "" : ";charset=" + charSet) + "\r\n" +
                 "Content-Language: " + contentLanguage + "\r\n" +
-                "\r\n" +
-                (body == null ? "" : body);
+                "\r\n";
     }
 
     // **CONSTRUCTORS**
 
-    public ResponseMessage(String protocol, Integer code, String status, String connection, String contentType, String contentLanguage, String body) {
+    private ResponseMessageHead(String protocol, Integer code, String status, String connection, String contentType, String charSet, String contentLanguage) {
         this.protocol = protocol;
         this.code = code;
         this.status = status;
         this.connection = connection;
         this.contentType = contentType;
+        this.charSet = charSet;
         this.contentLanguage = contentLanguage;
-        this.body = body;
-    }
-
-    public ResponseMessage(Integer code, String status, String contentType, String body) {
-        this.code = code;
-        this.status = status;
-        this.contentType = contentType;
-        this.body = body;
     }
 
     // **STATIC BUILDER**
 
-    public static ResponseMessage standardResponseMessage() {
-        return new ResponseMessage(HttpProtocol.HTTP_1_1, HttpStatusCode.OK, HttpStatusDescription.OK, HttpConnection.CLOSE, HttpContentType.TEXT_HTML, HttpContentLanguage.ZH_CN, null);
+    public static ResponseMessageHead standardResponseMessageHead() {
+        return new ResponseMessageHead(HttpProtocol.HTTP_1_1, HttpStatusCode.OK, HttpStatusDescription.OK, HttpConnection.CLOSE, HttpContentType.TEXT_HTML, Web.CHARSET_STRING, Web.CONTENT_LANGUAGE);
     }
 
 }

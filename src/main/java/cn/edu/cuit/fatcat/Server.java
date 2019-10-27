@@ -1,7 +1,5 @@
 package cn.edu.cuit.fatcat;
 
-import cn.edu.cuit.fatcat.thread.ServerThread;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,7 +32,7 @@ public class Server implements Runnable {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("[Thread-" + ++i + "]ACCEPT: " + socket.toString());
-                (new Thread(new ServerThread(socket))).start();
+                (new Thread(new GeneralServlet(socket))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

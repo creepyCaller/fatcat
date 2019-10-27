@@ -1,7 +1,6 @@
 package cn.edu.cuit.fatcat.message;
 
 import lombok.*;
-
 import java.util.Map;
 
 /**
@@ -16,7 +15,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestMessage {
-// **PROPERTIES**
+
+    // **HEAD**
 
     private String method;
 
@@ -24,20 +24,35 @@ public class RequestMessage {
 
     private String protocol;
 
+    // **PROPERTIES**
+
+    private String RequestType;
+
+    public String servletName;
+
+    // **BODY**
+
     private String body;
+
+    @Override
+    public String toString() {
+        return method + " " + direction + " " + protocol +
+               "\r\n" +
+               (body == null ? "" : body);
+    }
+
+    // **PARAMS**
 
     Map<String, String> param;
 
-    public String getMessage() {
-        return method + " " + direction + " " + protocol + "\r\n" + body;
-    }
+    // **STATIC BUILDER**
 
     public static RequestMessage empty() {
-        return new RequestMessage("", "", "", "", null);
+        return new RequestMessage("", "", "", "", "", "", null);
     }
 
-    public static RequestMessage construct(String method, String direction, String protocol, String body, Map<String, String> param) {
-        return new RequestMessage(method, direction, protocol, body, param);
+    public static RequestMessage construct(String method, String direction, String protocol, String requestType, String servletName, String body, Map<String, String> param) {
+        return new RequestMessage(method, direction, protocol, requestType, servletName, body, param);
     }
 
 }
