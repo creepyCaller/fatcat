@@ -12,11 +12,14 @@ import java.nio.charset.Charset;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
-public class Web {
-
+public class WebSetting {
     public static String ERROR_PAGE = "/error/error.html";
     public static String INDEX = "/index.html";
     public static String CHARSET_STRING = "UTF-8";
-    public static Charset CHARSET = Charset.forName(Web.CHARSET_STRING);
+    public static Charset CHARSET = Charset.forName(WebSetting.CHARSET_STRING);
     public static String CONTENT_LANGUAGE = HttpContentLanguage.ZH_CN;
+    public static int port;
+    static {
+        port = 80;
+    }
 }

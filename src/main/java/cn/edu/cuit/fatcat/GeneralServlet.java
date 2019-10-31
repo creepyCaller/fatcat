@@ -7,10 +7,11 @@ import cn.edu.cuit.fatcat.message.RequestMessage;
 import cn.edu.cuit.fatcat.message.ResponseMessageHead;
 import cn.edu.cuit.fatcat.service.RequestMessageService;
 import cn.edu.cuit.fatcat.service.ResponseMessageService;
-import cn.edu.cuit.fatcat.setting.Web;
+import cn.edu.cuit.fatcat.setting.WebSetting;
 import cn.edu.cuit.fatcat.util.ArrayUtil;
 import cn.edu.cuit.fatcat.util.FileUtil;
 import cn.edu.cuit.fatcat.util.ResponseMessageUtil;
+import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.Socket;
 
@@ -21,6 +22,7 @@ import java.net.Socket;
  * @date 2019/10/23
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class GeneralServlet implements Runnable {
 
     private Socket socket;
@@ -48,7 +50,7 @@ public class GeneralServlet implements Runnable {
             responseMessageHead = ResponseMessageHead.standardResponseMessageHead(); // 构造标准响应头
             service(requestMessage, responseMessageHead);
             responseMessageBody = responseMessageService.readResponseMessageBody(requestMessage, responseMessageHead); // 读取响应体二进制流
-            write.write(ArrayUtil.BiyeArrayMerge(responseMessageHead.toString().getBytes(Web.CHARSET), responseMessageBody)); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
+            write.write(ArrayUtil.BiyeArrayMerge(responseMessageHead.toString().getBytes(WebSetting.CHARSET), responseMessageBody)); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
             destroy();
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,6 +88,7 @@ public class GeneralServlet implements Runnable {
                     doTrace(requestMessage, responseMessageHead);
                     break;
                 default:
+                    // 如果请求方法不匹配以上所有方法，则报501错误
                     responseMessageHead.setCode(HttpStatusCode.NOT_IMPLEMENTED);
                     responseMessageHead.setStatus(HttpStatusDescription.NOT_IMPLEMENTED);
                     break;

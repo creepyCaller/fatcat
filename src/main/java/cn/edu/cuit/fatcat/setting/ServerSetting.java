@@ -8,8 +8,9 @@ package cn.edu.cuit.fatcat.setting;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
-public class Server {
+public class ServerSetting {
 
+    // 临时解决方案：在打JAR包的时候换成"../wwwroot"
     public static String WWWROOT = "wwwroot";
 
 }

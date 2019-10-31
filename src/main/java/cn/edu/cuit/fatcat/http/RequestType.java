@@ -9,7 +9,7 @@ package cn.edu.cuit.fatcat.http;
  * @date 2019/10/24
  * @since Fatcat 0.0.1
  */
-public class RequestType {
+public interface RequestType {
 
     public static final String FILE = "file";
     public static final String SERVLET = "servlet";

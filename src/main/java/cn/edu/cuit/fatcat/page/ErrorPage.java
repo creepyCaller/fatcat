@@ -1,6 +1,6 @@
 package cn.edu.cuit.fatcat.page;
 
-import cn.edu.cuit.fatcat.setting.Web;
+import cn.edu.cuit.fatcat.setting.WebSetting;
 
 /**
  * 自带的错误页，在指定的错误页无法读取时候使用
@@ -30,7 +30,7 @@ public class ErrorPage {
                 "\t<hr/>" +
                 "\t<p>警告：这是fatcat自带的错误页,请看到此页后自行配置自定义错误页.</p>\r\n" +
                 "</body>\r\n" +
-                "</html>").getBytes(Web.CHARSET);
+                "</html>").getBytes(WebSetting.CHARSET);
     }
 
 }

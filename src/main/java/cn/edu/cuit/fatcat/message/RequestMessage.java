@@ -26,9 +26,9 @@ public class RequestMessage {
 
     // **PROPERTIES**
 
-    private String RequestType;
+    private String requestType;
 
-    public String servletName;
+    private String servletName;
 
     // **BODY**
 
@@ -44,15 +44,5 @@ public class RequestMessage {
     // **PARAMS**
 
     Map<String, String> param;
-
-    // **STATIC BUILDER**
-
-    public static RequestMessage empty() {
-        return new RequestMessage("", "", "", "", "", "", null);
-    }
-
-    public static RequestMessage construct(String method, String direction, String protocol, String requestType, String servletName, String body, Map<String, String> param) {
-        return new RequestMessage(method, direction, protocol, requestType, servletName, body, param);
-    }
 
 }

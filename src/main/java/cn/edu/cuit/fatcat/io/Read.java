@@ -1,7 +1,7 @@
 package cn.edu.cuit.fatcat.io;
 
-import cn.edu.cuit.fatcat.setting.Server;
-
+import cn.edu.cuit.fatcat.setting.ServerSetting;
+import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.io.InputStream;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class Read {
 
     private InputStream iStr;
@@ -40,7 +41,8 @@ public class Read {
      * @throws IOException IO异常
      */
     public byte[] read(String direction) throws IOException {
-        File file = new File(Server.WWWROOT + direction);
+        File file = new File(ServerSetting.WWWROOT + direction);
+        log.info("读取文件: " + file.getAbsolutePath());
         FileInputStream fIStr = new FileInputStream(file);
         return read(fIStr);
     }

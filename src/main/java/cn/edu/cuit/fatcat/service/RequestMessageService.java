@@ -4,7 +4,7 @@ import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.fatcat.http.RequestType;
 import cn.edu.cuit.fatcat.io.Read;
 import cn.edu.cuit.fatcat.message.RequestMessage;
-import cn.edu.cuit.fatcat.setting.Web;
+import cn.edu.cuit.fatcat.setting.WebSetting;
 import cn.edu.cuit.fatcat.util.FileUtil;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class RequestMessageService {
      * @return 请求报文实体
      */
     public RequestMessage getRequestMessage(Read read) throws IOException {
-        String request = new String(read.read(), Web.CHARSET);
+        String request = new String(read.read(), WebSetting.CHARSET);
         String[] requestLines = request.split("\r\n"); // 依据换行符拆分Request报文
         String[] a = requestLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
         String[] s = a[1].split("\\?"); // 根据问号拆分请求路径，格式为：真路径？参数
@@ -47,7 +47,15 @@ public class RequestMessageService {
         } else {
             servletName = "";
         }
-        return RequestMessage.construct(a[0], path, a[2], requestType, servletName, body, param); // 构造请求报文并返回
+        return RequestMessage.builder()
+                .method(a[0])
+                .direction(path)
+                .protocol(a[2])
+                .requestType(requestType)
+                .servletName(servletName)
+                .body(body)
+                .param(param)
+                .build();
     }
 
     /**
@@ -55,7 +63,7 @@ public class RequestMessageService {
      * 如果请求没有后缀名就假设为Servlet，事实上应该查表或者是查注解，现在只是测试
      * 如果有请求路径有后缀名，则被认为是文件，没有则先检查有没有设置转发
      * 最后再确认是Servlet
-     * 事实上应该先检查此路径有没有Servlet映射到某个Servlet
+     * 事实上应该先检查此路径有没有映射到某个Servlet
      *
      * @param path 请求路径
      * @return 请求类型

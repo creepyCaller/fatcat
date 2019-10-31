@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>表单相关</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <div id="app">
+        <p>使用v-model双向绑定数据在表单类元素上：</p>
+        <input type="text" class="form-control" v-model="imsg" placeholder="INPUT_MSG">
+        <p>使用.lazy修饰的input的v-model：(只在失焦或按回车更新数据)</p>
+        <input type="text" class="form-control" v-model.lazy="imsg" placeholder="INPUT_MSG">
+        <p>INPUT_MSG&nbsp;=&nbsp;&quot;{{ imsg }}&quot;</p>
+        <hr/>
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script>
+        var app = new Vue({
+           el: '#app',
+           data: {
+               imsg: ''
+           }
+        });
+    </script>
+    <script src="js/jquery-3.3.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

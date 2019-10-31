@@ -5,7 +5,10 @@ import cn.edu.cuit.fatcat.io.Read;
 import cn.edu.cuit.fatcat.message.RequestMessage;
 import cn.edu.cuit.fatcat.message.ResponseMessageHead;
 import cn.edu.cuit.fatcat.page.ErrorPage;
-import cn.edu.cuit.fatcat.setting.Web;
+import cn.edu.cuit.fatcat.setting.WebSetting;
+import cn.edu.cuit.fatcat.util.FileUtil;
+import cn.edu.cuit.fatcat.util.ResponseMessageUtil;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -42,7 +45,9 @@ public class ResponseMessageService {
                     body = read.read(requestMessage.getDirection());
                     break;
                 case RequestType.DISPATCH:
-                    body = read.read(dispatcherService.dispatcher(requestMessage.getDirection()));
+                    dispatcherService.dispatcher(requestMessage);
+                    responseMessageHead.setContentType(ResponseMessageUtil.getContentType(FileUtil.getFileSuffix(requestMessage.getDirection()))); // 从请求报文的路径获取文件后缀名，再使用后缀确定内容类型
+                    body = read.read(requestMessage.getDirection());
                     break;
                 case RequestType.SERVLET:
                     body = servlet(requestMessage, responseMessageHead);
@@ -65,6 +70,7 @@ public class ResponseMessageService {
      *
      */
     private byte[] servlet(RequestMessage requestMessage, ResponseMessageHead responseMessageHead) {
+        responseMessageHead.setContentType(HttpContentType.TEXT_HTML);
         responseMessageHead.setCode(HttpStatusCode.INTERNAL_SERVER_ERROR);
         responseMessageHead.setStatus(HttpStatusDescription.INTERNAL_SERVER_ERROR);
         return ErrorPage.getEmbeddedErrorPageBytes("暂未支持Servlet", responseMessageHead.getCode(), responseMessageHead.getStatus(), requestMessage.toString(), responseMessageHead.toString());
@@ -78,10 +84,11 @@ public class ResponseMessageService {
     private byte[] handleException(RequestMessage requestMessage, ResponseMessageHead responseMessageHead, int code, String status) {
         responseMessageHead.setCode(code);
         responseMessageHead.setStatus(status);
+        responseMessageHead.setContentType(HttpContentType.TEXT_HTML);
         byte[] body;
         try {
             // 从ERROR_PAGE读取错误页
-            body = read.read(Web.ERROR_PAGE);
+            body = read.read(WebSetting.ERROR_PAGE);
         } catch (IOException ignore) {
             // 如果ERROR_PAGE指定的错误页找不到，就用容器自带的错误页
             body = ErrorPage.getEmbeddedErrorPageBytes(responseMessageHead.getStatus(), responseMessageHead.getCode(), responseMessageHead.getStatus(), requestMessage.toString(), responseMessageHead.toString());

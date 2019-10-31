@@ -1,5 +1,7 @@
 package cn.edu.cuit.fatcat.util;
 
+import cn.edu.cuit.fatcat.http.HttpContentType;
+
 /**
  * 响应报文工具类，处理响应报文相关
  *
@@ -12,29 +14,36 @@ public class ResponseMessageUtil {
     /**
      * 根据文件后缀名返回响应内容类型
      *
-     * @param subffix 文件后缀名
+     * @param suffix 文件后缀名
      * @return 响应内容类型
      */
-    public static String getContentType(String subffix) {
-        switch (subffix) {
+    public static String getContentType(String suffix) {
+        switch (suffix) {
             case "html":
-                return "text/html";
+            case "htm":
+                return HttpContentType.TEXT_HTML;
             case "css":
-                return "text/css";
+                return HttpContentType.TEXT_CSS;
             case "js":
-                return "application/javascript";
+                return HttpContentType.APPLICATION_JS;
             case "json":
-                return "application/json";
+                return HttpContentType.APPLICATION_JSON;
             case "png":
-                return "image/png";
+                return HttpContentType.IMAGE_PNG;
             case "jpg":
-                return "image/jpg";
+            case "jpeg":
+                return HttpContentType.IMAGE_JPEG;
             case "ico":
-                return "image/icon";
+                return HttpContentType.IMAGE_X_ICON;
             case "gif":
-                return "image/gif";
+                return HttpContentType.IMAGE_GIF;
+            case "svg":
+                return HttpContentType.IMAGE_SVG;
+            case "xml":
+            case "txt":
+                return HttpContentType.TEXT_XML;
             default:
-                return "unknown";
+                return HttpContentType.UNKNOWN;
         }
     }
 

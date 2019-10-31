@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat;
 
+import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,6 +12,7 @@ import java.net.Socket;
  * @date  2019/10/23
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class Server implements Runnable {
     private int port;
 
@@ -27,11 +29,11 @@ public class Server implements Runnable {
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("正在监听, Port = " + port);
-            int i = 0;
+            log.info("服务器启动成功!");
+            log.info("正在监听端口： " + port);
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("[Thread-" + ++i + "]ACCEPT: " + socket.toString());
+                log.info("建立连接: " + socket.toString());
                 (new Thread(new GeneralServlet(socket))).start();
             }
         } catch (IOException e) {
