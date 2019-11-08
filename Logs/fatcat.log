@@ -1,0 +1,125 @@
+2019-11-08 19:36:08,376 WARN [      main]       cn.edu.cuit.fatcat.launcher.Launch : 未设置服务器监听端口，使用默认值：80
+2019-11-08 19:36:08,377 INFO [      main]       cn.edu.cuit.fatcat.launcher.Launch : 正在开始初始化...
+2019-11-08 19:36:08,378 INFO [      main]       cn.edu.cuit.fatcat.launcher.Launch : 服务器初始化成功!
+2019-11-08 19:36:08,378 INFO [      main]       cn.edu.cuit.fatcat.launcher.Launch : 正在启动服务器...
+2019-11-08 19:36:08,378 INFO [      main]       cn.edu.cuit.fatcat.launcher.Launch : 服务器启动成功!共耗时2毫秒
+2019-11-08 19:36:08,379 INFO [  Thread-0]                cn.edu.cuit.linker.Server : 正在监听端口：80
+2019-11-08 19:36:17,088 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51980,localport=80]
+2019-11-08 19:36:17,117 INFO [  Thread-1]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /info.html
+2019-11-08 19:36:17,118 INFO [  Thread-1]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /info.html, 正在从硬盘中获取...
+2019-11-08 19:36:17,119 INFO [  Thread-1]              cn.edu.cuit.linker.io.Cache : 存入缓存: /info.html
+2019-11-08 19:36:19,713 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51981,localport=80]
+2019-11-08 19:36:19,724 INFO [  Thread-2]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /css/bootstrap.min.css
+2019-11-08 19:36:19,725 INFO [  Thread-2]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /css/bootstrap.min.css, 正在从硬盘中获取...
+2019-11-08 19:36:19,726 INFO [  Thread-2]              cn.edu.cuit.linker.io.Cache : 存入缓存: /css/bootstrap.min.css
+2019-11-08 19:36:19,796 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51982,localport=80]
+2019-11-08 19:36:19,797 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51983,localport=80]
+2019-11-08 19:36:19,798 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51984,localport=80]
+2019-11-08 19:36:19,798 INFO [  Thread-3]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue.min.js
+2019-11-08 19:36:19,798 INFO [  Thread-3]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/vue.min.js, 正在从硬盘中获取...
+2019-11-08 19:36:19,799 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51985,localport=80]
+2019-11-08 19:36:19,799 INFO [  Thread-4]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue-resource.min.js
+2019-11-08 19:36:19,800 INFO [  Thread-4]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/vue-resource.min.js, 正在从硬盘中获取...
+2019-11-08 19:36:19,800 INFO [  Thread-5]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/jquery-3.3.1.slim.min.js
+2019-11-08 19:36:19,800 INFO [  Thread-3]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/vue.min.js
+2019-11-08 19:36:19,800 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51986,localport=80]
+2019-11-08 19:36:19,801 INFO [  Thread-6]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/popper.min.js
+2019-11-08 19:36:19,800 INFO [  Thread-4]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/vue-resource.min.js
+2019-11-08 19:36:19,800 INFO [  Thread-5]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/jquery-3.3.1.slim.min.js, 正在从硬盘中获取...
+2019-11-08 19:36:19,802 INFO [  Thread-6]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/popper.min.js, 正在从硬盘中获取...
+2019-11-08 19:36:19,804 INFO [  Thread-5]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/jquery-3.3.1.slim.min.js
+2019-11-08 19:36:19,804 INFO [  Thread-7]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/bootstrap.min.js
+2019-11-08 19:36:19,804 INFO [  Thread-7]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/bootstrap.min.js, 正在从硬盘中获取...
+2019-11-08 19:36:19,804 INFO [  Thread-6]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/popper.min.js
+2019-11-08 19:36:19,805 INFO [  Thread-7]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/bootstrap.min.js
+2019-11-08 19:36:26,466 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51987,localport=80]
+2019-11-08 19:36:26,477 INFO [  Thread-8]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /lg.png
+2019-11-08 19:36:26,478 INFO [  Thread-8]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /lg.png, 正在从硬盘中获取...
+2019-11-08 19:36:26,478 INFO [  Thread-8]              cn.edu.cuit.linker.io.Cache : 存入缓存: /lg.png
+2019-11-08 19:37:20,519 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51991,localport=80]
+2019-11-08 19:37:20,521 INFO [  Thread-9]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /info.html
+2019-11-08 19:37:20,521 INFO [  Thread-9]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /info.html, 成功!
+2019-11-08 19:37:23,236 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51992,localport=80]
+2019-11-08 19:37:23,247 INFO [ Thread-10]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /css/bootstrap.min.css
+2019-11-08 19:37:23,247 INFO [ Thread-10]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /css/bootstrap.min.css, 成功!
+2019-11-08 19:37:23,258 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51993,localport=80]
+2019-11-08 19:37:23,260 INFO [ Thread-11]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue.min.js
+2019-11-08 19:37:23,260 INFO [ Thread-11]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue.min.js, 成功!
+2019-11-08 19:37:23,332 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51994,localport=80]
+2019-11-08 19:37:23,343 INFO [ Thread-12]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue-resource.min.js
+2019-11-08 19:37:23,344 INFO [ Thread-12]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue-resource.min.js, 成功!
+2019-11-08 19:37:23,344 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51995,localport=80]
+2019-11-08 19:37:23,346 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51996,localport=80]
+2019-11-08 19:37:23,346 INFO [ Thread-13]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/jquery-3.3.1.slim.min.js
+2019-11-08 19:37:23,347 INFO [ Thread-13]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/jquery-3.3.1.slim.min.js, 成功!
+2019-11-08 19:37:23,347 INFO [ Thread-14]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/popper.min.js
+2019-11-08 19:37:23,351 INFO [ Thread-14]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/popper.min.js, 成功!
+2019-11-08 19:37:23,365 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51997,localport=80]
+2019-11-08 19:37:23,375 INFO [ Thread-15]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/bootstrap.min.js
+2019-11-08 19:37:23,375 INFO [ Thread-15]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/bootstrap.min.js, 成功!
+2019-11-08 19:37:25,000 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51998,localport=80]
+2019-11-08 19:37:25,002 INFO [ Thread-16]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /index.html
+2019-11-08 19:37:25,002 INFO [ Thread-16]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /index.html, 正在从硬盘中获取...
+2019-11-08 19:37:25,003 INFO [ Thread-16]              cn.edu.cuit.linker.io.Cache : 存入缓存: /index.html
+2019-11-08 19:37:26,713 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=51999,localport=80]
+2019-11-08 19:37:26,715 INFO [ Thread-17]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /css/bootstrap.min.css
+2019-11-08 19:37:26,715 INFO [ Thread-17]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /css/bootstrap.min.css, 成功!
+2019-11-08 19:37:27,055 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52000,localport=80]
+2019-11-08 19:37:27,056 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52001,localport=80]
+2019-11-08 19:37:27,057 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52002,localport=80]
+2019-11-08 19:37:27,057 INFO [ Thread-18]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/jquery-3.4.1.min.js
+2019-11-08 19:37:27,057 INFO [ Thread-18]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /js/jquery-3.4.1.min.js, 正在从硬盘中获取...
+2019-11-08 19:37:27,058 INFO [ Thread-19]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/popper.min.js
+2019-11-08 19:37:27,058 INFO [ Thread-19]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/popper.min.js, 成功!
+2019-11-08 19:37:27,058 INFO [ Thread-18]              cn.edu.cuit.linker.io.Cache : 存入缓存: /js/jquery-3.4.1.min.js
+2019-11-08 19:37:27,058 INFO [ Thread-20]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/bootstrap.min.js
+2019-11-08 19:37:27,059 INFO [ Thread-20]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/bootstrap.min.js, 成功!
+2019-11-08 19:37:31,987 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52003,localport=80]
+2019-11-08 19:37:31,998 INFO [ Thread-21]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /lg.png
+2019-11-08 19:37:31,999 INFO [ Thread-21]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /lg.png, 成功!
+2019-11-08 19:37:39,324 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52004,localport=80]
+2019-11-08 19:37:39,335 INFO [ Thread-22]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /get.html
+2019-11-08 19:37:39,335 INFO [ Thread-22]     cn.edu.cuit.linker.io.StandardReader : 缓存中不存在: /get.html, 正在从硬盘中获取...
+2019-11-08 19:37:39,336 INFO [ Thread-22]              cn.edu.cuit.linker.io.Cache : 存入缓存: /get.html
+2019-11-08 19:37:47,233 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52005,localport=80]
+2019-11-08 19:37:47,244 INFO [ Thread-23]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /info.html
+2019-11-08 19:37:47,244 INFO [ Thread-23]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /info.html, 成功!
+2019-11-08 19:37:49,211 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52006,localport=80]
+2019-11-08 19:37:49,213 INFO [ Thread-24]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /css/bootstrap.min.css
+2019-11-08 19:37:49,214 INFO [ Thread-24]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /css/bootstrap.min.css, 成功!
+2019-11-08 19:37:49,253 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52007,localport=80]
+2019-11-08 19:37:49,264 INFO [ Thread-25]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue.min.js
+2019-11-08 19:37:49,264 INFO [ Thread-25]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue.min.js, 成功!
+2019-11-08 19:37:49,293 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52008,localport=80]
+2019-11-08 19:37:49,295 INFO [ Thread-26]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue-resource.min.js
+2019-11-08 19:37:49,295 INFO [ Thread-26]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue-resource.min.js, 成功!
+2019-11-08 19:37:49,332 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52009,localport=80]
+2019-11-08 19:37:49,333 INFO [ Thread-27]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/jquery-3.3.1.slim.min.js
+2019-11-08 19:37:49,334 INFO [ Thread-27]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/jquery-3.3.1.slim.min.js, 成功!
+2019-11-08 19:37:49,362 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52010,localport=80]
+2019-11-08 19:37:49,371 INFO [ Thread-28]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/popper.min.js
+2019-11-08 19:37:49,371 INFO [ Thread-28]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/popper.min.js, 成功!
+2019-11-08 19:37:49,382 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52011,localport=80]
+2019-11-08 19:37:49,384 INFO [ Thread-29]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/bootstrap.min.js
+2019-11-08 19:37:49,384 INFO [ Thread-29]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/bootstrap.min.js, 成功!
+2019-11-08 19:38:05,742 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52013,localport=80]
+2019-11-08 19:38:05,742 INFO [ Thread-30]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /info.html
+2019-11-08 19:38:05,742 INFO [ Thread-30]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /info.html, 成功!
+2019-11-08 19:38:08,872 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52014,localport=80]
+2019-11-08 19:38:08,874 INFO [ Thread-31]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /css/bootstrap.min.css
+2019-11-08 19:38:08,874 INFO [ Thread-31]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /css/bootstrap.min.css, 成功!
+2019-11-08 19:38:08,964 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52015,localport=80]
+2019-11-08 19:38:08,974 INFO [ Thread-32]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue.min.js
+2019-11-08 19:38:08,974 INFO [ Thread-32]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue.min.js, 成功!
+2019-11-08 19:38:09,401 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52016,localport=80]
+2019-11-08 19:38:09,402 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52017,localport=80]
+2019-11-08 19:38:09,403 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52018,localport=80]
+2019-11-08 19:38:09,403 INFO [ Thread-33]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/vue-resource.min.js
+2019-11-08 19:38:09,404 INFO [ Thread-34]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/jquery-3.3.1.slim.min.js
+2019-11-08 19:38:09,404 INFO [ Thread-34]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/jquery-3.3.1.slim.min.js, 成功!
+2019-11-08 19:38:09,404 INFO [ Thread-33]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/vue-resource.min.js, 成功!
+2019-11-08 19:38:09,405 INFO [ Thread-35]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/popper.min.js
+2019-11-08 19:38:09,406 INFO [ Thread-35]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/popper.min.js, 成功!
+2019-11-08 19:38:09,511 INFO [  Thread-0]         cn.edu.cuit.linker.SocketHandler : 建立套接字：Socket[addr=/192.168.1.125,port=52019,localport=80]
+2019-11-08 19:38:09,513 INFO [ Thread-36]     cn.edu.cuit.linker.io.StandardReader : 读取文件: /js/bootstrap.min.js
+2019-11-08 19:38:09,513 INFO [ Thread-36]     cn.edu.cuit.linker.io.StandardReader : 从缓存中获取: /js/bootstrap.min.js, 成功!

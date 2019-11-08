@@ -1,8 +1,7 @@
 package cn.edu.cuit.fatcat.util;
 
+import cn.edu.cuit.linker.util.FileUtil;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class FileUtilTest {
 

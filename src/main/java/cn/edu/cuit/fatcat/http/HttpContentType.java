@@ -18,5 +18,4 @@ public interface HttpContentType {
     public static final String IMAGE_GIF = "image/gif";
     public static final String IMAGE_SVG = "image/svg+xml";
     public static final String TEXT_XML = "text/xml";
-    public static final String UNKNOWN = "application/octet-stream";
 }

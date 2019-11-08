@@ -1,7 +1,7 @@
 package cn.edu.cuit.fatcat.service;
 
-import cn.edu.cuit.fatcat.message.RequestMessage;
-import cn.edu.cuit.fatcat.setting.WebSetting;
+import cn.edu.cuit.linker.message.Request;
+import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
 
 /**
  * 转发服务
@@ -10,22 +10,17 @@ import cn.edu.cuit.fatcat.setting.WebSetting;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
-class DispatcherService {
+public class DispatcherService {
 
     /**
      * 请求路径转发
      *
-     * @param requestMessage 请求报文
-     * @return 转发后的路径或需要调用的Servlet
+     * @param request 请求报文
      */
-    void dispatcher(RequestMessage requestMessage) {
-        // 以后要处理访问Servlet的Request
-        // 先找Servlet再找文件？
-        // 找到Servlet以后就调用它，最后就把Servlet的Response写到浏览器端
-        // 没有对应的Servlet就去WWWROOT下边找文件
-        if ("/".equals(requestMessage.getDirection())) {
-            // 如果请求的路径是"/"，则转到欢迎页(现在只是暂时设置为内部属性，以后要在settings里和Servlet里规定)
-            requestMessage.setDirection(WebSetting.INDEX);
+    public void dispatcher(Request request) {
+        if ("/".equals(request.getDirection())) {
+            // 如果请求的路径是"/"，则转到欢迎页
+            request.setDirection(WebApplicationServerSetting.INDEX);
         }
     }
 

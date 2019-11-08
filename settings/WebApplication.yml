@@ -1,0 +1,3 @@
+WelcomePage: /index.html
+ErrorPage: /error/error.html
+Charset: UTF-8

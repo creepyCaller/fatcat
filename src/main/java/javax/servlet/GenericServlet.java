@@ -1,4 +1,4 @@
 package javax.servlet;
 
-public class GenericServlet {
+public abstract class GenericServlet {
 }
