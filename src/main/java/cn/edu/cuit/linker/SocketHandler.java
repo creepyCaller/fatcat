@@ -13,6 +13,10 @@ public class SocketHandler {
         log.info("建立套接字：" + socket.toString());
     }
 
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     public Socket getSocket() {
         return socket;
     }

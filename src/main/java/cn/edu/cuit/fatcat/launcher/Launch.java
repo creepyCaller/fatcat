@@ -54,10 +54,10 @@ public class Launch {
                 throw new IOException();
             }
         }
-        File error_path = new File(FatcatSetting.WEB_APPLICATION + "/error");
-        if (!error_path.exists()) {
-            if (error_path.mkdirs()) {
-                log.warn("找不到存放错误提示页的目录!创建文件夹" + error_path.getAbsolutePath());
+        File errorPath = new File(FatcatSetting.WEB_APPLICATION + "/error");
+        if (!errorPath.exists()) {
+            if (errorPath.mkdirs()) {
+                log.warn("找不到存放错误提示页的目录!创建文件夹" + errorPath.getAbsolutePath());
             } else {
                 log.error("找不到存放错误提示页的目录!创建文件夹失败!");
                 throw new IOException();

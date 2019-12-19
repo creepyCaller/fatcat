@@ -26,9 +26,11 @@ public class Server implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(FatcatSetting.port); // 换用SocketWrapper
             log.info("正在监听端口：" + FatcatSetting.port);
+            // 在实现线程池之后，改用非阻断式
+            // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
             while (true) {
-                SocketHandler socketHandler = new SocketHandler(serverSocket.accept()); // 在实现线程池之后，改用非阻断式
-                (new Thread((new GenesisServlet(socketHandler.getSocket())))).start(); // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
+                SocketHandler socketHandler = new SocketHandler(serverSocket.accept());
+                (new Thread((new GenesisServlet(socketHandler.getSocket())))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

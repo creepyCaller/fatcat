@@ -1,6 +1,8 @@
-package cn.edu.cuit.linker.io;
+package cn.edu.cuit.linker.io.standard;
 
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
+import cn.edu.cuit.linker.io.Cache;
+import cn.edu.cuit.linker.io.Reader;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 

@@ -2,7 +2,6 @@ package cn.edu.cuit.linker.service;
 
 import cn.edu.cuit.fatcat.http.*;
 import cn.edu.cuit.linker.io.Reader;
-import cn.edu.cuit.linker.io.StandardReader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
 import cn.edu.cuit.fatcat.embed.ErrorPage;

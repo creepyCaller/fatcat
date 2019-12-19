@@ -1,4 +1,6 @@
-package cn.edu.cuit.linker.io;
+package cn.edu.cuit.linker.io.standard;
+
+import cn.edu.cuit.linker.io.Writer;
 
 import java.io.IOException;
 import java.io.OutputStream;

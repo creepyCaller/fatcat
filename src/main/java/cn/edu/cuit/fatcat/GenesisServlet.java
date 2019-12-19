@@ -2,8 +2,8 @@ package cn.edu.cuit.fatcat;
 
 import cn.edu.cuit.fatcat.http.*;
 import cn.edu.cuit.linker.io.Reader;
-import cn.edu.cuit.linker.io.StandardReader;
-import cn.edu.cuit.linker.io.StandardWriter;
+import cn.edu.cuit.linker.io.standard.StandardReader;
+import cn.edu.cuit.linker.io.standard.StandardWriter;
 import cn.edu.cuit.linker.io.Writer;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
@@ -107,7 +107,10 @@ public class GenesisServlet implements Runnable {
         // 首先调用转发器可能的请求url转发
         // 再判断转发后的文件类型
         dispatcherService.dispatcher(request);
-        responseHead.setContentType(ResponseMessageUtil.getContentType(FileUtil.getFileSuffix(request.getDirection())));
+        String direction = request.getDirection();
+        String suffix = FileUtil.getFileSuffix(direction);
+        String contentType = ResponseMessageUtil.getContentType(suffix);
+        responseHead.setContentType(contentType);
     }
 
     private void doPost(Request request, ResponseHead responseHead) {
