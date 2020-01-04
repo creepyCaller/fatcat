@@ -49,7 +49,7 @@ public class StandardReader implements Reader {
             return oBS;
         } else {
             log.info("缓存中不存在: " + direction + ", 正在从硬盘中获取...");
-            File file = new File(FatcatSetting.WEB_APPLICATION + direction); // FileNotFoundException
+            File file = new File(FatcatSetting.WEB_APPLICATIONS + direction); // FileNotFoundException
             FileInputStream fIStr = new FileInputStream(file); // IOException
             oBS = read(fIStr);
             Cache.put(direction, oBS);

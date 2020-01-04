@@ -1,6 +1,8 @@
 package cn.edu.cuit.linker.message;
 
 import lombok.*;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,7 +32,7 @@ public class Request {
 
     // **Params**
 
-    Map<String, String> param;
+    Map<String, List<String>> param;
 
     // **ToString**
 
@@ -38,7 +40,15 @@ public class Request {
     public String toString() {
         return method + " " + direction + " " + protocol +
                 "\r\n" +
-                (body == null ? "" : body);
+                (body == null ? "" : "\r\n" + body);
     }
 
+    public String getParamString() {
+        if (param != null) {
+            StringBuilder paramString = new StringBuilder();
+            param.forEach((key, value) -> paramString.append(key).append(": ").append(value.toString()).append("\r\n"));
+            return paramString.toString();
+        }
+        return "";
+    }
 }

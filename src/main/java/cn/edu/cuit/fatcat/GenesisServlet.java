@@ -45,7 +45,6 @@ public class GenesisServlet implements Runnable {
     public void run() {
         Request request;
         ResponseHead responseHead;
-        byte[] responseBody;
         try(Reader standardReader = new StandardReader(socket.getInputStream());
             Writer standardWriter = new StandardWriter(socket.getOutputStream())) {
             RequestMessageService requestMessageService = new RequestMessageService();
@@ -53,8 +52,10 @@ public class GenesisServlet implements Runnable {
             request = requestMessageService.getRequestMessage(standardReader); // 构造请求报文对象
             responseHead = ResponseHead.standardResponseMessageHead(); // 构造标准响应头
             service(request, responseHead);
-            responseBody = responseMessageService.readResponseMessageBody(request, responseHead); // 读取响应体二进制流
-            standardWriter.write(ArrayUtil.ByteArrayMerge(responseHead.toString().getBytes(WebApplicationServerSetting.CHARSET), responseBody)); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
+            byte[] responseHeadBiteArray = responseHead.toString().getBytes(WebApplicationServerSetting.CHARSET); // 响应头二进制流
+            byte[] responseBodyBiteArray = responseMessageService.readResponseMessageBody(request, responseHead); // 响应体二进制流
+            byte[] responseBiteArray = ArrayUtil.ByteArrayMerge(responseHeadBiteArray, responseBodyBiteArray);
+            standardWriter.write(responseBiteArray); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
         } catch (IOException e) {
             e.printStackTrace();
         }

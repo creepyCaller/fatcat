@@ -61,7 +61,7 @@ public class ResponseMessageService {
             body = standardReader.read(WebApplicationServerSetting.ERROR_PAGE);
         } catch (IOException ignore) {
             // 如果ERROR_PAGE指定的错误页找不到，就用容器自带的错误页
-            body = ErrorPage.getEmbeddedErrorPageBytes(responseHead.getStatus(), responseHead.getCode(), responseHead.getStatus(), request.toString(), responseHead.toString());
+            body = ErrorPage.getEmbeddedErrorPageBytes(request, responseHead);
         }
         return body;
     }

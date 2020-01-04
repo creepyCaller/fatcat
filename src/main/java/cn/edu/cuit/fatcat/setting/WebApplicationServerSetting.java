@@ -18,4 +18,7 @@ public class WebApplicationServerSetting {
     public static String CHARSET_STRING = "UTF-8";
     public static Charset CHARSET = Charset.forName(WebApplicationServerSetting.CHARSET_STRING);
     public static String CONTENT_LANGUAGE = HttpContentLanguage.ZH_CN;
+    static {
+
+    }
 }

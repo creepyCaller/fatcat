@@ -7,6 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 响应报文实体
  *
@@ -36,6 +41,12 @@ public class ResponseHead {
 
     private String contentLanguage;
 
+    private Date date;
+
+    private Integer contentLength;
+
+    Map<String, List<String>> param;
+
     // **Static Builder**
 
     public static ResponseHead standardResponseMessageHead() {
@@ -47,6 +58,8 @@ public class ResponseHead {
                 .contentType(HttpContentType.TEXT_HTML)
                 .charSet(WebApplicationServerSetting.CHARSET_STRING)
                 .contentLanguage(WebApplicationServerSetting.CONTENT_LANGUAGE)
+                .date(new Date())
+                .param(new HashMap<>())
                 .build();
     }
 
@@ -58,7 +71,18 @@ public class ResponseHead {
                 "Connection: " + connection + "\r\n" +
                 "Content-Type: " + contentType + (contentType.startsWith("text") ? (charSet == null ? "" : ";charset=" + charSet) : "") + "\r\n" +
                 "Content-Language: " + contentLanguage + "\r\n" +
+                "Date: " + date.toString() + "\r\n" +
+                this.getParamString() +
                 "\r\n";
+    }
+
+    private String getParamString() {
+        if (param != null) {
+            StringBuilder paramString = new StringBuilder();
+            param.forEach((key, value) -> paramString.append(key).append(": ").append(value.toString()).append("\r\n"));
+            return paramString.toString();
+        }
+        return "";
     }
 
 }

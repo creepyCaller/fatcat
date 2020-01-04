@@ -5,7 +5,9 @@ import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestMessageService {
@@ -23,8 +25,8 @@ public class RequestMessageService {
         String[] a = requestLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
         String[] s = a[1].split("\\?"); // 根据问号拆分请求路径，格式为：真路径？参数
         String path = s[0];
-        String body = ""; // 如果是POST方法(或者是文件，现在暂时不考虑)，需要使用流来读取body
-        Map<String, String> param = null;
+        String body = null;  // 需要改为使用比特流来装载body
+        Map<String, List<String>> param = null;
         switch (a[0]) {
             case HttpMethod.METHOD_GET:
                 if (s.length > 1) {
@@ -47,26 +49,35 @@ public class RequestMessageService {
 
     /**
      * 从参数团中分割出参数
-     * 示例：username=admin&password=123456&remember=
+     * 示例：username=admin&password=123456&remember=true
      * 结果：Map<>[0] = <"username", "admin">
      *      Map<>[1] = <"password", "123456">
-     *      Map<>[2] = <"remember", "">
+     *      Map<>[2] = <"remember", "true">
      *
      * @param variable 参数团
      * @return 参数的键值对的数组
      */
-    private Map<String, String> getParam(String variable) {
+    private Map<String, List<String>> getParam(String variable) {
         String[] s = variable.split("&");
-        Map<String, String> param = new HashMap<>();
+        Map<String, List<String>> param = new HashMap<>();
         for (String iter : s) {
             String[] a = iter.split("=");
-            if (a.length == 1) {
-                param.put(a[0], "");
-            } else if (a.length == 2) {
-                param.put(a[0], a[1]);
+            if (a.length == 2) {
+                this.addParam(param, a[0], a[1]);
             }
         }
         return param;
+    }
+
+    private void addParam(Map<String, List<String>> param, String key, String value) {
+        List<String> list = param.get(key);
+        if (list != null) {
+            list.add(value);
+        } else {
+            list = new ArrayList<>();
+            list.add(value);
+            param.put(key, list);
+        }
     }
 
 }

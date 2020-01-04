@@ -12,8 +12,7 @@ package cn.edu.cuit.fatcat.setting;
  */
 public class FatcatSetting {
 
-    // 临时解决方案：在打JAR包的时候换成"../webApplication"
-    public static String WEB_APPLICATION = "WebApplication";
+    public static String WEB_APPLICATIONS = "WebApplications";
 
     public long timeout = 20000;
 
