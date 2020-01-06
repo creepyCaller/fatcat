@@ -43,17 +43,19 @@ public class RequestMessageService {
         Map<String, List<String>> param = new HashMap<>();
         this.getParamFromMessage(param, requestHeaderLines);
         switch (method) {
-            // TODO:添加其他HTTP方法、拆分这部分到另一个方法
+            // TODO:添加其他HTTP方法
             case HttpMethod.METHOD_GET:
                 if (s.length > 1) {
                     this.getParamFromURL(param, pathVariable);
                 }
                 break;
-            case HttpMethod.METHOD_POST:
-                this.getParamFromURL(param, pathVariable);
+            default:
+                // POST...
+                if (s.length > 1) {
+                    this.getParamFromURL(param, pathVariable);
+                }
                 this.getParamFromBody(param, body);
                 break;
-            default:
         }
         return Request.builder()
                 .method(a[0])

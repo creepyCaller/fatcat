@@ -54,7 +54,7 @@ public class ResponseHead {
                 .protocol(HttpProtocol.HTTP_1_1)
                 .code(HttpStatusCode.OK)
                 .status(HttpStatusDescription.OK)
-                .connection(HttpConnection.CLOSE)
+                .connection(HttpConnection.KEEP_ALIVE)
                 .contentType(HttpContentType.TEXT_HTML)
                 .charSet(WebApplicationServerSetting.CHARSET_STRING)
                 .contentLanguage(WebApplicationServerSetting.CONTENT_LANGUAGE)

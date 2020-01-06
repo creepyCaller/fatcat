@@ -39,8 +39,7 @@ public class Request {
     @Override
     public String toString() {
         return method + " " + direction + " " + protocol + "\r\n" +
-                "\r\n" +
-                body;
+                ("".equals(body) ? "" : "\r\n" + body);
     }
 
     public String getParamString() {

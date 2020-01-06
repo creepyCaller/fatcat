@@ -1,6 +1,7 @@
 package cn.edu.cuit.linker.io.standard;
 
 import cn.edu.cuit.linker.io.Writer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,6 +13,7 @@ import java.io.OutputStream;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class StandardWriter implements Writer {
 
     private OutputStream oStr;
@@ -33,6 +35,7 @@ public class StandardWriter implements Writer {
 
     @Override
     public void close() throws IOException {
+        log.info("关闭输出流{}", oStr.toString());
         this.oStr.close();
     }
 

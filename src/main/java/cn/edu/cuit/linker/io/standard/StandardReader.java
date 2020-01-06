@@ -92,6 +92,7 @@ public class StandardReader implements Reader {
 
     @Override
     public void close() throws IOException {
+        log.info("关闭输入流{}", iStr.toString());
         this.iStr.close();
     }
 

@@ -68,27 +68,35 @@ public class GenesisServlet implements Runnable {
             // 进行HTTP方法(动作)派分，处理
             switch (request.getMethod()) {
                 case HttpMethod.METHOD_GET:
+                    log.info("请求GET方法");
                     doGet(request, responseHead);
                     break;
                 case HttpMethod.METHOD_POST:
+                    log.info("请求POST方法");
                     doPost(request, responseHead);
                     break;
                 case HttpMethod.METHOD_DELETE:
+                    log.info("请求DELETE方法");
                     doDelete(request, responseHead);
                     break;
                 case HttpMethod.METHOD_PATCH:
+                    log.info("请求PATCH方法");
                     doPatch(request, responseHead);
                     break;
                 case HttpMethod.METHOD_PUT:
+                    log.info("请求PUT方法");
                     doPut(request, responseHead);
                     break;
                 case HttpMethod.METHOD_HEAD:
+                    log.info("请求HEAD方法");
                     doHead(request, responseHead);
                     break;
                 case HttpMethod.METHOD_OPTIONS:
+                    log.info("请求OPTIONS方法");
                     doOptions(request, responseHead);
                     break;
                 case HttpMethod.METHOD_TRACE:
+                    log.info("请求TRACE方法");
                     doTrace(request, responseHead);
                     break;
                 default:

@@ -17,21 +17,23 @@ public class ErrorPage {
         return ("<!DOCTYPE html>\r\n" +
                 "<html lang=\"zh-CN\">\r\n" +
                 "<head>\r\n" +
-                "\t<meta charset=\"UTF-8\">\r\n" +
-                "\t<title>" + responseHead.getStatus() + " - fatcat</title>\r\n" +
+                "<meta charset=\"UTF-8\">\r\n" +
+                "<title>" + responseHead.getStatus() + " - fatcat</title>\r\n" +
                 "</head>\r\n" +
                 "<body>\r\n" +
-                "\t<p><h1>" + responseHead.getCode() + "</h1></p>\r\n" +
-                "\t<p>" + responseHead.getStatus() + "</p>\r\n" +
-                "\t<hr/>" +
-                "\t<p>请求报文：</p>\r\n" +
-                "\t<span>" + request.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
-                "\t<hr/>" +
-                "\t<p>请求参数：</p>\r\n" +
-                "\t<span>" + request.getParamString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
-                "\t<hr/>" +
-                "\t<p>响应报文头：</p>\r\n" +
-                "\t<span>" + responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
+                "<p><h1>" + responseHead.getCode() + "</h1></p>\r\n" +
+                "<p>" + responseHead.getStatus() + "</p>\r\n" +
+                "<hr/>\r\n" +
+                "<p>请求报文：</p>\r\n" +
+                "<span>" + "\r\n" +
+                request.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
+                "<hr/>" + "\r\n" +
+                "<p>请求参数：</p>\r\n" +
+                "<span>" + "\r\n" +
+                request.getParamString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
+                "<hr/>\r\n" +
+                "<p>响应报文头：</p>\r\n" +
+                "<span>" + responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
                 "</body>\r\n" +
                 "</html>").getBytes(WebApplicationServerSetting.CHARSET);
     }
