@@ -1,6 +1,6 @@
 package cn.edu.cuit.fatcat.embed;
 
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
 
@@ -35,7 +35,7 @@ public class ErrorPage {
                 "<p>响应报文头：</p>\r\n" +
                 "<span>" + responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
                 "</body>\r\n" +
-                "</html>").getBytes(WebApplicationServerSetting.CHARSET);
+                "</html>").getBytes(FatcatSetting.CHARSET);
     }
 
 }

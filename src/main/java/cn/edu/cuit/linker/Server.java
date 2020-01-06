@@ -30,7 +30,7 @@ public class Server implements Runnable {
             // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
             while (true) {
                 SocketHandler socketHandler = new SocketHandler(serverSocket.accept());
-                (new Thread((new GenesisServlet(socketHandler.getSocket())))).start();
+                (new Thread((new GenesisServlet(socketHandler)))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

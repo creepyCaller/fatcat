@@ -3,7 +3,7 @@ package cn.edu.cuit.linker.service;
 import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class RequestMessageService {
      * @return 请求报文实体
      */
     public Request getRequestMessage(Reader standardReader) throws IOException {
-        String request = new String(standardReader.read(), WebApplicationServerSetting.CHARSET);
+        String request = new String(standardReader.read(), FatcatSetting.CHARSET);
         String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n");
         String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request报文
         String body = "";

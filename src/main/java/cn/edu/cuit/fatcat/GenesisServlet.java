@@ -1,6 +1,7 @@
 package cn.edu.cuit.fatcat;
 
 import cn.edu.cuit.fatcat.http.*;
+import cn.edu.cuit.linker.SocketHandler;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.io.standard.StandardReader;
 import cn.edu.cuit.linker.io.standard.StandardWriter;
@@ -10,13 +11,12 @@ import cn.edu.cuit.linker.message.ResponseHead;
 import cn.edu.cuit.fatcat.service.DispatcherService;
 import cn.edu.cuit.linker.service.RequestMessageService;
 import cn.edu.cuit.linker.service.ResponseMessageService;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.util.ArrayUtil;
 import cn.edu.cuit.linker.util.FileUtil;
 import cn.edu.cuit.linker.util.ResponseMessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
-import java.net.Socket;
 
 /**
  * 对处理一次HTTP请求的子线程
@@ -28,12 +28,12 @@ import java.net.Socket;
 @Slf4j
 public class GenesisServlet implements Runnable {
 
-    private Socket socket;
+    private SocketHandler socketHandler;
 
     private DispatcherService dispatcherService;
 
-    public GenesisServlet(Socket socket) {
-        this.socket = socket;
+    public GenesisServlet(SocketHandler socketHandler) {
+        this.socketHandler = socketHandler;
         this.dispatcherService = new DispatcherService();
     }
 
@@ -45,14 +45,14 @@ public class GenesisServlet implements Runnable {
     public void run() {
         Request request;
         ResponseHead responseHead;
-        try(Reader standardReader = new StandardReader(socket.getInputStream());
-            Writer standardWriter = new StandardWriter(socket.getOutputStream())) {
+        try(Reader standardReader = new StandardReader(socketHandler.getSocket().getInputStream());
+            Writer standardWriter = new StandardWriter(socketHandler.getSocket().getOutputStream())) {
             RequestMessageService requestMessageService = new RequestMessageService();
             ResponseMessageService responseMessageService = new ResponseMessageService(standardReader);
             request = requestMessageService.getRequestMessage(standardReader); // 构造请求报文对象
             responseHead = ResponseHead.standardResponseMessageHead(); // 构造标准响应头
             service(request, responseHead);
-            byte[] responseHeadBiteArray = responseHead.toString().getBytes(WebApplicationServerSetting.CHARSET); // 响应头二进制流
+            byte[] responseHeadBiteArray = responseHead.toString().getBytes(FatcatSetting.CHARSET); // 响应头二进制流
             byte[] responseBodyBiteArray = responseMessageService.readResponseMessageBody(request, responseHead); // 响应体二进制流
             byte[] responseBiteArray = ArrayUtil.ByteArrayMerge(responseHeadBiteArray, responseBodyBiteArray);
             standardWriter.write(responseBiteArray); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器

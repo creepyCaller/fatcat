@@ -2,14 +2,13 @@ package cn.edu.cuit.linker.service;
 
 import cn.edu.cuit.fatcat.embed.TestPage;
 import cn.edu.cuit.fatcat.http.*;
+import cn.edu.cuit.linker.handler.ExceptionHandler;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
-import cn.edu.cuit.fatcat.embed.ErrorPage;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 响应报文服务
@@ -20,11 +19,13 @@ import java.io.IOException;
  */
 public class ResponseMessageService {
 
-
     private Reader standardReader;
+
+    private ExceptionHandler exceptionHandler;
 
     public ResponseMessageService(Reader standardReader) {
         this.standardReader = standardReader;
+        exceptionHandler = new ExceptionHandler(standardReader);
     }
 
     /**
@@ -35,7 +36,7 @@ public class ResponseMessageService {
     public byte[] readResponseMessageBody(Request request, ResponseHead responseHead) {
         byte[] body;
         try {
-            if (request.getDirection().startsWith("/TEST")) {
+            if (Objects.equals(request.getDirection(), "/TEST.html")) {
                 // 如果是调用测试页的话
                 body = TestPage.getEmbeddedTestPageBytes(request, responseHead);
             } else {
@@ -44,32 +45,14 @@ public class ResponseMessageService {
             }
         } catch (FileNotFoundException e) {
             // 404 Not Found
-            body = handleException(request, responseHead, HttpStatusCode.NOT_FOUND, HttpStatusDescription.NOT_FOUND);
+            body = exceptionHandler.handleException(request, responseHead, HttpStatusCode.NOT_FOUND, HttpStatusDescription.NOT_FOUND);
         } catch (IOException e) {
             // 500 Internal Server Error
-            body = handleException(request, responseHead, HttpStatusCode.INTERNAL_SERVER_ERROR, HttpStatusDescription.INTERNAL_SERVER_ERROR);
+            body = exceptionHandler.handleException(request, responseHead, HttpStatusCode.INTERNAL_SERVER_ERROR, HttpStatusDescription.INTERNAL_SERVER_ERROR);
         }
         return body;
     }
 
-    /**
-     * 处理异常
-     *
-     * @param responseHead 响应报文头实体
-     */
-    private byte[] handleException(Request request, ResponseHead responseHead, int code, String status) {
-        responseHead.setCode(code);
-        responseHead.setStatus(status);
-        responseHead.setContentType(HttpContentType.TEXT_HTML);
-        byte[] body;
-        try {
-            // 从ERROR_PAGE读取错误页
-            body = standardReader.read(WebApplicationServerSetting.ERROR_PAGE);
-        } catch (IOException ignore) {
-            // 如果ERROR_PAGE指定的错误页找不到，就用容器自带的错误页
-            body = ErrorPage.getEmbeddedErrorPageBytes(request, responseHead);
-        }
-        return body;
-    }
+
 
 }

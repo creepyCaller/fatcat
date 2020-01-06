@@ -1,7 +1,7 @@
 package cn.edu.cuit.fatcat.service;
 
 import cn.edu.cuit.linker.message.Request;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 
 /**
  * 转发服务
@@ -18,15 +18,20 @@ public class DispatcherService {
      * @param request 请求报文
      */
     public void dispatcher(Request request) {
-        switch (request.getDirection()) {
+        String requestDirection = request.getDirection();
+        switch (requestDirection) {
             case "/":
                 // 如果请求的路径是"/"，则转到欢迎页
-                request.setDirection(WebApplicationServerSetting.INDEX);
+                request.setDirection(FatcatSetting.INDEX);
                 break;
             case "/test":
                 request.setDirection("/TEST.html");
                 break;
+            case "/favicon.ico":
+                request.setDirection(FatcatSetting.FAVICON);
             default:
+
+                break;
         }
     }
 

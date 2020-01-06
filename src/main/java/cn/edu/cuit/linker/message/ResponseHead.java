@@ -1,7 +1,7 @@
 package cn.edu.cuit.linker.message;
 
 import cn.edu.cuit.fatcat.http.*;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,8 +56,8 @@ public class ResponseHead {
                 .status(HttpStatusDescription.OK)
                 .connection(HttpConnection.KEEP_ALIVE)
                 .contentType(HttpContentType.TEXT_HTML)
-                .charSet(WebApplicationServerSetting.CHARSET_STRING)
-                .contentLanguage(WebApplicationServerSetting.CONTENT_LANGUAGE)
+                .charSet(FatcatSetting.CHARSET_STRING)
+                .contentLanguage(FatcatSetting.CONTENT_LANGUAGE)
                 .date(new Date())
                 .param(new HashMap<>())
                 .build();

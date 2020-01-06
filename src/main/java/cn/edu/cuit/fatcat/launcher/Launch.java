@@ -2,10 +2,8 @@ package cn.edu.cuit.fatcat.launcher;
 
 import cn.edu.cuit.linker.Server;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
-import cn.edu.cuit.fatcat.setting.WebApplicationServerSetting;
 import lombok.extern.slf4j.Slf4j;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Fatcat容器入口方法
@@ -47,7 +45,7 @@ public class Launch {
      * 仅用于检查文件，可有可无
      */
     private void init() {
-        File index = new File(FatcatSetting.WEB_APPLICATIONS + WebApplicationServerSetting.INDEX);
+        File index = new File(FatcatSetting.WEB_APPLICATION + FatcatSetting.INDEX);
         if(!index.exists()) {
             log.error("找不到导航页!");
         }

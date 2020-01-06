@@ -49,7 +49,7 @@ public class StandardReader implements Reader {
             return oBS;
         } else {
             log.info("缓存中不存在: " + direction + ", 正在从硬盘中获取...");
-            File file = new File(FatcatSetting.WEB_APPLICATIONS + direction); // FileNotFoundException
+            File file = new File(FatcatSetting.WEB_APPLICATION + direction); // FileNotFoundException
             FileInputStream fIStr = new FileInputStream(file); // IOException
             oBS = read(fIStr);
             Cache.put(direction, oBS);
@@ -92,7 +92,7 @@ public class StandardReader implements Reader {
 
     @Override
     public void close() throws IOException {
-        log.info("关闭输入流{}", iStr.toString());
+        log.info("关闭输入流: {}", iStr.toString());
         this.iStr.close();
     }
 

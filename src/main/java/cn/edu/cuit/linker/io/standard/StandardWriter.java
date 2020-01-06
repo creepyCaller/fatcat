@@ -35,7 +35,7 @@ public class StandardWriter implements Writer {
 
     @Override
     public void close() throws IOException {
-        log.info("关闭输出流{}", oStr.toString());
+        log.info("关闭输出流: {}", oStr.toString());
         this.oStr.close();
     }
 
