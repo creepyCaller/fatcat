@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat.setting;
 
+import cn.edu.cuit.linker.util.WARUtil;
 import cn.edu.cuit.linker.util.YamlUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,14 +27,15 @@ import java.util.Map;
 @Slf4j
 public class FatcatSetting {
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
-    public static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
+    private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
-    public static Map<Integer, String> ERROR_PAGES; // 从web.xml读取
     public static String INDEX = "/index.html"; // 从web.xml读取,默认为"/index.html"
+    public static String DEFAULT_INDEX = "/index.html";
     public static String WAR; // 待解压的WAR包名,如果SERVER_ROOT不为空目录就不解压
     public static String CHARSET_STRING; // 编码
-    public static String DEFAULT_CHARSET = "UTF-8";
+    private static String DEFAULT_CHARSET = "UTF-8";
     public static Charset CHARSET;
+    public static Map<Integer, String> ERROR_PAGES; // 从web.xml读取
     public static void init() throws IOException {
         log.info("正在初始化服务器配置...");
         LinkedHashMap settings = YamlUtil.getSettings();
@@ -55,7 +57,7 @@ public class FatcatSetting {
         } else {
             if (settings.get("charset") instanceof java.lang.String) {
                 FatcatSetting.CHARSET_STRING = (String) settings.get("charset");
-                log.info("使用{}编码", FatcatSetting.CHARSET_STRING);
+                log.info("使用编码: {}", FatcatSetting.CHARSET_STRING);
             } else {
                 log.warn("编码设置错误, 使用默认值: {}", FatcatSetting.DEFAULT_CHARSET);
                 FatcatSetting.CHARSET_STRING = FatcatSetting.DEFAULT_CHARSET;
@@ -68,9 +70,10 @@ public class FatcatSetting {
             File war = new File("WAR" + settings.get("war"));
             if (war.exists()) {
                 log.info("找到待解压的WAR包, 位于: {}", war.getAbsolutePath());
-                log.info("开始解压WAR包");
-
-                log.info("解压完成");
+                log.info("开始解压WAR包...");
+                long start = System.currentTimeMillis();
+                WARUtil.unpack(war);
+                log.info("解压完成, 共耗时: {}ms", System.currentTimeMillis() - start);
             } else {
                 log.info("设置的待解压WAR包不存在");
             }

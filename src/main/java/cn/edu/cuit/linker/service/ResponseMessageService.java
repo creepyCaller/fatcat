@@ -6,6 +6,8 @@ import cn.edu.cuit.linker.handler.ExceptionHandler;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
@@ -17,6 +19,7 @@ import java.util.Objects;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class ResponseMessageService {
 
     private Reader standardReader;
@@ -45,6 +48,7 @@ public class ResponseMessageService {
             }
         } catch (FileNotFoundException e) {
             // 404 Not Found
+            log.info("找不到文件: {}", request.getDirection());
             body = exceptionHandler.handleException(request, responseHead, HttpStatusCode.NOT_FOUND, HttpStatusDescription.NOT_FOUND);
         } catch (IOException e) {
             // 500 Internal Server Error

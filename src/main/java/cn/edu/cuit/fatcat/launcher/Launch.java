@@ -3,8 +3,6 @@ package cn.edu.cuit.fatcat.launcher;
 import cn.edu.cuit.linker.Server;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import lombok.extern.slf4j.Slf4j;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Fatcat容器入口方法
@@ -21,8 +19,8 @@ public class Launch {
         long startTime = System.currentTimeMillis();
 
         try {
-            log.info("开始初始化");
-            (new Launch()).init();
+            log.info("开始初始化...");
+            FatcatSetting.init();
             log.info("服务器初始化成功!");
             log.info("正在启动服务器...");
             Server server = new Server();
@@ -34,16 +32,4 @@ public class Launch {
             log.info(e.toString());
         }
     }
-
-    /**
-     * 初始化服务器
-     */
-    private void init() throws IOException {
-        FatcatSetting.init();
-        File index = new File(FatcatSetting.SERVER_ROOT + FatcatSetting.INDEX);
-        if(!index.exists()) {
-            log.error("找不到导航页!");
-        }
-    }
-
 }

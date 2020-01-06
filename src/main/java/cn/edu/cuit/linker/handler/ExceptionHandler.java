@@ -6,9 +6,10 @@ import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
-
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
+@Slf4j
 public class ExceptionHandler {
 
     private Reader standardReader;
@@ -31,7 +32,8 @@ public class ExceptionHandler {
             // 读取错误页
             body = standardReader.read(FatcatSetting.ERROR_PAGES.get(responseHead.getCode()));
         } catch (IOException ignore) {
-            // 如果ERROR_PAGE指定的错误页找不到，就用容器自带的错误页
+            // 如果ERROR_PAGES中未指定错误页，就用容器自带的错误页
+            log.warn("未设置或无法获取错误页: {} - {}", responseHead.getCode(), responseHead.getStatus());
             body = ErrorPage.getTomcatEmbeddedErrorPageBytes(request, responseHead);
         }
         return body;
