@@ -15,11 +15,14 @@ public class TestPage {
                 "</head>\r\n" +
                 "<body>\r\n" +
                 "<p>请求报文：</p>\r\n" +
-                "<span>" + request.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
-                "<hr/>" +
+                "<span>" + "\r\n" +
+                request.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
+                "<hr/>" + "\r\n" +
                 "<p>请求参数：</p>\r\n" +
-                "<span>" + request.getParamString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
-                "<hr/>" +
+                "<span>" + "\r\n" +
+                request.getParamString().replaceAll("\r\n", "<br/>\r\n") +
+                "</span>\r\n" +
+                "<hr/>" + "\r\n" +
                 "<p>响应报文头：</p>\r\n" +
                 "<span>" + responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
                 "</body>\r\n" +

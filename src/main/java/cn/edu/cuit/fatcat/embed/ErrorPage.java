@@ -33,7 +33,8 @@ public class ErrorPage {
                 request.getParamString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
                 "<hr/>\r\n" +
                 "<p>响应报文头：</p>\r\n" +
-                "<span>" + responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
+                "<span>" + "\r\n" +
+                responseHead.toString().replaceAll("\r\n", "<br/>\r\n") + "</span>\r\n" +
                 "</body>\r\n" +
                 "</html>").getBytes(FatcatSetting.CHARSET);
     }
