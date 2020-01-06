@@ -32,7 +32,7 @@ public class ExceptionHandler {
             body = standardReader.read(FatcatSetting.ERROR_PAGES.get(responseHead.getCode()));
         } catch (IOException ignore) {
             // 如果ERROR_PAGE指定的错误页找不到，就用容器自带的错误页
-            body = ErrorPage.getEmbeddedErrorPageBytes(request, responseHead);
+            body = ErrorPage.getTomcatEmbeddedErrorPageBytes(request, responseHead);
         }
         return body;
     }

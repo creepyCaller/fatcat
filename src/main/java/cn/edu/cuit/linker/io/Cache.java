@@ -15,7 +15,7 @@ public class Cache {
 
     public static void put(String key, byte[] value) {
         cache.put(key, value);
-        log.info("存入缓存: " + key);
+        log.info("存入缓存: {}", key);
     }
 
     public static byte[] get(String key) {

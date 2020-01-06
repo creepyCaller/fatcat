@@ -39,8 +39,6 @@ public class ResponseHead {
 
     private String charSet;
 
-    private String contentLanguage;
-
     private Date date;
 
     private Integer contentLength;
@@ -57,7 +55,6 @@ public class ResponseHead {
                 .connection(HttpConnection.KEEP_ALIVE)
                 .contentType(HttpContentType.TEXT_HTML)
                 .charSet(FatcatSetting.CHARSET_STRING)
-                .contentLanguage(FatcatSetting.CONTENT_LANGUAGE)
                 .date(new Date())
                 .param(new HashMap<>())
                 .build();
@@ -70,8 +67,8 @@ public class ResponseHead {
         return protocol + " " + code + " " + status + "\r\n" +
                 "Connection: " + connection + "\r\n" +
                 "Content-Type: " + contentType + (contentType.startsWith("text") ? (charSet == null ? "" : ";charset=" + charSet) : "") + "\r\n" +
-                "Content-Language: " + contentLanguage + "\r\n" +
                 "Date: " + date.toString() + "\r\n" +
+                "Server: Fatcat\r\n" +
                 this.getParamString() +
                 "\r\n";
     }

@@ -24,8 +24,8 @@ public class Server implements Runnable {
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(FatcatSetting.port); // 换用SocketWrapper
-            log.info("正在监听端口：" + FatcatSetting.port);
+            ServerSocket serverSocket = new ServerSocket(FatcatSetting.PORT); // 换用SocketWrapper
+            log.info("正在监听端口：{}", FatcatSetting.PORT);
             // 在实现线程池之后，改用非阻断式
             // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
             while (true) {

@@ -21,20 +21,16 @@ public class RequestMessageService {
      */
     public Request getRequestMessage(Reader standardReader) throws IOException {
         String request = new String(standardReader.read(), FatcatSetting.CHARSET);
-        String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n");
-        String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request报文
+        String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n", 2);
         String body = "";
-        if (requestSpiltHeaderAndBody.length > 1) {
-            // 长度大于1就说明存在body
-            StringBuilder bodySB = new StringBuilder();
-            for (int i = 1; i < requestSpiltHeaderAndBody.length; ++i) {
-                bodySB.append(requestSpiltHeaderAndBody[i]);
-            }
-            body = bodySB.toString();
+        if (requestSpiltHeaderAndBody.length == 2) {
+            // 长度为2就说明存在body
+            body = requestSpiltHeaderAndBody[1];
         }
-        String[] a = requestHeaderLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
-        String method = a[0];
-        String[] s = a[1].split("\\?"); // 根据问号拆分请求路径，格式为：真路径？参数
+        String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request Headers
+        String[] firstLine = requestHeaderLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
+        String method = firstLine[0];
+        String[] s = firstLine[1].split("\\?", 2); // 根据问号拆分请求路径，格式为：真路径？参数
         String path = s[0];
         String pathVariable = "";
         if (s.length > 1) {
@@ -42,6 +38,7 @@ public class RequestMessageService {
         }
         Map<String, List<String>> param = new HashMap<>();
         this.getParamFromMessage(param, requestHeaderLines);
+        String protocol = firstLine[2];
         switch (method) {
             // TODO:添加其他HTTP方法
             case HttpMethod.METHOD_GET:
@@ -58,9 +55,9 @@ public class RequestMessageService {
                 break;
         }
         return Request.builder()
-                .method(a[0])
+                .method(method)
                 .direction(path)
-                .protocol(a[2])
+                .protocol(protocol)
                 .body(body)
                 .param(param)
                 .build();
@@ -72,15 +69,9 @@ public class RequestMessageService {
      */
     private void getParamFromMessage(Map<String, List<String>> param, String[] message) {
         for (int i = 1; i < message.length; ++i) {
-            String[] kv = message[i].split(": ");
-            if (kv.length >= 2) {
-                String key = kv[0];
-                StringBuilder valueSB = new StringBuilder();
-                for (int j = 1; j < kv.length; ++j) {
-                    valueSB.append(kv[j]);
-                }
-                String value = valueSB.toString();
-                this.addParam(param, key, value);
+            String[] kv = message[i].split(": ", 2);
+            if (kv.length == 2) {
+                this.addParam(param, kv[0], kv[1]);
             }
         }
     }
@@ -101,9 +92,9 @@ public class RequestMessageService {
     private void getParamFromURL(Map<String, List<String>> param, String variable) {
         String[] s = variable.split("&");
         for (String iter : s) {
-            String[] a = iter.split("=");
-            if (a.length == 2) {
-                this.addParam(param, a[0], a[1]);
+            String[] kv = iter.split("=", 2);
+            if (kv.length == 2) {
+                this.addParam(param, kv[0], kv[1]);
             }
         }
     }

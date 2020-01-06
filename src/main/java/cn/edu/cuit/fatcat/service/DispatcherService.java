@@ -27,8 +27,6 @@ public class DispatcherService {
             case "/test":
                 request.setDirection("/TEST.html");
                 break;
-            case "/favicon.ico":
-                request.setDirection(FatcatSetting.FAVICON);
             default:
 
                 break;

@@ -42,14 +42,14 @@ public class StandardReader implements Reader {
      */
     @Override
     public byte[] read(String direction) throws IOException {
-        log.info("读取文件: " + direction);
+        log.info("读取文件: {}", direction);
         byte[] oBS = Cache.get(direction);
         if (oBS != null) {
-            log.info("从缓存中获取: " + direction + ", 成功!");
+            log.info("从缓存中获取: {}, 成功!", direction);
             return oBS;
         } else {
-            log.info("缓存中不存在: " + direction + ", 正在从硬盘中获取...");
-            File file = new File(FatcatSetting.WEB_APPLICATION + direction); // FileNotFoundException
+            log.info("缓存中不存在: {}, 正在从硬盘中获取...", direction);
+            File file = new File(FatcatSetting.SERVER_ROOT + direction); // FileNotFoundException
             FileInputStream fIStr = new FileInputStream(file); // IOException
             oBS = read(fIStr);
             Cache.put(direction, oBS);
@@ -58,7 +58,7 @@ public class StandardReader implements Reader {
     }
 
     /**
-     * 从指定输入路读取
+     * 从指定输入流读取
      *
      * @param is 指定的输入流，可以是套接字的输入流也可以是文件的
      * @return 字节流数组
@@ -92,7 +92,6 @@ public class StandardReader implements Reader {
 
     @Override
     public void close() throws IOException {
-        log.info("关闭输入流: {}", iStr.toString());
         this.iStr.close();
     }
 
