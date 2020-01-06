@@ -38,9 +38,9 @@ public class Request {
 
     @Override
     public String toString() {
-        return method + " " + direction + " " + protocol +
+        return method + " " + direction + " " + protocol + "\r\n" +
                 "\r\n" +
-                (body == null ? "" : "\r\n" + body);
+                body;
     }
 
     public String getParamString() {

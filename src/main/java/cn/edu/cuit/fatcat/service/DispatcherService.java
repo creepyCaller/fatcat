@@ -18,9 +18,15 @@ public class DispatcherService {
      * @param request 请求报文
      */
     public void dispatcher(Request request) {
-        if ("/".equals(request.getDirection())) {
-            // 如果请求的路径是"/"，则转到欢迎页
-            request.setDirection(WebApplicationServerSetting.INDEX);
+        switch (request.getDirection()) {
+            case "/":
+                // 如果请求的路径是"/"，则转到欢迎页
+                request.setDirection(WebApplicationServerSetting.INDEX);
+                break;
+            case "/test":
+                request.setDirection("/TEST.html");
+                break;
+            default:
         }
     }
 

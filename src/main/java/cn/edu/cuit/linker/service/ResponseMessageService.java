@@ -1,5 +1,6 @@
 package cn.edu.cuit.linker.service;
 
+import cn.edu.cuit.fatcat.embed.TestPage;
 import cn.edu.cuit.fatcat.http.*;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
@@ -34,8 +35,13 @@ public class ResponseMessageService {
     public byte[] readResponseMessageBody(Request request, ResponseHead responseHead) {
         byte[] body;
         try {
-            // 读出direction路径下的文件
-            body = standardReader.read(request.getDirection());
+            if (request.getDirection().startsWith("/TEST")) {
+                // 如果是调用测试页的话
+                body = TestPage.getEmbeddedTestPageBytes(request, responseHead);
+            } else {
+                // 读出direction路径下的文件
+                body = standardReader.read(request.getDirection());
+            }
         } catch (FileNotFoundException e) {
             // 404 Not Found
             body = handleException(request, responseHead, HttpStatusCode.NOT_FOUND, HttpStatusDescription.NOT_FOUND);
