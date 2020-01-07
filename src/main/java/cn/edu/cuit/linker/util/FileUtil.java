@@ -1,5 +1,11 @@
 package cn.edu.cuit.linker.util;
 
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.util.Objects;
+
 /**
  * 文件工具类，处理文件相关
  *
@@ -7,6 +13,7 @@ package cn.edu.cuit.linker.util;
  * @date 2019/10/24
  * @since Fatcat 0.0.1
  */
+@Slf4j
 public class FileUtil {
 
     /**
@@ -26,4 +33,29 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 清空服务器根目录
+     */
+    public static void clearServerRoot() {
+        log.info("开始清空服务器根目录");
+        File serverRoot = new File(FatcatSetting.SERVER_ROOT);
+        FileUtil.directoryHandler(serverRoot);
+        log.info("清空目录成功");
+    }
+
+    private static void directoryHandler(File dir) {
+        File[] files = Objects.requireNonNull(dir.listFiles());
+        for (File iter : files) {
+            if (iter.isFile()) {
+                FileUtil.fileHandler(iter);
+            } else if (iter.isDirectory()) {
+                FileUtil.directoryHandler(iter);
+                iter.delete();
+            }
+        }
+    }
+
+    private static void fileHandler(File file) {
+        file.delete();
+    }
 }

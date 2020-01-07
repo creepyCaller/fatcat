@@ -8,7 +8,7 @@ import cn.edu.cuit.linker.io.standard.StandardWriter;
 import cn.edu.cuit.linker.io.Writer;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.ResponseHead;
-import cn.edu.cuit.fatcat.service.DispatcherService;
+import cn.edu.cuit.linker.service.DispatchService;
 import cn.edu.cuit.linker.service.RequestMessageService;
 import cn.edu.cuit.linker.service.ResponseMessageService;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
@@ -30,11 +30,11 @@ public class GenesisServlet implements Runnable {
 
     private SocketHandler socketHandler;
 
-    private DispatcherService dispatcherService;
+    private DispatchService dispatcherService;
 
     public GenesisServlet(SocketHandler socketHandler) {
         this.socketHandler = socketHandler;
-        this.dispatcherService = new DispatcherService();
+        this.dispatcherService = new DispatchService();
     }
 
     /**
@@ -115,7 +115,7 @@ public class GenesisServlet implements Runnable {
     private void doGet(Request request, ResponseHead responseHead) {
         // 首先调用转发器可能的请求url转发
         // 再判断转发后的文件类型
-        dispatcherService.dispatcher(request);
+        dispatcherService.dispatch(request);
         String direction = request.getDirection();
         String suffix = FileUtil.getFileSuffix(direction);
         String contentType = ResponseMessageUtil.getContentType(suffix);

@@ -17,7 +17,6 @@ public class YamlUtil {
     private final static DumperOptions OPTIONS;
 
     static {
-        //将默认读取的方式设置为块状读取
         OPTIONS = new DumperOptions();
         OPTIONS.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     }

@@ -19,7 +19,7 @@ public class Launch {
         long startTime = System.currentTimeMillis();
 
         try {
-            log.info("开始初始化...");
+            log.info("正在初始化服务器...");
             FatcatSetting.init();
             log.info("服务器初始化成功!");
             log.info("正在启动服务器...");
@@ -30,6 +30,7 @@ public class Launch {
         } catch (Exception e) {
             log.error("服务器启动失败!");
             log.info(e.toString());
+            e.printStackTrace();
         }
     }
 }

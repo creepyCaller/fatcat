@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat.setting;
 
+import cn.edu.cuit.linker.util.FileUtil;
 import cn.edu.cuit.linker.util.WARUtil;
 import cn.edu.cuit.linker.util.YamlUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +30,12 @@ public class FatcatSetting {
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
-    public static String INDEX = "/index.html"; // 从web.xml读取,默认为"/index.html"
-    public static String DEFAULT_INDEX = "/index.html";
-    public static String WAR; // 待解压的WAR包名,如果SERVER_ROOT不为空目录就不解压
+    public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"
+    public static String WAR; // 待解压的WAR包名,如果不存在就跳过解压
     public static String CHARSET_STRING; // 编码
     private static String DEFAULT_CHARSET = "UTF-8";
     public static Charset CHARSET;
-    public static Map<Integer, String> ERROR_PAGES; // 从web.xml读取
+    public static Map<Integer, String> ERROR_PAGES; // 从web.xml读取, 错误码对应的错误页
     public static void init() throws IOException {
         log.info("正在初始化服务器配置...");
         LinkedHashMap settings = YamlUtil.getSettings();
@@ -67,15 +67,20 @@ public class FatcatSetting {
         if (settings.get("war") == null) {
             log.warn("未设置待解压的WAR包");
         } else {
-            File war = new File("WAR" + settings.get("war"));
-            if (war.exists()) {
-                log.info("找到待解压的WAR包, 位于: {}", war.getAbsolutePath());
+            String war = (String) settings.get("war");
+            if (!war.startsWith("/")) {
+                war = "/" + war;
+            }
+            File file = new File("WAR" + war);
+            if (file.exists()) {
+                log.info("待解压WAR包位于: {}", file.getAbsolutePath());
+                FileUtil.clearServerRoot();
                 log.info("开始解压WAR包...");
                 long start = System.currentTimeMillis();
-                WARUtil.unpack(war);
+                WARUtil.unpack(file);
                 log.info("解压完成, 共耗时: {}ms", System.currentTimeMillis() - start);
             } else {
-                log.info("设置的待解压WAR包不存在");
+                log.info("待解压WAR包不存在");
             }
         }
         ERROR_PAGES = new HashMap<>();
