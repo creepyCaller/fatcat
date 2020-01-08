@@ -5,10 +5,8 @@ import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RequestMessageService {
 
@@ -104,7 +102,17 @@ public class RequestMessageService {
     private void addParam(Map<String, List<String>> param, String key, String value) {
         List<String> list = param.get(key);
         if (list != null) {
-            list.add(value);
+            AtomicBoolean added = new AtomicBoolean(false);
+            list.parallelStream()
+                .filter(Objects::nonNull)
+                .forEach(each -> {
+                    if (Objects.equals(each, value)) {
+                        added.set(true);
+                    }
+                });
+            if (!added.get()) {
+                list.add(value);
+            }
         } else {
             list = new ArrayList<>();
             list.add(value);
