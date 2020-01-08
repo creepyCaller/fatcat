@@ -1,10 +1,8 @@
 package cn.edu.cuit.fatcat.setting;
 
 import cn.edu.cuit.linker.util.FileUtil;
-import cn.edu.cuit.linker.util.WARUtil;
 import cn.edu.cuit.linker.util.YamlUtil;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -77,7 +75,7 @@ public class FatcatSetting {
                 FileUtil.clearServerRoot();
                 log.info("开始解压WAR包...");
                 long start = System.currentTimeMillis();
-                WARUtil.unpack(file);
+                FileUtil.unpack(file);
                 log.info("解压完成, 共耗时: {}ms", System.currentTimeMillis() - start);
             } else {
                 log.info("待解压WAR包不存在");
