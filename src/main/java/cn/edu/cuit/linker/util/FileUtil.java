@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -111,5 +112,11 @@ public class FileUtil {
             }
         }
         zipFile.close();
+        // j检测有没有图标,如果没有的话就把默认的图标复制过去
+        File src = new File(FatcatSetting.DEFAULT_FAVICON);
+        File dest = new File(FatcatSetting.SERVER_ROOT, "favicon.ico");
+        if (!dest.exists()) {
+            Files.copy(src.toPath(), dest.toPath());
+        }
     }
 }

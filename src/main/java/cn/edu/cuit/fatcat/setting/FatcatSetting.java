@@ -26,6 +26,7 @@ import java.util.Map;
 @Slf4j
 public class FatcatSetting {
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
+    public static String DEFAULT_FAVICON = "Resources/Default/Icon/favicon.ico";
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
     public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"

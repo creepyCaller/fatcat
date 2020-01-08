@@ -102,15 +102,14 @@ public class RequestMessageService {
     private void addParam(Map<String, List<String>> param, String key, String value) {
         List<String> list = param.get(key);
         if (list != null) {
-            AtomicBoolean added = new AtomicBoolean(false);
-            list.parallelStream()
-                .filter(Objects::nonNull)
-                .forEach(each -> {
-                    if (Objects.equals(each, value)) {
-                        added.set(true);
-                    }
-                });
-            if (!added.get()) {
+            boolean nonAdd = false;
+            for (String iter : list) {
+                if (Objects.equals(iter, value)) {
+                    nonAdd = true;
+                    break;
+                }
+            }
+            if (nonAdd) {
                 list.add(value);
             }
         } else {
