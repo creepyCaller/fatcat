@@ -5,10 +5,8 @@ import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.io.Writer;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
-import cn.edu.cuit.linker.util.ArrayUtil;
-import cn.edu.cuit.linker.util.FileReader;
+import cn.edu.cuit.linker.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -37,7 +35,7 @@ public class StandardWriter implements Writer {
 
     @Override
     public void write(Request request, Response response) throws IOException {
-        byte[] responseBody = FileReader.readBinStr(request, response); // 响应体二进制流
+        byte[] responseBody = FileUtil.readBinStr(request, response); // 响应体二进制流
         if (response.getHeader().get(HttpHeader.ACCEPT_RANGES) != null) {
             response.getHeader().put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(responseBody.length)));
         }

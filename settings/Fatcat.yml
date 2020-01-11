@@ -1,3 +1,4 @@
 port: 8080
 charset: UTF-8
-war: helloworld.war
+#war: /helloworld.war
+war: /www.war

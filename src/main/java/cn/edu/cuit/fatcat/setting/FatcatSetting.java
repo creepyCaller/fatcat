@@ -43,8 +43,9 @@ public class FatcatSetting implements LifeCycle {
         log.info("正在初始化服务器配置...");
         this.settings = YamlUtil.getSettings();
         ERROR_PAGES = new HashMap<>();
-        FatcatSetting.ERROR_PAGES.put(404, "/ErrorPages/404.html");
-        FatcatSetting.ERROR_PAGES.put(500, "/ErrorPages/500.html");
+        FatcatSetting.ERROR_PAGES.put(404, "/error/error.html");
+//        FatcatSetting.ERROR_PAGES.put(404, "/ErrorPages/404.html");
+//        FatcatSetting.ERROR_PAGES.put(500, "/ErrorPages/500.html");
     }
 
     @Override
