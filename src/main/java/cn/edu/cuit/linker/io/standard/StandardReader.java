@@ -1,7 +1,6 @@
 package cn.edu.cuit.linker.io.standard;
 
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
-import cn.edu.cuit.linker.io.Cache;
 import cn.edu.cuit.linker.io.Reader;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
@@ -22,6 +21,11 @@ public class StandardReader implements Reader {
         this.iStr = iStr;
     }
 
+    @Override
+    public byte[] readBinStr() throws IOException {
+        return this.read(this.iStr);
+    }
+
     /**
      * 读取一次输入的流
      *
@@ -29,32 +33,8 @@ public class StandardReader implements Reader {
      * @throws IOException IO异常
      */
     @Override
-    public byte[] read() throws IOException {
-        return read(iStr);
-    }
-
-    /**
-     * 读取direction指定的文件的流
-     *
-     * @param direction 在网站根目录下的目标读取文件
-     * @return 文件字节流
-     * @throws IOException IO异常
-     */
-    @Override
-    public byte[] read(String direction) throws IOException {
-        log.info("读取文件: {}", direction);
-        byte[] oBS = Cache.get(direction);
-        if (oBS != null) {
-            log.info("从缓存中获取: {}, 成功!", direction);
-            return oBS;
-        } else {
-            log.info("缓存中不存在: {}, 正在从硬盘中获取...", direction);
-            File file = new File(FatcatSetting.SERVER_ROOT + direction); // FileNotFoundException
-            FileInputStream fIStr = new FileInputStream(file); // IOException
-            oBS = read(fIStr);
-            Cache.put(direction, oBS);
-            return oBS;
-        }
+    public String readText() throws IOException {
+        return new String(this.read(this.iStr), FatcatSetting.CHARSET);
     }
 
     /**
@@ -65,7 +45,7 @@ public class StandardReader implements Reader {
      * @throws IOException IO异常
      */
     private byte[] read(InputStream is) throws IOException {
-        int length = getLength(is);
+        int length = StandardReader.getLength(is);
         byte[] buf = new byte[length];
         int read = 0;
         while (read < length) {
@@ -82,7 +62,7 @@ public class StandardReader implements Reader {
      * @return 输入流可读长度
      * @throws IOException IO异常
      */
-    private int getLength(InputStream is) throws IOException {
+    private static int getLength(InputStream is) throws IOException {
         int length = is.available();
         while (length == 0) {
             length = is.available();

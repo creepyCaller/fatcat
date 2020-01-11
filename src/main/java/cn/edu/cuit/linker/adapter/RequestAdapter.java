@@ -1,24 +1,12 @@
-package cn.edu.cuit.linker.service;
+package cn.edu.cuit.linker.adapter;
 
 import cn.edu.cuit.fatcat.http.HttpMethod;
-import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.message.Request;
-import cn.edu.cuit.fatcat.setting.FatcatSetting;
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class RequestMessageService {
+public class RequestAdapter implements Adapter {
 
-    /**
-     * 由请求报文字符串获取请求报文实体
-     * 现在暂时只用得到请求报文的第一行 method + Direction + Protocol
-     *
-     * @param standardReader 请求报文字符串
-     * @return 请求报文实体
-     */
-    public Request getRequestMessage(Reader standardReader) throws IOException {
-        String request = new String(standardReader.read(), FatcatSetting.CHARSET);
+    public Request getRequest(String request) {
         String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n", 2);
         String body = "";
         if (requestSpiltHeaderAndBody.length == 2) {
@@ -34,22 +22,22 @@ public class RequestMessageService {
         if (s.length > 1) {
             pathVariable = s[1];
         }
-        Map<String, List<String>> param = new HashMap<>();
-        this.getParamFromMessage(param, requestHeaderLines);
+        Map<String, List<String>> header = new HashMap<>();
+        this.getParamFromMessage(header, requestHeaderLines);
         String protocol = firstLine[2];
         switch (method) {
             // TODO:添加其他HTTP方法
             case HttpMethod.METHOD_GET:
                 if (s.length > 1) {
-                    this.getParamFromURL(param, pathVariable);
+                    this.getParamFromURL(header, pathVariable);
                 }
                 break;
             default:
-                // POST...
+                // POST PUT PATCH DELETE HEAD OPTIONS TRACE
                 if (s.length > 1) {
-                    this.getParamFromURL(param, pathVariable);
+                    this.getParamFromURL(header, pathVariable);
                 }
-                this.getParamFromBody(param, body);
+                this.getParamFromBody(header, body);
                 break;
         }
         return Request.builder()
@@ -57,7 +45,8 @@ public class RequestMessageService {
                 .direction(path)
                 .protocol(protocol)
                 .body(body)
-                .param(param)
+                .header(header)
+                .context(request)
                 .build();
     }
 
@@ -65,17 +54,17 @@ public class RequestMessageService {
      * 从报文头中分割参数
      * @param message 报文头按行分割
      */
-    private void getParamFromMessage(Map<String, List<String>> param, String[] message) {
+    private void getParamFromMessage(Map<String, List<String>> header, String[] message) {
         for (int i = 1; i < message.length; ++i) {
             String[] kv = message[i].split(": ", 2);
             if (kv.length == 2) {
-                this.addParam(param, kv[0], kv[1]);
+                this.addParam(header, kv[0], kv[1]);
             }
         }
     }
 
-    private void getParamFromBody(Map<String, List<String>> param, String body) {
-        this.getParamFromURL(param, body);
+    private void getParamFromBody(Map<String, List<String>> header, String body) {
+        this.getParamFromURL(header, body);
     }
 
     /**
@@ -87,20 +76,20 @@ public class RequestMessageService {
      *
      * @param variable 参数团
      */
-    private void getParamFromURL(Map<String, List<String>> param, String variable) {
+    private void getParamFromURL(Map<String, List<String>> header, String variable) {
         String[] s = variable.split("&");
         for (String iter : s) {
             String[] kv = iter.split("=", 2);
             if (kv.length == 2) {
-                this.addParam(param, kv[0], kv[1]);
+                this.addParam(header, kv[0], kv[1]);
             } else if (kv.length == 1) {
-                this.addParam(param, kv[0], "");
+                this.addParam(header, kv[0], "");
             }
         }
     }
 
-    private void addParam(Map<String, List<String>> param, String key, String value) {
-        List<String> list = param.get(key);
+    private void addParam(Map<String, List<String>> header, String key, String value) {
+        List<String> list = header.get(key);
         if (list != null) {
             boolean nonAdd = false;
             for (String iter : list) {
@@ -115,7 +104,7 @@ public class RequestMessageService {
         } else {
             list = new ArrayList<>();
             list.add(value);
-            param.put(key, list);
+            header.put(key, list);
         }
     }
 

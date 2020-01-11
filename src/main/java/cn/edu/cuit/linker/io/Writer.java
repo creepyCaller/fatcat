@@ -1,8 +1,10 @@
 package cn.edu.cuit.linker.io;
 
+import cn.edu.cuit.linker.message.Request;
+import cn.edu.cuit.linker.message.Response;
 import java.io.IOException;
 
 public interface Writer extends AutoCloseable {
-    public void write(byte[] bStr) throws IOException;
+    public void write(Request request, Response response) throws IOException;
     public void close() throws IOException;
 }

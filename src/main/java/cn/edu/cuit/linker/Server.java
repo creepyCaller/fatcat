@@ -1,6 +1,6 @@
 package cn.edu.cuit.linker;
 
-import cn.edu.cuit.fatcat.GenesisServlet;
+import cn.edu.cuit.fatcat.Fatcat;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
@@ -30,7 +30,7 @@ public class Server implements Runnable {
             // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
             while (true) {
                 SocketHandler socketHandler = new SocketHandler(serverSocket.accept());
-                (new Thread((new GenesisServlet(socketHandler)))).start();
+                (new Thread((new Fatcat(socketHandler)))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

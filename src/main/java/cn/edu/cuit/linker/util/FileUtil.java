@@ -112,10 +112,10 @@ public class FileUtil {
             }
         }
         zipFile.close();
-        // j检测有没有图标,如果没有的话就把默认的图标复制过去
-        File src = new File(FatcatSetting.DEFAULT_FAVICON);
+        // 检测有没有图标,如果没有的话就把默认的图标复制过去
         File dest = new File(FatcatSetting.SERVER_ROOT, "favicon.ico");
         if (!dest.exists()) {
+            File src = new File(FatcatSetting.DEFAULT_FAVICON);
             Files.copy(src.toPath(), dest.toPath());
         }
     }

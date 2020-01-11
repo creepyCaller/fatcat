@@ -1,10 +1,17 @@
 package cn.edu.cuit.linker.io.standard;
 
+import cn.edu.cuit.fatcat.http.HttpHeader;
+import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.io.Writer;
+import cn.edu.cuit.linker.message.Request;
+import cn.edu.cuit.linker.message.Response;
+import cn.edu.cuit.linker.util.ArrayUtil;
+import cn.edu.cuit.linker.util.FileReader;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 
 /**
  * 对输出的处理类
@@ -22,15 +29,20 @@ public class StandardWriter implements Writer {
         this.oStr = oStr;
     }
 
-    /**
-     * 将ResponseMessage实体转为字符串，输出到浏览器
-     *
-     * @param bStr 输出流
-     */
-    @Override
-    public void write(byte[] bStr) throws IOException {
-        oStr.write(bStr);
+    private void write(byte[] responseHead, byte[] responseBody) throws IOException {
+        oStr.write(responseHead);
+        oStr.write(responseBody);
         oStr.flush();
+    }
+
+    @Override
+    public void write(Request request, Response response) throws IOException {
+        byte[] responseBody = FileReader.readBinStr(request, response); // 响应体二进制流
+        if (response.getHeader().get(HttpHeader.ACCEPT_RANGES) != null) {
+            response.getHeader().put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(responseBody.length)));
+        }
+        byte[] responseHead = response.getResponseHeadString().getBytes(FatcatSetting.CHARSET); // 响应头二进制流
+        this.write(responseHead, responseBody); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
     }
 
     @Override

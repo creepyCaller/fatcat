@@ -37,12 +37,14 @@ public class ResponseMessageUtil {
             case "svg":
                 return HttpContentType.IMAGE_SVG;
             case "xml":
-            case "txt":
                 return HttpContentType.TEXT_XML;
+            case "txt":
+                return HttpContentType.TEXT_PLAIN;
             case "html":
             case "htm":
-            default:
                 return HttpContentType.TEXT_HTML;
+            default:
+                return HttpContentType.APPLICATION_OCTET_STREAM;
         }
     }
 

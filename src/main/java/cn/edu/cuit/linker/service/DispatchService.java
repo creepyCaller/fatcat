@@ -22,7 +22,9 @@ public class DispatchService {
         if ("/".equals(requestDirection)) {// 如果请求的路径是"/"，则转到欢迎页
             request.setDirection(FatcatSetting.DEFAULT_WELCOME);
         } else if ("/test".equals(requestDirection)) {
-            request.setDirection("/TEST.html");
+            request.setDirection("$TEST$");
+        } else if ("/servlet".equals(requestDirection)) {
+            request.setDirection("$SERVLET$");
         }
     }
 

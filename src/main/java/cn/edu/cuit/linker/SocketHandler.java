@@ -1,10 +1,12 @@
 package cn.edu.cuit.linker;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
 import java.net.Socket;
 
 @Slf4j
-public class SocketHandler {
+public class SocketHandler implements AutoCloseable {
 
     private Socket socket;
 
@@ -13,12 +15,20 @@ public class SocketHandler {
         log.info("建立套接字：" + socket.toString());
     }
 
-    public void setSocket(Socket socket) {
-        this.socket = socket;
+    public InputStream getInputStream() throws IOException {
+        return socket.getInputStream();
     }
 
-    public Socket getSocket() {
-        return socket;
+    public OutputStream getOutputStream() throws IOException {
+        return socket.getOutputStream();
     }
 
+    public PrintWriter getPrintWriter() throws IOException {
+        return new PrintWriter(this.getOutputStream());
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.socket.close();
+    }
 }

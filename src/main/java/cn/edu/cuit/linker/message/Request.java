@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 请求报文实体
@@ -26,26 +27,27 @@ public class Request {
 
     private String protocol;
 
+    // **PARAMS**
+
+    private Map<String, List<String>> header;
+
     // **BODY**
 
     private String body;
 
-    // **Params**
-
-    Map<String, List<String>> param;
-
     // **ToString**
+
+    private String context;
 
     @Override
     public String toString() {
-        return method + " " + direction + " " + protocol + "\r\n" +
-                ("".equals(body) ? "" : "\r\n" + body);
+        return context;
     }
 
     public String getParamString() {
-        if (param != null) {
+        if (header != null) {
             StringBuilder paramString = new StringBuilder();
-            param.forEach((key, value) -> paramString.append(key).append(": ").append(value.toString()).append("\r\n"));
+            header.forEach((key, value) -> paramString.append(key).append(": ").append(value.toString()).append("\r\n"));
             return paramString.toString();
         }
         return "";

@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat.setting;
 
+import cn.edu.cuit.fatcat.LifeCycle;
 import cn.edu.cuit.linker.util.FileUtil;
 import cn.edu.cuit.linker.util.YamlUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,8 @@ import java.util.Map;
  * @since Fatcat 0.0.1
  */
 @Slf4j
-public class FatcatSetting {
+public class FatcatSetting implements LifeCycle {
+
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
     public static String DEFAULT_FAVICON = "Resources/Default/Icon/favicon.ico";
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
@@ -35,9 +37,18 @@ public class FatcatSetting {
     private static String DEFAULT_CHARSET = "UTF-8";
     public static Charset CHARSET;
     public static Map<Integer, String> ERROR_PAGES; // 从web.xml读取, 错误码对应的错误页
-    public static void init() throws IOException {
+    private LinkedHashMap settings;
+
+    public void init() throws IOException {
         log.info("正在初始化服务器配置...");
-        LinkedHashMap settings = YamlUtil.getSettings();
+        this.settings = YamlUtil.getSettings();
+        ERROR_PAGES = new HashMap<>();
+        FatcatSetting.ERROR_PAGES.put(404, "/ErrorPages/404.html");
+        FatcatSetting.ERROR_PAGES.put(500, "/ErrorPages/500.html");
+    }
+
+    @Override
+    public void start() throws IOException {
         if (settings.get("port") == null) {
             log.warn("未设置服务端口, 使用默认值: {}", FatcatSetting.DEFAULT_PORT);
             FatcatSetting.PORT = FatcatSetting.DEFAULT_PORT;
@@ -63,14 +74,14 @@ public class FatcatSetting {
             }
         }
         FatcatSetting.CHARSET = Charset.forName(FatcatSetting.CHARSET_STRING);
-        if (settings.get("war") == null) {
+        FatcatSetting.WAR = (String) settings.get("war");
+        if (FatcatSetting.WAR == null) {
             log.warn("未设置待解压的WAR包");
         } else {
-            String war = (String) settings.get("war");
-            if (!war.startsWith("/")) {
-                war = "/" + war;
+            if (!FatcatSetting.WAR.startsWith("/")) {
+                FatcatSetting.WAR = "/" + FatcatSetting.WAR;
             }
-            File file = new File("WAR" + war);
+            File file = new File("WAR" + FatcatSetting.WAR);
             if (file.exists()) {
                 log.info("待解压WAR包位于: {}", file.getAbsolutePath());
                 FileUtil.clearServerRoot();
@@ -82,8 +93,14 @@ public class FatcatSetting {
                 log.info("待解压WAR包不存在");
             }
         }
-        ERROR_PAGES = new HashMap<>();
-        FatcatSetting.ERROR_PAGES.put(404, "/ErrorPages/404.html");
-        FatcatSetting.ERROR_PAGES.put(500, "/ErrorPages/500.html");
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }
