@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 服务器配置
@@ -33,7 +30,7 @@ public class FatcatSetting implements LifeCycle {
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
     public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"
-    public static List<String> WELCOME_LIST;
+    public static List<String> WELCOME_LIST; // <FileName, isExist>
     public static String WAR; // 待解压的WAR包名,如果不存在就跳过解压
     public static String CHARSET_STRING; // 编码
     private static String DEFAULT_CHARSET = "UTF-8";
@@ -43,11 +40,19 @@ public class FatcatSetting implements LifeCycle {
 
     public void init() throws IOException {
         log.info("正在初始化服务器配置...");
-        this.settings = YamlUtil.getSettings();
-        ERROR_PAGES = new HashMap<>();
+        settings = YamlUtil.getSettings();
+        FatcatSetting.ERROR_PAGES = new HashMap<>();
+        initErrorPages();
+        FatcatSetting.WELCOME_LIST = new ArrayList<>();
+        initWelcomeList();
+    }
+
+    private void initErrorPages() {
         FatcatSetting.ERROR_PAGES.put(404, "/error/error.html");
-//        FatcatSetting.ERROR_PAGES.put(404, "/ErrorPages/404.html");
-//        FatcatSetting.ERROR_PAGES.put(500, "/ErrorPages/500.html");
+    }
+
+    private void initWelcomeList() {
+        FatcatSetting.WELCOME_LIST.add("/index.html");
     }
 
     @Override

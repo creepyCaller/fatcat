@@ -2,11 +2,9 @@ package cn.edu.cuit.fatcat;
 
 import cn.edu.cuit.fatcat.container.servlet.TestServlet;
 import cn.edu.cuit.linker.SocketWrapper;
-import cn.edu.cuit.linker.io.Writer;
 import cn.edu.cuit.linker.io.standard.StandardServletWriter;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
-
 import java.io.PrintWriter;
 
 public class Fatcat implements LifeCycle {

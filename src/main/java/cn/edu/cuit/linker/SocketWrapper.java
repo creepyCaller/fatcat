@@ -6,13 +6,12 @@ import java.io.*;
 import java.net.Socket;
 
 @Slf4j
-public class SocketWrapper implements AutoCloseable {
+public class SocketWrapper implements Closeable {
 
     private Socket socket;
 
     public SocketWrapper(Socket socket) {
         this.socket = socket;
-        log.info("建立套接字：" + socket.toString());
     }
 
     public InputStream getInputStream() throws IOException {
@@ -28,7 +27,7 @@ public class SocketWrapper implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         this.socket.close();
     }
 }

@@ -63,7 +63,7 @@ public class TestServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setHeader("Date", new Date().toString());
         response.setHeader("Server", "Fatcat");
-        out.println(); // 怎么处理响应报文???
+        out.println(); // 怎么处理PrinteWriter???
         out.println("<h1>Hello, world !</h1>");
         out.println("这是一条来自" + this.getClass().getName() + ", " + this.toString() + ", 的消息.<br/>");
         out.println(request.getContext().replaceAll("\r\n", "<br/>\r\n"));

@@ -34,7 +34,6 @@ public class Server implements Runnable {
                 HttpHandler httpHandler = new HttpHandler(socketWrapper);
                 Thread thread = new Thread(httpHandler);
                 thread.start();
-//                (new Thread((new HttpHandler(new SocketWrapper(serverSocket.accept()))))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -16,11 +16,13 @@ public class StandardCache implements Cache {
 
     @Override
     public void put(String key, byte[] value) {
+        log.info("放入缓存: {}, 比特流长度: {}", key, value.length);
         cache.put(key, value);
     }
 
     @Override
     public byte[] get(String key) {
+        log.info("从缓存获取: {}", key);
         return cache.get(key);
     }
 }

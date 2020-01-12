@@ -13,30 +13,6 @@ import cn.edu.cuit.linker.message.Response;
  */
 public class ErrorPage {
 
-    public static String getEmbeddedErrorPageBytes(Request request, Response response) {
-        return ("<!DOCTYPE html>\r\n" +
-                "<html lang=\"zh-CN\">\r\n" +
-                "<head>\r\n" +
-                "<meta charset=\"UTF-8\">\r\n" +
-                "<title>" + response.getStatus() + " - fatcat</title>\r\n" +
-                "</head>\r\n" +
-                "<body>\r\n" +
-                "<p><h1>" + response.getCode() + "</h1></p>\r\n" +
-                "<p>" + response.getStatus() + "</p>\r\n" +
-                "<hr/>\r\n" +
-                "<p>请求报文：</p>\r\n" +
-                "<span>" + "\r\n" +
-                request.toString().replaceAll("\r\n", "<br/>\r\n") +
-                "</span>\r\n" +
-                "<hr/>" + "\r\n" +
-                "<p>请求参数：</p>\r\n" +
-                "<span>" + "\r\n" +
-                request.getParamString().replaceAll("\r\n", "<br/>\r\n") +
-                "</span>\r\n" +
-                "</body>\r\n" +
-                "</html>");
-    }
-
     public static String getTomcatEmbeddedErrorPageBytes(Request request, Response response) {
         return ("<!doctype html>\r\n" +
                 "<html lang=\"zh-CN\">\r\n" +

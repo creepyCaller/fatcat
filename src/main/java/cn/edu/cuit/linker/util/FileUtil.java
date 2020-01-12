@@ -155,8 +155,10 @@ public class FileUtil {
      * @throws IOException IO异常
      */
     public static byte[] readBinStr(String direction) throws IOException {
+        log.info("读取文件, 路径: {}", direction);
         byte[] oBS = Cache.getInstance().get(direction);
         if (oBS != null) {
+            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
             return oBS;
         } else {
             File file = new File(FatcatSetting.SERVER_ROOT + direction); // FileNotFoundException
