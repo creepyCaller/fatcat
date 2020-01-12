@@ -6,12 +6,12 @@ import cn.edu.cuit.fatcat.http.HttpStatusDescription;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.handler.ExceptionHandler;
 import cn.edu.cuit.linker.io.Cache;
+import cn.edu.cuit.linker.io.standard.StandardCache;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.io.standard.StandardReader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Enumeration;
@@ -155,7 +155,7 @@ public class FileUtil {
      * @throws IOException IO异常
      */
     public static byte[] readBinStr(String direction) throws IOException {
-        byte[] oBS = Cache.get(direction);
+        byte[] oBS = Cache.getInstance().get(direction);
         if (oBS != null) {
             return oBS;
         } else {
@@ -163,7 +163,7 @@ public class FileUtil {
             FileInputStream fIStr = new FileInputStream(file); // IOException
             Reader reader = new StandardReader(fIStr);
             oBS = reader.readBinStr();
-            Cache.put(direction, oBS);
+            Cache.getInstance().put(direction, oBS);
             return oBS;
         }
     }

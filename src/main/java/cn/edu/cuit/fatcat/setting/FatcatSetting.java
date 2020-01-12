@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +33,7 @@ public class FatcatSetting implements LifeCycle {
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
     public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"
+    public static List<String> WELCOME_LIST;
     public static String WAR; // 待解压的WAR包名,如果不存在就跳过解压
     public static String CHARSET_STRING; // 编码
     private static String DEFAULT_CHARSET = "UTF-8";

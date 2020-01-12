@@ -6,11 +6,11 @@ import java.io.*;
 import java.net.Socket;
 
 @Slf4j
-public class SocketHandler implements AutoCloseable {
+public class SocketWrapper implements AutoCloseable {
 
     private Socket socket;
 
-    public SocketHandler(Socket socket) {
+    public SocketWrapper(Socket socket) {
         this.socket = socket;
         log.info("建立套接字：" + socket.toString());
     }

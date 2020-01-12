@@ -1,7 +1,8 @@
 package cn.edu.cuit.linker;
 
-import cn.edu.cuit.fatcat.Fatcat;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
+import cn.edu.cuit.linker.io.Cache;
+import cn.edu.cuit.linker.io.standard.StandardCache;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,6 +16,7 @@ import java.net.ServerSocket;
  */
 @Slf4j
 public class Server implements Runnable {
+    public static final Cache cache = new StandardCache();
 
     /**
      * 用来承载一个Server实例的Runnable接口实现类
@@ -23,14 +25,16 @@ public class Server implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(FatcatSetting.PORT); // 换用SocketWrapper
+        try(ServerSocket serverSocket = new ServerSocket(FatcatSetting.PORT)) {
             log.info("正在监听端口：{}", FatcatSetting.PORT);
-            // 在实现线程池之后，改用非阻断式
-            // 使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
+            // TODO:使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
+            // TODO:在实现线程池之后，改用非阻断式
             while (true) {
-                SocketHandler socketHandler = new SocketHandler(serverSocket.accept());
-                (new Thread((new Fatcat(socketHandler)))).start();
+                SocketWrapper socketWrapper = new SocketWrapper(serverSocket.accept());
+                HttpHandler httpHandler = new HttpHandler(socketWrapper);
+                Thread thread = new Thread(httpHandler);
+                thread.start();
+//                (new Thread((new HttpHandler(new SocketWrapper(serverSocket.accept()))))).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

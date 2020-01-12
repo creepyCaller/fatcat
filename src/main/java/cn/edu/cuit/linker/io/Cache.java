@@ -1,24 +1,11 @@
 package cn.edu.cuit.linker.io;
 
-import lombok.extern.slf4j.Slf4j;
-import java.util.HashMap;
-import java.util.Map;
+import cn.edu.cuit.linker.Server;
 
-@Slf4j
-public class Cache {
-
-    private static Map<String, byte[]> cache;
-
-    static {
-        cache = new HashMap<>();
+public interface Cache {
+    public void put(String key, byte[] value);
+    public byte[] get(String key);
+    public static Cache getInstance() {
+        return Server.cache;
     }
-
-    public static void put(String key, byte[] value) {
-        cache.put(key, value);
-    }
-
-    public static byte[] get(String key) {
-        return cache.get(key);
-    }
-
 }
