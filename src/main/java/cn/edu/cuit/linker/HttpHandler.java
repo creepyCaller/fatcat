@@ -58,6 +58,7 @@ public class HttpHandler implements Runnable {
             // TODO:在这里进行派分,是请求Servlet还是服务器上的资源
             if (isRequestServlet) {
                 // 如果是请求Servlet(暂未实现)(Servlet容器模块):
+                // TODO: 在此处测试从别的地方调用class文件
                 LifeCycle fatcat = new Fatcat(request, response, socketWrapper);
                 fatcat.service();;
             } else {

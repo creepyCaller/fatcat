@@ -6,12 +6,14 @@ import cn.edu.cuit.fatcat.http.HttpStatusDescription;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.handler.ExceptionHandler;
 import cn.edu.cuit.linker.io.Cache;
-import cn.edu.cuit.linker.io.standard.StandardCache;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.io.standard.StandardReader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Enumeration;
@@ -168,5 +170,17 @@ public class FileUtil {
             Cache.getInstance().put(direction, oBS);
             return oBS;
         }
+    }
+
+    public static Document getWebXML() {
+        File webxml = new File(FatcatSetting.SERVER_ROOT + "/WEB-INF/web.xml");
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            return builder.parse(webxml);
+        } catch (Exception e) {
+            log.info("读取web.XML失败");
+        }
+        return null;
     }
 }

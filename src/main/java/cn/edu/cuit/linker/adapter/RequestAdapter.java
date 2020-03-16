@@ -25,21 +25,10 @@ public class RequestAdapter implements Adapter {
         Map<String, List<String>> header = new HashMap<>();
         this.getParamFromMessage(header, requestHeaderLines);
         String protocol = firstLine[2];
-        switch (method) {
-            // TODO:添加其他HTTP方法
-            case HttpMethod.METHOD_GET:
-                if (s.length > 1) {
-                    this.getParamFromURL(header, pathVariable);
-                }
-                break;
-            default:
-                // POST PUT PATCH DELETE HEAD OPTIONS TRACE
-                if (s.length > 1) {
-                    this.getParamFromURL(header, pathVariable);
-                }
-                this.getParamFromBody(header, body);
-                break;
+        if (s.length > 1) {
+            this.getParamFromURL(header, pathVariable);
         }
+        this.getParamFromBody(header, body);
         return Request.builder()
                 .method(method)
                 .direction(path)

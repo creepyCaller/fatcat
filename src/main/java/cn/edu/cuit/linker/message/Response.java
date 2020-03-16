@@ -38,7 +38,7 @@ public class Response {
 
     private String charset;
 
-    private boolean nonSet;
+    private boolean nonSet = true;
 
     private Date date;
 
