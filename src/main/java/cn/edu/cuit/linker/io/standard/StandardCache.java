@@ -8,6 +8,10 @@ import java.util.Map;
 @Slf4j
 public class StandardCache implements Cache {
 
+    private StandardCache() {}
+
+    private static final Cache instance = new StandardCache();
+
     private static Map<String, byte[]> cache;
 
     static {
@@ -24,5 +28,9 @@ public class StandardCache implements Cache {
     public byte[] get(String key) {
 //        log.info("从缓存获取: {}", key);
         return cache.get(key);
+    }
+
+    public static Cache getInstance() {
+        return StandardCache.instance;
     }
 }

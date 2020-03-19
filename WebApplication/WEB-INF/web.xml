@@ -4,7 +4,54 @@
            xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 		  http://java.sun.com/xml/ns/javaee/web-app_4_0.xsd"
            version="4.0">
+
+	<!-- 项目显示名 -->
     <display-name>helloworld</display-name>
+	
+	<!-- 上下文初始化参数 -->
+	<context-param>
+		<param-name>ContainerName</param-name>
+		<param-value>fatcat</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>ContainerVer</param-name>
+		<param-value>0.1</param-value>
+	</context-param>
+
+    <!-- Servlet -->
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>
+            <param-name>param1</param-name>
+            <param-value>value1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>param2</param-name>
+            <param-value>value2</param-value>
+        </init-param>
+        <init-param>
+            <param-name>param3</param-name>
+            <param-value>value3</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/servlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FakeServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FakeServlet</servlet-name>
+        <url-pattern>/fake</url-pattern>
+    </servlet-mapping>
 	
 	<!-- 欢迎页列表 -->
     <welcome-file-list>

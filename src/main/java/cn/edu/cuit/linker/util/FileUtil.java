@@ -7,6 +7,7 @@ import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.handler.ExceptionHandler;
 import cn.edu.cuit.linker.io.Cache;
 import cn.edu.cuit.linker.io.Reader;
+import cn.edu.cuit.linker.io.standard.StandardCache;
 import cn.edu.cuit.linker.io.standard.StandardReader;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
@@ -131,7 +132,7 @@ public class FileUtil {
     public static byte[] readBinStr(Request request, Response response) {
         byte[] biStr;
         try {
-            if (Objects.equals(request.getDirection(), "$TEST$")) {
+            if (Objects.equals(request.getDirection(), "TEST.html")) {
                 // 如果是调用测试页的话
                 biStr = TestPage.getEmbeddedTestPageBytes(request, response);
             } else {
@@ -157,17 +158,17 @@ public class FileUtil {
      * @throws IOException IO异常
      */
     public static byte[] readBinStr(String direction) throws IOException {
-        log.info("读取文件, 路径: {}", direction);
-        byte[] oBS = Cache.getInstance().get(direction);
+//        log.info("读取文件, 路径: {}", direction);
+        byte[] oBS = StandardCache.getInstance().get(direction);
         if (oBS != null) {
-            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
+//            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
             return oBS;
         } else {
             File file = new File(FatcatSetting.SERVER_ROOT + direction); // FileNotFoundException
             FileInputStream fIStr = new FileInputStream(file); // IOException
             Reader reader = new StandardReader(fIStr);
             oBS = reader.readBinStr();
-            Cache.getInstance().put(direction, oBS);
+            StandardCache.getInstance().put(direction, oBS);
             return oBS;
         }
     }

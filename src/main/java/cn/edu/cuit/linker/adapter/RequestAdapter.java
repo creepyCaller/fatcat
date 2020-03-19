@@ -1,6 +1,5 @@
 package cn.edu.cuit.linker.adapter;
 
-import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.linker.message.Request;
 import java.util.*;
 
@@ -80,14 +79,15 @@ public class RequestAdapter implements Adapter {
     private void addParam(Map<String, List<String>> header, String key, String value) {
         List<String> list = header.get(key);
         if (list != null) {
-            boolean nonAdd = false;
+            System.out.println("添加已存在的key的value: " + value);
+            boolean add = false;
             for (String iter : list) {
                 if (Objects.equals(iter, value)) {
-                    nonAdd = true;
+                    add = true;
                     break;
                 }
             }
-            if (nonAdd) {
+            if (!add) {
                 list.add(value);
             }
         } else {

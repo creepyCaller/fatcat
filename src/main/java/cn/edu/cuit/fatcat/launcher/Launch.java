@@ -20,7 +20,7 @@ public class Launch {
         try {
             log.info("正在初始化服务器...");
             LifeCycle fatcatInit = new FatcatSetting();
-            fatcatInit.service();
+            fatcatInit.start();
             log.info("服务器初始化成功");
             log.info("正在启动服务器...");
             Server server = new Server();

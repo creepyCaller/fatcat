@@ -1,5 +1,6 @@
 package cn.edu.cuit.linker;
 
+import cn.edu.cuit.fatcat.container.ServletInstanceManager;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.io.Cache;
 import cn.edu.cuit.linker.io.standard.StandardCache;
@@ -16,7 +17,7 @@ import java.net.ServerSocket;
  */
 @Slf4j
 public class Server implements Runnable {
-    public static final Cache cache = new StandardCache();
+    public static final ServletInstanceManager servletInstanceManager = new ServletInstanceManager();
 
     /**
      * 用来承载一个Server实例的Runnable接口实现类

@@ -11,7 +11,7 @@ public class TestPage {
                 "<html lang=\"zh-CN\">\r\n" +
                 "<head>\r\n" +
                 "<meta charset=\"UTF-8\">\r\n" +
-                "<title>TEST - fatcat</title>\r\n" +
+                "<title>TEST</title>\r\n" +
                 "</head>\r\n" +
                 "<body>\r\n" +
                 "<p>请求报文：</p>\r\n" +

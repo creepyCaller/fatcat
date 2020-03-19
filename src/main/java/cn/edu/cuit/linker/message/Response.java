@@ -36,10 +36,6 @@ public class Response {
 
     private String contentType;
 
-    private String charset;
-
-    private boolean nonSet = true;
-
     private Date date;
 
     private PrintWriter printer; // 如果是servlet请求的话就使用PW
@@ -58,14 +54,14 @@ public class Response {
         }
         List<String> list = this.header.get(key);
         if (list != null) {
-            boolean nonAdd = false;
+            boolean add = false;
             for (String iter : list) {
                 if (Objects.equals(iter, value)) {
-                    nonAdd = true;
+                    add = true;
                     break;
                 }
             }
-            if (nonAdd) {
+            if (!add) {
                 list.add(value);
             }
         } else {
@@ -88,17 +84,13 @@ public class Response {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-        if (this.printer != null) {
+        if (this.getPrinter() != null) {
             this.printer.println("Content-Type: " + contentType);
         }
     }
 
     public void setCharacterEncoding(String charset) {
-        this.charset = charset;
-        if (this.contentType != null && this.nonSet) {
-            this.contentType = this.contentType + ";charset=" + charset;
-            this.nonSet = false;
-        }
+        this.setContentType(this.getContentType() + ";charset=" + charset);
     }
 
     // **Static Builder**
@@ -108,7 +100,7 @@ public class Response {
                 .protocol(HttpProtocol.HTTP_1_1)
                 .code(HttpStatusCode.OK)
                 .status(HttpStatusDescription.OK)
-                .contentType(null)
+                .contentType(HttpContentType.TEXT_HTML)
                 .date(new Date())
                 .printer(null)
                 .header(new HashMap<>())

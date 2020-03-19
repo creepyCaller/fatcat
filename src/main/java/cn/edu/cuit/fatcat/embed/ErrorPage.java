@@ -1,6 +1,5 @@
 package cn.edu.cuit.fatcat.embed;
 
-import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
 
@@ -15,9 +14,9 @@ public class ErrorPage {
 
     public static String getTomcatEmbeddedErrorPageBytes(Request request, Response response) {
         return ("<!doctype html>\r\n" +
-                "<html lang=\"zh-CN\">\r\n" +
+                "<html>\r\n" +
                 "<head>\r\n" +
-                "  <title>HTTP Status " + response.getStatus() + " – Fatcat</title>\r\n" +
+                "  <title>HTTP Status " + response.getStatus() + "</title>\r\n" +
                 "    <style type=\"text/css\">\r\n" +
                 "      h1 {\r\n" +
                 "          font-family: Tahoma, Arial, sans-serif;\r\n" +
