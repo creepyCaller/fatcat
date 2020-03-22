@@ -3,7 +3,7 @@ package cn.edu.cuit.linker.adapter;
 import cn.edu.cuit.linker.message.Request;
 import java.util.*;
 
-public class RequestAdapter implements Adapter {
+public class RequestAdapter {
 
     public Request getRequest(String request) {
         String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n", 2);
@@ -79,17 +79,7 @@ public class RequestAdapter implements Adapter {
     private void addParam(Map<String, List<String>> header, String key, String value) {
         List<String> list = header.get(key);
         if (list != null) {
-            System.out.println("添加已存在的key的value: " + value);
-            boolean add = false;
-            for (String iter : list) {
-                if (Objects.equals(iter, value)) {
-                    add = true;
-                    break;
-                }
-            }
-            if (!add) {
-                list.add(value);
-            }
+            list.add(value);
         } else {
             list = new ArrayList<>();
             list.add(value);

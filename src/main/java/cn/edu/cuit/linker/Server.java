@@ -1,9 +1,7 @@
 package cn.edu.cuit.linker;
 
-import cn.edu.cuit.fatcat.container.ServletInstanceManager;
+import cn.edu.cuit.fatcat.container.servlet.ServletInstanceManager;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
-import cn.edu.cuit.linker.io.Cache;
-import cn.edu.cuit.linker.io.standard.StandardCache;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
@@ -19,6 +17,7 @@ import java.net.ServerSocket;
 public class Server implements Runnable {
     public static final ServletInstanceManager servletInstanceManager = new ServletInstanceManager();
 
+
     /**
      * 用来承载一个Server实例的Runnable接口实现类
      *
@@ -28,13 +27,12 @@ public class Server implements Runnable {
     public void run() {
         try(ServerSocket serverSocket = new ServerSocket(FatcatSetting.PORT)) {
             log.info("正在监听端口：{}", FatcatSetting.PORT);
-            // TODO:使用线程池来做， getExecutor().execute(new SocketProcessor(wrapper));
+            // TODO:使用线程池来做， getExecutor().execute(new HttpHandler(socketWrapper));
             // TODO:在实现线程池之后，改用非阻断式
             while (true) {
                 SocketWrapper socketWrapper = new SocketWrapper(serverSocket.accept());
                 HttpHandler httpHandler = new HttpHandler(socketWrapper);
-                Thread thread = new Thread(httpHandler);
-                thread.start();
+                (new Thread(httpHandler)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

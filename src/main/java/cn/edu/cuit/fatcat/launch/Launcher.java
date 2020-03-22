@@ -1,4 +1,4 @@
-package cn.edu.cuit.fatcat.launcher;
+package cn.edu.cuit.fatcat.launch;
 
 import cn.edu.cuit.fatcat.LifeCycle;
 import cn.edu.cuit.linker.Server;
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since Fatcat 0.0.1
  */
 @Slf4j
-public class Launch {
+public class Launcher {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();

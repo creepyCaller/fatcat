@@ -20,7 +20,6 @@ public class Dispatcher {
 
     static {
         // TODO: 在Setting.yml初始化
-        Dispatcher.setDispatch("/test", "TEST.html");
     }
 
     public static void setDispatch(String srcDir, String dstDir) {

@@ -1,5 +1,6 @@
 package cn.edu.cuit.linker.adapter;
 
+import cn.edu.cuit.linker.message.Response;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,4 +12,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ResponseAdapter {
+
+    public String getResponse(Response response) {
+        return null;
+    }
+
 }

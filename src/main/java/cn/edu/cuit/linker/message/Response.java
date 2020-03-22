@@ -54,16 +54,7 @@ public class Response {
         }
         List<String> list = this.header.get(key);
         if (list != null) {
-            boolean add = false;
-            for (String iter : list) {
-                if (Objects.equals(iter, value)) {
-                    add = true;
-                    break;
-                }
-            }
-            if (!add) {
-                list.add(value);
-            }
+            list.add(value);
         } else {
             list = new ArrayList<>();
             list.add(value);

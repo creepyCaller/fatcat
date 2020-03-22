@@ -1,3 +1,3 @@
 port: 8080
 charset: UTF-8
-#war: helloworld.war
+war: servletTest.war

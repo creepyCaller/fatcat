@@ -52,7 +52,8 @@ public class HttpHandler implements Runnable {
             String requestServletName = Mapping.getServletName(request.getDirection());
             if (requestServletName != null) {
                 // 如果是请求Servlet(暂未实现)(Servlet容器模块):
-                // TODO: 在此处测试从别的地方调用class文件
+                // TODO: 每个请求对应的fatcat实例,由池分配
+                // TODO: 使用ResponseAdapter转换为响应报文再write
                 LifeCycle fatcat = new Fatcat(request, response, socketWrapper);
                 fatcat.start();
             } else {

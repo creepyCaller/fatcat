@@ -1,11 +1,9 @@
 package cn.edu.cuit.linker.util;
 
-import cn.edu.cuit.fatcat.embed.TestPage;
 import cn.edu.cuit.fatcat.http.HttpStatusCode;
 import cn.edu.cuit.fatcat.http.HttpStatusDescription;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.handler.ExceptionHandler;
-import cn.edu.cuit.linker.io.Cache;
 import cn.edu.cuit.linker.io.Reader;
 import cn.edu.cuit.linker.io.standard.StandardCache;
 import cn.edu.cuit.linker.io.standard.StandardReader;
@@ -122,6 +120,7 @@ public class FileUtil {
         }
         zipFile.close();
         // 检测有没有图标,如果没有的话就把默认的图标复制过去
+        // TODO: 把默认图标以base64编码存在类里
         File dest = new File(FatcatSetting.SERVER_ROOT, "favicon.ico");
         if (!dest.exists()) {
             File src = new File(FatcatSetting.DEFAULT_FAVICON);
@@ -132,13 +131,8 @@ public class FileUtil {
     public static byte[] readBinStr(Request request, Response response) {
         byte[] biStr;
         try {
-            if (Objects.equals(request.getDirection(), "TEST.html")) {
-                // 如果是调用测试页的话
-                biStr = TestPage.getEmbeddedTestPageBytes(request, response);
-            } else {
-                // 读出direction路径下的文件
-                biStr = FileUtil.readBinStr(request.getDirection());
-            }
+            // 读出direction路径下的文件
+            biStr = FileUtil.readBinStr(request.getDirection());
         } catch (FileNotFoundException e) {
             // 404 Not Found
             log.info("找不到文件: {}", request.getDirection());
@@ -170,6 +164,27 @@ public class FileUtil {
             oBS = reader.readBinStr();
             StandardCache.getInstance().put(direction, oBS);
             return oBS;
+        }
+    }
+
+    public static byte[] readClassRawFromClazzName(String clazzName) throws ClassNotFoundException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(FatcatSetting.SERVER_ROOT).append(File.separatorChar).append("WEB-INF").append(File.separatorChar).append("classes").append(File.separatorChar);
+        if (clazzName.contains(".")) {
+            sb.append(clazzName.replace('.', File.separatorChar)).append(".class");
+        } else {
+            sb.append(clazzName).append(".class");
+        }
+        String path = sb.toString();
+        File f = new File(path);
+        try (FileInputStream fIS = new FileInputStream(f);
+             Reader reader = new StandardReader(fIS)) {
+            byte[] bs = reader.readBinStr();
+            log.info("已读取{}的字节码二进制流，长度为: {}", clazzName, bs.length);
+            return bs;
+        } catch (IOException e) {
+            log.error("找不到文件: {}", path);
+            throw new ClassNotFoundException(clazzName);
         }
     }
 

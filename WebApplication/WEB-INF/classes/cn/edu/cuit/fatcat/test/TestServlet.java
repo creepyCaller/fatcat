@@ -58,10 +58,21 @@ public class TestServlet implements Servlet {
     private void doGet(Request request, Response response) {
         PrintWriter out = response.getPrinter();
         response.setCharacterEncoding("utf-8");
-        out.println(); // 怎么处理PrinteWriter???
-        out.println("<h1>Hello, world !</h1><br/>");
-        out.println(this.toString() + "<br/>");
-        out.println("Date=" + new Date().toString() + "<br/>");
+        out.println();
+        out.println("这是一个测试用的Servlet");
+        out.println("<br/>");
+        out.println(this.toString());
+        out.println("<br/>");
+        out.println("Date=" + (new Date()).toString());
+        out.println("<hr/>");
+        out.println("以下为可能有用的信息:");
+        out.println("<br/>");
+        out.println("请求参数表:");
+        out.println("<br/>");
+        out.println(request.getParamString().replaceAll("\r\n", "<br/>"));
+        out.println("请求报文:");
+        out.println("<br/>");
+        out.println(request.toString().replaceAll("\r\n", "<br/>"));
     }
 
     private void doPost(Request request, Response response) {
