@@ -20,8 +20,15 @@ public class ServletClassLoader extends FatcatClassLoader {
      */
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        log.info("ServletClassLoader.findClass({})", name);
-        return super.findClass(name);
+        Class<?> cls = super.findClass(name);
+        if (cls == null) {
+            throw new ClassNotFoundException(name);
+        }
+        if (Servlets.isRegistered(cls.getName())) {
+            log.info("{} is registered", name);
+            return cls;
+        }
+        throw new ClassNotFoundException(name);
     }
 
 }

@@ -39,6 +39,7 @@ public class Dispatcher {
         String requestDirection = request.getDirection();
         if ("/".equals(requestDirection)) {
             //这是对于请求根目录的情况
+            // TODO: 改进？
             if (FatcatSetting.WELCOME_LIST.size() > 0) {
                 FatcatSetting.WELCOME_LIST.stream()
                         .filter(Dispatcher::nonEmpty)
