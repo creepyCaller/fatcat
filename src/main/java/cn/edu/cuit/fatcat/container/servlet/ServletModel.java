@@ -4,6 +4,7 @@ import cn.edu.cuit.linker.Server;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.util.Enumeration;
@@ -60,7 +61,7 @@ public class ServletModel implements ServletConfig {
      */
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return Server.servlets;
     }
 
     /**
@@ -74,8 +75,8 @@ public class ServletModel implements ServletConfig {
      */
     @Override
     public String getInitParameter(String name) {
-        if (this.initParam != null) {
-            return this.initParam.get(name);
+        if (initParam != null) {
+            return initParam.get(name);
         }
         return null;
     }

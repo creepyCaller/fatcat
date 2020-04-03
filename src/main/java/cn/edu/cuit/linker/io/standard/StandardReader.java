@@ -14,7 +14,6 @@ import java.io.*;
  */
 @Slf4j
 public class StandardReader implements Reader {
-
     private InputStream iStr;
 
     public StandardReader(InputStream iStr) {
@@ -75,4 +74,8 @@ public class StandardReader implements Reader {
         this.iStr.close();
     }
 
+    @Override
+    public void recycle() {
+
+    }
 }

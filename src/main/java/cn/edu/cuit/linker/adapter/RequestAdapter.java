@@ -70,8 +70,6 @@ public class RequestAdapter {
             String[] kv = iter.split("=", 2);
             if (kv.length == 2) {
                 this.addParam(header, kv[0], kv[1]);
-            } else if (kv.length == 1) {
-                this.addParam(header, kv[0], "");
             }
         }
     }

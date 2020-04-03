@@ -1,6 +1,7 @@
-package cn.edu.cuit.fatcat.container.servlet;
+package cn.edu.cuit.fatcat.loader;
 
-import cn.edu.cuit.fatcat.container.FatcatClassLoader;
+import cn.edu.cuit.fatcat.container.servlet.Servlets;
+import cn.edu.cuit.linker.Server;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,7 +25,7 @@ public class ServletClassLoader extends FatcatClassLoader {
         if (cls == null) {
             throw new ClassNotFoundException(name);
         }
-        if (Servlets.isRegistered(cls.getName())) {
+        if (Server.servlets.isRegistered(cls.getName())) {
             log.info("{} is registered", name);
             return cls;
         }

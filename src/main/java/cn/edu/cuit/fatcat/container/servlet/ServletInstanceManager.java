@@ -1,7 +1,10 @@
 package cn.edu.cuit.fatcat.container.servlet;
 
 import cn.edu.cuit.fatcat.container.InstanceManager;
+import cn.edu.cuit.fatcat.loader.ServletClassLoader;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.Servlet;
 
 @Slf4j
 public class ServletInstanceManager extends InstanceManager {

@@ -1,5 +1,6 @@
 package cn.edu.cuit.linker.io.standard;
 
+import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
 import cn.edu.cuit.linker.io.Writer;
@@ -20,7 +21,6 @@ import java.util.Collections;
  */
 @Slf4j
 public class StandardWriter implements Writer {
-
     private OutputStream oStr;
 
     public StandardWriter(OutputStream oStr) {
@@ -36,8 +36,8 @@ public class StandardWriter implements Writer {
     @Override
     public void write(Request request, Response response) throws IOException {
         byte[] responseBody = FileUtil.readBinStr(request, response); // 响应体二进制流
-        if (response.getHeader().get(HttpHeader.ACCEPT_RANGES) != null) {
-            response.getHeader().put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(responseBody.length)));
+        if (response.getHeader(HttpHeader.ACCEPT_RANGES) != null) {
+            response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(responseBody.length));
         }
         byte[] responseHead = response.getResponseHeadString().getBytes(FatcatSetting.CHARSET); // 响应头二进制流
         this.write(responseHead, responseBody); // 将响应报文头转为字符串后再转为Byte数组，再和响应体合并，最后使用流输出到浏览器
@@ -48,4 +48,8 @@ public class StandardWriter implements Writer {
         this.oStr.close();
     }
 
+    @Override
+    public void recycle() {
+
+    }
 }

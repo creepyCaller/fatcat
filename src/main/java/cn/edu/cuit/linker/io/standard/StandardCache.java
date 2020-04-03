@@ -10,13 +10,9 @@ public class StandardCache implements Cache {
 
     private StandardCache() {}
 
-    private static final Cache instance = new StandardCache();
+    private static Cache instance;
 
-    private static Map<String, byte[]> cache;
-
-    static {
-        cache = new HashMap<>();
-    }
+    private static final Map<String, byte[]> cache = new HashMap<>();
 
     @Override
     public void put(String key, byte[] value) {
@@ -31,6 +27,9 @@ public class StandardCache implements Cache {
     }
 
     public static Cache getInstance() {
+        if (instance == null) {
+            instance = new StandardCache();
+        }
         return StandardCache.instance;
     }
 }

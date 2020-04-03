@@ -26,7 +26,8 @@ import java.util.*;
  */
 @Slf4j
 public class FatcatSetting implements LifeCycle {
-
+    // TODO: 使用getter和setter包装
+    public static String HOST = "localhost";
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
     public static String DEFAULT_FAVICON = "Resources/Default/Icon/favicon.ico";
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号

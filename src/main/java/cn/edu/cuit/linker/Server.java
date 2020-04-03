@@ -1,7 +1,10 @@
 package cn.edu.cuit.linker;
 
 import cn.edu.cuit.fatcat.container.servlet.ServletInstanceManager;
+import cn.edu.cuit.fatcat.container.servlet.Servlets;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
+import cn.edu.cuit.linker.adapter.RequestAdapter;
+import cn.edu.cuit.linker.adapter.ResponseAdapter;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
@@ -16,7 +19,9 @@ import java.net.ServerSocket;
 @Slf4j
 public class Server implements Runnable {
     public static final ServletInstanceManager servletInstanceManager = new ServletInstanceManager();
-
+    public static final Servlets servlets = new Servlets();
+    public static final RequestAdapter requestAdapter = new RequestAdapter();
+    public static final ResponseAdapter responseAdapter = new ResponseAdapter();
 
     /**
      * 用来承载一个Server实例的Runnable接口实现类

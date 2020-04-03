@@ -1,4 +1,4 @@
-package cn.edu.cuit.linker.service;
+package cn.edu.cuit.linker;
 
 import cn.edu.cuit.linker.io.standard.StandardCache;
 import cn.edu.cuit.linker.message.Request;

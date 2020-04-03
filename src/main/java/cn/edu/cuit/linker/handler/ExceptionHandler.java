@@ -21,6 +21,7 @@ public class ExceptionHandler {
         response.setCode(code);
         response.setStatus(status);
         response.setContentType(HttpContentType.TEXT_HTML);
+        response.setCharacterEncoding(FatcatSetting.CHARSET_STRING);
         byte[] body;
         try {
             // 读取错误页

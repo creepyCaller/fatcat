@@ -1,4 +1,4 @@
-package cn.edu.cuit.fatcat.container;
+package cn.edu.cuit.fatcat.loader;
 
 import cn.edu.cuit.linker.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;

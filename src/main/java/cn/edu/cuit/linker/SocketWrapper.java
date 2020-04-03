@@ -1,13 +1,13 @@
 package cn.edu.cuit.linker;
 
+import cn.edu.cuit.fatcat.RecycleAble;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.Socket;
 
 @Slf4j
-public class SocketWrapper implements Closeable {
-
+public class SocketWrapper implements Closeable, RecycleAble {
     private Socket socket;
 
     public SocketWrapper(Socket socket) {
@@ -29,5 +29,10 @@ public class SocketWrapper implements Closeable {
     @Override
     public void close() throws IOException {
         this.socket.close();
+    }
+
+    @Override
+    public void recycle() {
+
     }
 }

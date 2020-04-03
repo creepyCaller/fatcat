@@ -5,6 +5,7 @@ import cn.edu.cuit.fatcat.container.servlet.Mapping;
 import cn.edu.cuit.fatcat.container.servlet.ServletModel;
 import cn.edu.cuit.fatcat.container.servlet.Servlets;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
+import cn.edu.cuit.linker.Server;
 import cn.edu.cuit.linker.util.FileUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -76,7 +77,7 @@ public class WebAppXMLLoader implements LifeCycle {
                     }
                 }
             }
-            Servlets.putServlet(servletModel.getServletName(), servletModel);
+            Server.servlets.putServlet(servletModel.getServletName(), servletModel);
         }
     }
 

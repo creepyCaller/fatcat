@@ -10,7 +10,6 @@ import cn.edu.cuit.linker.io.standard.StandardWriter;
 import cn.edu.cuit.linker.io.Writer;
 import cn.edu.cuit.linker.message.Request;
 import cn.edu.cuit.linker.message.Response;
-import cn.edu.cuit.linker.service.Dispatcher;
 import cn.edu.cuit.linker.adapter.RequestAdapter;
 import cn.edu.cuit.linker.adapter.ResponseAdapter;
 import cn.edu.cuit.fatcat.setting.FatcatSetting;
@@ -43,33 +42,31 @@ public class HttpHandler implements Runnable {
     public void run() {
         try(Reader reader = new StandardReader(socketWrapper.getInputStream());
             Writer writer = new StandardWriter(socketWrapper.getOutputStream())) {
-            RequestAdapter requestAdapter = new RequestAdapter();
-            ResponseAdapter responseAdapter = new ResponseAdapter();
             String requestText = reader.readText();
-            request = requestAdapter.getRequest(requestText); // 构造请求报文对象
-            response = Response.standardResponseMessageHead(); // 构造标准响应头
+            request = Server.requestAdapter.getRequest(requestText);
+            response = Response.standardResponse();
             init(); // 对请求和响应进行初始化
             String requestServletName = Mapping.getServletName(request.getDirection());
             if (requestServletName != null) {
                 // 如果是请求Servlet(暂未实现)(Servlet容器模块):
                 // TODO: 每个请求对应的fatcat实例,由池分配
                 // TODO: 使用ResponseAdapter转换为响应报文再write
-                LifeCycle fatcat = new Fatcat(request, response, socketWrapper);
+                LifeCycle fatcat = new Fatcat(request, response);
                 fatcat.start();
             } else {
                 // 如果是请求资源(请求资源的话就统一是二进制流)(反向代理模块):
                 String suffix = FileUtil.getFileSuffix(request.getDirection());
                 String contentType = ResponseMessageUtil.getContentType(suffix); // 判断文件类型
+                response.setContentType(contentType);
                 if (contentType.startsWith("text/") || contentType.startsWith("application/")) {
                     // 判断是二进制流还是文本文件
                     // 如果是文本文件,就设置响应头的编码类型
-                    // TODO:这个判断需要改进
+                    // TODO:这个判断需要改进（意思是多几个clause）
                     response.setCharacterEncoding(FatcatSetting.CHARSET_STRING);
                 } else {
                     // 如果是字节流就设置流长度
                     response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
                 }
-                response.setContentType(contentType);
                 writer.write(request, response);
             }
         } catch (Throwable e) {
