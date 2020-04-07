@@ -1,17 +1,16 @@
 package cn.edu.cuit.fatcat.loader;
 
-import cn.edu.cuit.fatcat.LifeCycle;
+import cn.edu.cuit.fatcat.Caller;
+import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.Mapping;
+import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.container.servlet.ServletModel;
-import cn.edu.cuit.fatcat.container.servlet.Servlets;
-import cn.edu.cuit.fatcat.setting.FatcatSetting;
-import cn.edu.cuit.linker.Server;
-import cn.edu.cuit.linker.util.FileUtil;
+import cn.edu.cuit.fatcat.util.FileUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class WebAppXMLLoader implements LifeCycle {
+public class WebAppXMLLoader implements Caller {
     private Document webxml;
 
     @Override
@@ -77,7 +76,7 @@ public class WebAppXMLLoader implements LifeCycle {
                     }
                 }
             }
-            Server.servlets.putServlet(servletModel.getServletName(), servletModel);
+            ServletCollector.getInstance().putServlet(servletModel.getServletName(), servletModel);
         }
     }
 
@@ -89,12 +88,12 @@ public class WebAppXMLLoader implements LifeCycle {
             for (int i = 0; i < contextParams.getLength() ; ++i) {
                 String paramName = paramNames.item(i).getFirstChild().getNodeValue();
                 String paramValue = paramValues.item(i).getFirstChild().getNodeValue();
-                FatcatSetting.CONTEXT_PARAM.put(paramName, paramValue);
+                Setting.CONTEXT_PARAM.put(paramName, paramValue);
             }
         }
         NodeList displayName = webxml.getElementsByTagName("display-name");
         if (displayName.getLength() > 0) {
-            FatcatSetting.CONTEXT_PARAM.put("display-name", displayName.item(0).getFirstChild().getNodeValue());
+            Setting.CONTEXT_PARAM.put("display-name", displayName.item(0).getFirstChild().getNodeValue());
         }
     }
 
@@ -106,7 +105,7 @@ public class WebAppXMLLoader implements LifeCycle {
             for (int i = 0; i < errorPages.getLength() ; ++i) {
                 Integer errorCode = Integer.valueOf(errorCodes.item(i).getFirstChild().getNodeValue());
                 String pageDir = pageDirs.item(i).getFirstChild().getNodeValue();
-                FatcatSetting.ERROR_PAGES.put(errorCode, pageDir);
+                Setting.ERROR_PAGES.put(errorCode, pageDir);
             }
         }
     }
@@ -117,7 +116,7 @@ public class WebAppXMLLoader implements LifeCycle {
             NodeList welcomeFiles = webxml.getElementsByTagName("welcome-file");
             for (int i = 0; i < welcomeFiles.getLength() ; ++i) {
                 String welcomePage = welcomeFiles.item(i).getFirstChild().getNodeValue();
-                FatcatSetting.WELCOME_LIST.add(welcomePage);
+                Setting.WELCOME_LIST.add(welcomePage);
             }
         }
     }

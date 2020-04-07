@@ -1,7 +1,7 @@
 package cn.edu.cuit.fatcat.embed;
 
-import cn.edu.cuit.linker.message.Request;
-import cn.edu.cuit.linker.message.Response;
+import cn.edu.cuit.fatcat.message.Request;
+import cn.edu.cuit.fatcat.message.Response;
 
 /**
  * 自带的错误页，在指定的错误页无法读取时候使用

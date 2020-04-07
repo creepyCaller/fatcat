@@ -5,8 +5,8 @@ import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.fatcat.http.HttpProtocol;
 import cn.edu.cuit.fatcat.http.HttpStatusCode;
 import cn.edu.cuit.fatcat.http.HttpStatusDescription;
-import cn.edu.cuit.linker.message.Request;
-import cn.edu.cuit.linker.message.Response;
+import cn.edu.cuit.fatcat.message.Request;
+import cn.edu.cuit.fatcat.message.Response;
 import java.io.PrintWriter;
 import java.util.Date;
 

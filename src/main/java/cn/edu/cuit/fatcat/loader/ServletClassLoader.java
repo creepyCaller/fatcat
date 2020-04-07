@@ -1,11 +1,10 @@
 package cn.edu.cuit.fatcat.loader;
 
-import cn.edu.cuit.fatcat.container.servlet.Servlets;
-import cn.edu.cuit.linker.Server;
+import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ServletClassLoader extends FatcatClassLoader {
+public class ServletClassLoader extends FatCatClassLoader {
 
     /**
      * 2020/3/23 2:41
@@ -25,7 +24,7 @@ public class ServletClassLoader extends FatcatClassLoader {
         if (cls == null) {
             throw new ClassNotFoundException(name);
         }
-        if (Server.servlets.isRegistered(cls.getName())) {
+        if (ServletCollector.getInstance().isRegistered(cls.getName())) {
             log.info("{} is registered", name);
             return cls;
         }

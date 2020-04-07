@@ -22,7 +22,7 @@
     <!-- Servlet -->
     <servlet>
         <servlet-name>TestServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
+        <servlet-class>cn.edu.cuit.test.TestServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
         <init-param>
             <param-name>param1</param-name>
@@ -40,17 +40,7 @@
 
     <servlet-mapping>
         <servlet-name>TestServlet</servlet-name>
-        <url-pattern>/servlet</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FakeServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>FakeServlet</servlet-name>
-        <url-pattern>/fake</url-pattern>
+        <url-pattern>/test</url-pattern>
     </servlet-mapping>
 	
 	<!-- 欢迎页列表 -->

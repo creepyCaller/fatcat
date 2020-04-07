@@ -1,6 +1,5 @@
 package cn.edu.cuit.fatcat.container.servlet;
 
-import cn.edu.cuit.linker.Server;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +34,8 @@ public class ServletModel implements ServletConfig {
         if (init) {
             return servletInstance;
         } else {
-            return Server.servletInstanceManager.getServletInstance(this);
-        }
+            return ServletInstanceManager.getInstance().getServletInstance(this);
+    }
     }
 
     /**
@@ -61,7 +60,7 @@ public class ServletModel implements ServletConfig {
      */
     @Override
     public ServletContext getServletContext() {
-        return Server.servlets;
+        return ServletCollector.getInstance();
     }
 
     /**

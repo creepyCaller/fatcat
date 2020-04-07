@@ -55,7 +55,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>Libs/</classpathPrefix>
-                            <mainClass>cn.edu.cuit.fatcat.launch.Launcher</mainClass>
+                            <mainClass>cn.edu.cuit.fatcat.Main</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>/</Class-Path>
