@@ -3,6 +3,7 @@ package cn.edu.cuit.fatcat.message;
 import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
+import cn.edu.cuit.fatcat.io.SocketWrapper;
 import lombok.*;
 import javax.servlet.*;
 import javax.servlet.annotation.MultipartConfig;
@@ -22,8 +23,6 @@ import java.util.*;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Request implements HttpServletRequest, RecycleAble {
     private String method;
 
@@ -33,15 +32,19 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String body;
 
-    private Map<String, Enumeration<String>> header;
+    private Map<String, Vector<String>> headers;
 
-    private List<Cookie> cookies;
+    private Vector<String> headerNames;
+
+    private Cookie[] cookies;
 
     private String context;
 
     private Boolean committed;
 
     private Response response;
+
+    private SocketWrapper socketWrapper;
 
     @Override
     public String toString() {
@@ -81,7 +84,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public Cookie[] getCookies() {
-        return new Cookie[0];
+        return cookies;
     }
 
     /**
@@ -138,6 +141,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getHeader(String name) {
+        Enumeration<String> values = getHeaders(name);
+        if (values != null && values.hasMoreElements()) {
+            return values.nextElement();
+        }
         return null;
     }
 
@@ -167,7 +174,11 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public Enumeration<String> getHeaders(String name) {
-        return header.get(name);
+        Vector<String> value = headers.get(name);
+        if (value != null) {
+            return value.elements();
+        }
+        return null;
     }
 
     /**
@@ -189,7 +200,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public Enumeration<String> getHeaderNames() {
-        return null;
+        if (headerNames == null) {
+            headerNames = new Vector<>(headers.keySet());
+        }
+        return headerNames.elements();
     }
 
     /**
@@ -213,7 +227,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getIntHeader(String name) {
-        return 0;
+        return Integer.parseInt(getHeader(name));
     }
 
     /**
@@ -967,7 +981,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getServerName() {
-        return null;
+        return getClass().getName();
     }
 
     /**
@@ -980,7 +994,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getServerPort() {
-        return 0;
+        return Setting.PORT;
     }
 
     /**
@@ -1000,7 +1014,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public BufferedReader getReader() throws IOException {
-        return null;
+        return socketWrapper.getBufferedReader();
     }
 
     /**

@@ -52,9 +52,11 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     private SocketWrapper socketWrapper;
 
-    private Boolean useWriter;
+    private Boolean useWriter; // 如果使用writer，就不能使用OutputStream
 
     private PrintWriter printWriter;
+
+    private Boolean useStream; // 如果使用stream，就不能使用writer
 
     private OutputStream outputStream;
 
@@ -734,7 +736,7 @@ public class Response implements HttpServletResponse, RecycleAble {
     @Override
     public PrintWriter getWriter() throws IOException {
         if (printWriter == null) {
-            printWriter = new FatCatWriter(getOutputStream(), false);
+            printWriter = socketWrapper.getPrintWriter();
         }
         return printWriter;
     }
@@ -760,7 +762,7 @@ public class Response implements HttpServletResponse, RecycleAble {
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
         if (outputStream == null) {
-            outputStream = new FatCatOutPutStream();
+            outputStream = socketWrapper.getOutputStream();
         }
         return (ServletOutputStream) outputStream;
     }
@@ -870,16 +872,21 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .status(HttpStatusDescription.OK)
                 .headers(new HashMap<>())
                 .cookies(new ArrayList<>())
+                .useWriter(false)
+                .useStream(false)
                 .build();
         resp.setHeader("Server", "FatCat/0.2");
         resp.setDateHeader("Data", System.currentTimeMillis());
         return resp;
     }
 
+    /**
+     * 为静态代理部分保留
+     * @return 空体响应
+     */
     public String getResponseHeadString() {
         return protocol + " " + code + " " + status + "\r\n" +
-                this.getParamString() +
-                "\r\n";
+               this.getParamString() + "\r\n";
     }
 
     private String getParamString() {
@@ -910,5 +917,37 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public Boolean getCommitted() {
+        return committed;
+    }
+
+    public void setCommitted(Boolean committed) {
+        this.committed = committed;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    public Boolean getUseWriter() {
+        return useWriter;
+    }
+
+    public void setUseWriter(Boolean useWriter) {
+        this.useWriter = useWriter;
+    }
+
+    public Boolean getUseStream() {
+        return useStream;
+    }
+
+    public void setUseStream(Boolean useStream) {
+        this.useStream = useStream;
     }
 }

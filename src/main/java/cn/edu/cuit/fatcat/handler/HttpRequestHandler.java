@@ -19,7 +19,7 @@ import java.net.ServerSocket;
 public class HttpRequestHandler implements Runnable {
 
     /**
-     * 用来承载一个Server实例的Runnable接口实现类
+     * Http请求处理
      *
      * @see Thread#run()
      */

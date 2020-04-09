@@ -17,8 +17,8 @@ public class RequestAdapter {
         return instance;
     }
 
-    public Request getRequest(String request) {
-        String[] requestSpiltHeaderAndBody = request.split("\r\n\r\n", 2);
+    public Request getRequest(String requestContext) {
+        String[] requestSpiltHeaderAndBody = requestContext.split("\r\n\r\n", 2);
         String body = "";
         if (requestSpiltHeaderAndBody.length == 2) {
             // 长度为2就说明存在body
@@ -33,20 +33,21 @@ public class RequestAdapter {
         if (s.length > 1) {
             pathVariable = s[1];
         }
-        Map<String, Enumeration<String>> header = new HashMap<>();
-        this.getParamFromMessage(header, requestHeaderLines);
+        Map<String, Vector<String>> headers = new HashMap<>();
+        getParamFromMessage(headers, requestHeaderLines);
         String protocol = firstLine[2];
         if (s.length > 1) {
-            this.getParamFromURL(header, pathVariable);
+            getParamFromURL(headers, pathVariable);
         }
-        this.getParamFromBody(header, body);
+        getParamFromBody(headers, body);
         return Request.builder()
                 .method(method)
                 .direction(path)
                 .protocol(protocol)
                 .body(body)
-                .header(header)
-                .context(request)
+                .headers(headers)
+                .context(requestContext)
+                .cookies(null) // TODO: Cookies
                 .build();
     }
 
@@ -54,17 +55,17 @@ public class RequestAdapter {
      * 从报文头中分割参数
      * @param message 报文头按行分割
      */
-    private void getParamFromMessage(Map<String, Enumeration<String>> header, String[] message) {
+    private void getParamFromMessage(Map<String, Vector<String>> header, String[] message) {
         for (int i = 1; i < message.length; ++i) {
             String[] kv = message[i].split(": ", 2);
             if (kv.length == 2) {
-                this.addParam(header, kv[0], kv[1]);
+                addParam(header, kv[0], kv[1]);
             }
         }
     }
 
-    private void getParamFromBody(Map<String, Enumeration<String>> header, String body) {
-        this.getParamFromURL(header, body);
+    private void getParamFromBody(Map<String, Vector<String>> header, String body) {
+        getParamFromURL(header, body);
     }
 
     /**
@@ -76,28 +77,25 @@ public class RequestAdapter {
      *
      * @param variable 参数团
      */
-    private void getParamFromURL(Map<String, Enumeration<String>> header, String variable) {
+    private void getParamFromURL(Map<String, Vector<String>> header, String variable) {
         String[] s = variable.split("&");
         for (String iter : s) {
             String[] kv = iter.split("=", 2);
             if (kv.length == 2) {
-                this.addParam(header, kv[0], kv[1]);
+                addParam(header, kv[0], kv[1]);
             }
         }
     }
 
-    private void addParam(Map<String, Enumeration<String>> header, String key, String value) {
-        Enumeration<String> enumeration = header.get(key);
-        Vector<String> vector = new Vector<>();
-        if (enumeration != null) {
-            while (enumeration.hasMoreElements()) {
-                vector.add(enumeration.nextElement());
-            }
-            vector.add(value);
+    private void addParam(Map<String, Vector<String>> header, String key, String value) {
+        Vector<String> storedValue = header.get(key);
+        if (storedValue != null) {
+            storedValue.add(value);
         } else {
-            vector.add(value);
+            storedValue = new Vector<>();
+            storedValue.add(value);
         }
-        header.put(key, vector.elements());
+        header.put(key, storedValue);
     }
 
 }

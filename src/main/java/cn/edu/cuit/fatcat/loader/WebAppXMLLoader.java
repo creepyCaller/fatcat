@@ -2,7 +2,7 @@ package cn.edu.cuit.fatcat.loader;
 
 import cn.edu.cuit.fatcat.Caller;
 import cn.edu.cuit.fatcat.Setting;
-import cn.edu.cuit.fatcat.container.servlet.Mapping;
+import cn.edu.cuit.fatcat.container.servlet.ServletMapping;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.container.servlet.ServletModel;
 import cn.edu.cuit.fatcat.util.FileUtil;
@@ -35,11 +35,11 @@ public class WebAppXMLLoader implements Caller {
                     }
                 }
             }
-            Mapping.setMapping(urlPattern, servletName);
+            ServletMapping.getInstance().setMapping(urlPattern, servletName);
         }
     }
 
-    private void initServlets() {
+    private void initServlets() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         NodeList servlets = webxml.getElementsByTagName("servlet");
         for (int i = 0; i < servlets.getLength() ; ++i) {
             Node servletInfo = servlets.item(i);
@@ -51,7 +51,7 @@ public class WebAppXMLLoader implements Caller {
                             servletModel.setServletName(node.getFirstChild().getNodeValue());
                             break;
                         case "servlet-class":
-                            servletModel.setServletClazz(node.getFirstChild().getNodeValue());
+                            servletModel.setClassName(node.getFirstChild().getNodeValue());
                             break;
                         case "load-on-startup":
                             servletModel.setLoadOnStartup(Integer.valueOf(node.getFirstChild().getNodeValue()));

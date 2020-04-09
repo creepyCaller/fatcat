@@ -1,11 +1,13 @@
 package cn.edu.cuit.fatcat.util;
 
+import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.handler.ExceptionHandler;
+import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.http.HttpStatusCode;
 import cn.edu.cuit.fatcat.http.HttpStatusDescription;
 import cn.edu.cuit.fatcat.io.CacheImpl;
-import cn.edu.cuit.fatcat.io.standard.StandardReader;
+import cn.edu.cuit.fatcat.io.io.StandardReader;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -132,19 +134,51 @@ public class FileUtil {
         }
     }
 
-    public static byte[] readBinStr(Request request, Response response) {
+    public static byte[] readBinStr(Request request, Response response) throws IOException {
+        String direction = Dispatcher.getInstance().dispatch(request.getDirection()); // 最先处理服务器端转发
         byte[] biStr;
-        try {
-            // 读出direction路径下的文件
-            biStr = FileUtil.readBinStr(request.getDirection());
-        } catch (FileNotFoundException e) {
-            // 404 Not Found
-            log.info("找不到文件: {}", request.getDirection());
-            biStr = ExceptionHandler.handleException(request, response, HttpStatusCode.NOT_FOUND, HttpStatusDescription.NOT_FOUND);
-        } catch (IOException e) {
-            // 500 Internal Server Error
-            biStr = ExceptionHandler.handleException(request, response, HttpStatusCode.INTERNAL_SERVER_ERROR, HttpStatusDescription.INTERNAL_SERVER_ERROR);
+        if (request.getHeader(HttpHeader.RANGE) != null) {
+            // TODO: 解耦!
+            String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
+            if (kv.length == 2) {
+                if (kv[0].equals("bytes")) {
+                    String[] kv1 = kv[1].split("-");
+                    if (kv1.length == 2) {
+                        Integer src = Integer.parseInt(kv1[0]);
+                        Integer dst = Integer.parseInt(kv1[1]);
+                        byte[] ctx = FileUtil.readBinStr(direction);
+                        biStr = new byte[dst - src];
+                        try {
+                            for (int i = src, j = 0; i < dst; ++i, ++j) {
+                                biStr[j] = ctx[i];
+                            }
+                            response.setHeader(HttpHeader.CONTENT_RANGE, src.toString() + "-" + dst.toString() +  "/" + ctx.length);
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                            biStr = FileUtil.readBinStr(direction);
+                        }
+                    } else {
+                        biStr = FileUtil.readBinStr(direction);
+                    }
+                } else {
+                    biStr = FileUtil.readBinStr(direction);
+                }
+            } else {
+                biStr = FileUtil.readBinStr(direction);
+            }
+        } else {
+            biStr = FileUtil.readBinStr(direction);
         }
+        // 读出direction路径下的文件
+        String suffix = getFileSuffix(direction);
+        String contentType = ResponseMessageUtil.getContentType(suffix); // 判断文件类型
+        response.setContentType(contentType);
+        if (contentType.startsWith("text/") || contentType.startsWith("application/")) {
+            // 判断是二进制流还是文本文件
+            // 如果是文本文件,就设置响应头的编码类型
+            // TODO:这个判断需要改进（意思是多几个clause）
+            response.setCharacterEncoding(Setting.CHARSET_STRING);
+        }
+        response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
         return biStr;
     }
 

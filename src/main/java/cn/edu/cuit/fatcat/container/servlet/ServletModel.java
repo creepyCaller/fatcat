@@ -2,7 +2,6 @@ package cn.edu.cuit.fatcat.container.servlet;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -15,7 +14,7 @@ import java.util.Vector;
 @Slf4j
 public class ServletModel implements ServletConfig {
     private String servletName; // Servlet的名字
-    private String servletClazz; // 类名，连着包名的那种
+    private String className; // 类名，连着包名的那种
     private Integer loadOnStartup = -1; // 是否在容器初始化时加载的flag
     private Map<String, String> initParam; // 参数
     private volatile Servlet servletInstance = null; // 实例，只允许单例
@@ -30,7 +29,7 @@ public class ServletModel implements ServletConfig {
         this.initParam.put(paramName, paramValue);
     }
 
-    public Servlet getInstance() throws Throwable {
+    public Servlet getInstance() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (init) {
             return servletInstance;
         } else {

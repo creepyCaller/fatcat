@@ -18,6 +18,7 @@ import java.util.*;
 
 @Slf4j
 public class ServletCollector implements Collector, ServletContext {
+    // TODO: 设置锁防止脏数据
     private final Map<String, ServletModel> servletCollector = new HashMap<>();
     private final Set<String> registered = new HashSet<>();
     private static ServletCollector instance;
@@ -31,10 +32,13 @@ public class ServletCollector implements Collector, ServletContext {
         return instance;
     }
 
-    public void putServlet(String servletName, ServletModel servletModel) {
+    public void putServlet(String servletName, ServletModel servletModel) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         log.info("put({}, {})", servletName, servletModel.toString());
+        registered.add(servletModel.getClassName());
+        if (servletModel.getLoadOnStartup() > 0) {
+            servletModel.setServletInstance(servletModel.getInstance());
+        }
         servletCollector.put(servletName, servletModel);
-        registered.add(servletModel.getServletClazz());
     }
 
     public ServletModel getServletModel(String servletName) throws ServletException {
@@ -50,17 +54,17 @@ public class ServletCollector implements Collector, ServletContext {
         return servletCollector.containsKey(servletName);
     }
 
-    public String getClazzName(String servletName) throws ServletException {
-        return getServletModel(servletName).getServletClazz();
+    public String getClassName(String servletName) throws ServletException {
+        return getServletModel(servletName).getClassName();
     }
 
     /**
      * 判断是否已经在web.xml注册
-     * @param servletClazz
+     * @param className
      * @return
      */
-    public boolean isRegistered(String servletClazz) {
-        return registered.contains(servletClazz);
+    public boolean isRegistered(String className) {
+        return registered.contains(className);
     }
 
     /**
@@ -423,7 +427,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public Enumeration<Servlet> getServlets() {
-        return null;
+        return (new Vector<Servlet>()).elements();
     }
 
     /**
@@ -438,7 +442,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public Enumeration<String> getServletNames() {
-        return null;
+        return (new Vector<String>()).elements();
     }
 
     /**
