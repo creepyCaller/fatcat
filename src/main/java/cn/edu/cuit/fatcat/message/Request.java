@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat.message;
 
+import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
@@ -30,11 +31,13 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String protocol;
 
-    private String body;
-
     private Map<String, Vector<String>> headers;
 
     private Vector<String> headerNames;
+
+    private Map<String, String[]> parameters;
+
+    private Vector<String> parameterNames;
 
     private Cookie[] cookies;
 
@@ -901,6 +904,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getParameter(String name) {
+        String[] value = getParameterValues(name);
+        if (value != null && value.length > 0) {
+            return value[0];
+        }
         return null;
     }
 
@@ -917,7 +924,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public Enumeration<String> getParameterNames() {
-        return null;
+        if (parameterNames == null) {
+            parameterNames = new Vector<>(parameters.keySet());
+        }
+        return parameterNames.elements();
     }
 
     /**
@@ -936,7 +946,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String[] getParameterValues(String name) {
-        return new String[0];
+        return parameters.get(name);
     }
 
     /**
@@ -953,7 +963,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public Map<String, String[]> getParameterMap() {
-        return null;
+        return parameters;
     }
 
     /**
@@ -981,7 +991,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getServerName() {
-        return getClass().getName();
+        return getHeader("Host");
     }
 
     /**
@@ -994,7 +1004,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getServerPort() {
-        return Setting.PORT;
+        return socketWrapper.getSocket().getLocalPort();
     }
 
     /**
@@ -1028,7 +1038,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRemoteAddr() {
-        return null;
+        return socketWrapper.getSocket().getInetAddress().getHostAddress();
     }
 
     /**
@@ -1044,7 +1054,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRemoteHost() {
-        return null;
+        return socketWrapper.getSocket().getInetAddress().getHostName();
     }
 
     /**
@@ -1161,7 +1171,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public RequestDispatcher getRequestDispatcher(String path) {
-        return null;
+        return Dispatcher.INSTANCE;
     }
 
     /**
@@ -1221,7 +1231,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getLocalPort() {
-        return Setting.PORT;
+        return socketWrapper.getSocket().getLocalPort();
     }
 
     /**

@@ -3,6 +3,9 @@ package cn.edu.cuit.fatcat.container.servlet;
 import cn.edu.cuit.fatcat.loader.FatCatClassLoader;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
+
 @Slf4j
 public class ServletClassLoader extends FatCatClassLoader {
 
@@ -24,13 +27,16 @@ public class ServletClassLoader extends FatCatClassLoader {
         if (cls == null) {
             throw new ClassNotFoundException(name);
         }
-        if (ServletCollector.getInstance().isRegistered(cls.getName())) {
-            log.info("{} is registered", name);
-            return cls;
-        } else {
-            log.info("{} is not registered!", name);
-            throw new ClassNotFoundException(name);
+        if (Servlet.class.isAssignableFrom(cls)) {
+            if (ServletCollector.getInstance().isRegistered(cls.getName())) {
+                log.info("{} is registered", name);
+                return cls;
+            } else {
+                log.info("{} is not registered!", name);
+                throw new ClassNotFoundException(name);
+            }
         }
+        return cls;
     }
 
 }

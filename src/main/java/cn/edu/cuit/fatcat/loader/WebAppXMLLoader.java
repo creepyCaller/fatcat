@@ -4,7 +4,7 @@ import cn.edu.cuit.fatcat.Caller;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletMapping;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
-import cn.edu.cuit.fatcat.container.servlet.ServletModel;
+import cn.edu.cuit.fatcat.container.servlet.ServletContainer;
 import cn.edu.cuit.fatcat.util.FileUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -35,7 +35,7 @@ public class WebAppXMLLoader implements Caller {
                     }
                 }
             }
-            ServletMapping.getInstance().setMapping(urlPattern, servletName);
+            ServletMapping.INSTANCE.setMapping(urlPattern, servletName);
         }
     }
 
@@ -43,18 +43,18 @@ public class WebAppXMLLoader implements Caller {
         NodeList servlets = webxml.getElementsByTagName("servlet");
         for (int i = 0; i < servlets.getLength() ; ++i) {
             Node servletInfo = servlets.item(i);
-            ServletModel servletModel = new ServletModel();
+            ServletContainer servletContainer = new ServletContainer();
             for (Node node = servletInfo.getFirstChild(); node != null; node = node.getNextSibling()) {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     switch (node.getNodeName()) {
                         case "servlet-name":
-                            servletModel.setServletName(node.getFirstChild().getNodeValue());
+                            servletContainer.setServletName(node.getFirstChild().getNodeValue());
                             break;
                         case "servlet-class":
-                            servletModel.setClassName(node.getFirstChild().getNodeValue());
+                            servletContainer.setClassName(node.getFirstChild().getNodeValue());
                             break;
                         case "load-on-startup":
-                            servletModel.setLoadOnStartup(Integer.valueOf(node.getFirstChild().getNodeValue()));
+                            servletContainer.setLoadOnStartup(Integer.valueOf(node.getFirstChild().getNodeValue()));
                             break;
                         case "init-param":
                             String initParamName = null;
@@ -71,12 +71,12 @@ public class WebAppXMLLoader implements Caller {
                                     }
                                 }
                             }
-                            servletModel.setInitParam(initParamName, initParamValue);
+                            servletContainer.setInitParam(initParamName, initParamValue);
                             break;
                     }
                 }
             }
-            ServletCollector.getInstance().putServlet(servletModel.getServletName(), servletModel);
+            ServletCollector.getInstance().putServletModel(servletContainer.getServletName(), servletContainer);
         }
     }
 

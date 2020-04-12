@@ -19,7 +19,7 @@ import java.util.*;
 @Slf4j
 public class ServletCollector implements Collector, ServletContext {
     // TODO: 设置锁防止脏数据
-    private final Map<String, ServletModel> servletCollector = new HashMap<>();
+    private final Map<String, ServletContainer> servletCollector = new HashMap<>();
     private final Set<String> registered = new HashSet<>();
     private static ServletCollector instance;
 
@@ -27,26 +27,30 @@ public class ServletCollector implements Collector, ServletContext {
 
     public static ServletCollector getInstance() {
         if (instance == null) {
-            instance = new ServletCollector();
+            synchronized (ServletCollector.class) {
+                if (instance == null) {
+                    instance = new ServletCollector();
+                }
+            }
         }
         return instance;
     }
 
-    public void putServlet(String servletName, ServletModel servletModel) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
-        log.info("put({}, {})", servletName, servletModel.toString());
-        registered.add(servletModel.getClassName());
-        if (servletModel.getLoadOnStartup() > 0) {
-            servletModel.setServletInstance(servletModel.getInstance());
+    public void putServletModel(String servletName, ServletContainer servletContainer) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+        log.info("putServletModel({}, {})", servletName, servletContainer.toString());
+        registered.add(servletContainer.getClassName());
+        if (servletContainer.getLoadOnStartup() != null && servletContainer.getLoadOnStartup() != 0) {
+            servletContainer.setInstance(servletContainer.getInstance());
         }
-        servletCollector.put(servletName, servletModel);
+        servletCollector.put(servletName, servletContainer);
     }
 
-    public ServletModel getServletModel(String servletName) throws ServletException {
-        ServletModel servletModel = servletCollector.get(servletName);
-        if (servletModel == null) {
-            throw new ServletException("not found: " + servletName);
+    public ServletContainer getServletModel(String servletName) throws ServletException {
+        ServletContainer servletContainer = servletCollector.get(servletName);
+        if (servletContainer == null) {
+            throw new ServletException("servlet not found : " + servletName);
         } else {
-            return servletModel;
+            return servletContainer;
         }
     }
 

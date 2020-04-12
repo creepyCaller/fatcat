@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
 
 /**
@@ -75,7 +77,11 @@ public class Setting implements Caller {
                 Setting.CHARSET_STRING = Setting.DEFAULT_CHARSET;
             }
         }
-        Setting.CHARSET = Charset.forName(Setting.CHARSET_STRING);
+        try {
+            Setting.CHARSET = Charset.forName(Setting.CHARSET_STRING);
+        } catch (UnsupportedCharsetException ignore) {
+            Setting.CHARSET = StandardCharsets.UTF_8;
+        }
         Setting.WAR = (String) settings.get("war");
         if (Setting.WAR == null) {
             log.warn("未设置待解压的WAR包");

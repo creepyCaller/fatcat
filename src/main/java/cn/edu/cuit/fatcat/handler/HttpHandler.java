@@ -23,12 +23,9 @@ import java.io.IOException;
  */
 @Slf4j
 public class HttpHandler implements RunnableFunctionalModule, RecycleAble {
-    private Request request;
-    private Response response;
     private SocketWrapper socketWrapper;
     private StandardReader reader;
-    private StandardWriter writer;
-    private Boolean close;
+    private boolean close;
 
     HttpHandler(SocketWrapper socketWrapper) {
         this.socketWrapper = socketWrapper;
@@ -57,7 +54,6 @@ public class HttpHandler implements RunnableFunctionalModule, RecycleAble {
         // TODO: 池分配
         try {
             reader = new StandardReader(socketWrapper.getInputStream());
-            writer = new StandardWriter(socketWrapper.getOutputStream());
         } catch (IOException e) {
             log.error(e.toString());
             e.printStackTrace();
@@ -71,23 +67,24 @@ public class HttpHandler implements RunnableFunctionalModule, RecycleAble {
     @Override
     public void work() {
         try {
-            request = RequestAdapter.getInstance().getRequest(reader.readRequestContext());
+            Request request = RequestAdapter.INSTANCE.getRequest(reader.readRequestContext());
             request.setSocketWrapper(socketWrapper);
-            close = isClose();
-            socketWrapper.getSocket().setKeepAlive(!close);
-            response = Response.standardResponse();
+            socketWrapper.setRequest(request);
+            Response response = Response.standardResponse();
             response.setSocketWrapper(socketWrapper);
+            socketWrapper.setResponse(response);
+            close = isClose(request, response);
+            socketWrapper.getSocket().setKeepAlive(!close);
             if (close) {
                 response.setHeader(HttpHeader.CONNECTION, HttpConnection.CLOSE);
             }
-            if (ServletMapping.getInstance().getServletName(request) != null) {
+            if (ServletMapping.INSTANCE.getServletName(request) != null) {
                 // Servlet容器:
-                // TODO: 每个请求对应的ServletCaller实例,由池分配
                 // TODO: Chunked
-                (new ServletCaller(request, response)).start();
+                ServletCaller.INSTANCE.callServlet(request, response);
             } else {
                 // 反向代理:
-                // TODO: Content-Length
+                StandardWriter writer = new StandardWriter(socketWrapper.getOutputStream());
                 writer.write(request, response);
             }
         } catch (Throwable e) {
@@ -96,9 +93,11 @@ public class HttpHandler implements RunnableFunctionalModule, RecycleAble {
         }
     }
 
-    private Boolean isClose() {
-//        return HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION)); // TODO: 连接持续时间, 超时关闭, 反正就是主动关闭socket的办法
-        return true;
+    // TODO: 限制连接数，设置连接持续时间, 超时关闭
+    private boolean isClose(Request request, Response response) {
+//        return HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION));
+//        return true;
+        return false;
     }
 
     /**

@@ -7,21 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class ServletMapping {
-    private static ServletMapping instance;
-    private final Map<String, String> mapper = new HashMap<>();
+public enum ServletMapping {
+    INSTANCE;
 
-    private ServletMapping() {}
-
-    public static ServletMapping getInstance() {
-        if (instance == null) {
-            instance = new ServletMapping();
-        }
-        return instance;
-    }
+    private Map<String, String> mapper = new HashMap<>();
 
     public void setMapping(String urlPattern, String servletName) {
-        log.info("put({}, {})", urlPattern, servletName);
+        log.info("setMapping({}, {})", urlPattern, servletName);
         mapper.put(urlPattern, servletName);
     }
 

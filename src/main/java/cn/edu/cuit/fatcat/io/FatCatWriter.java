@@ -1,12 +1,49 @@
 package cn.edu.cuit.fatcat.io;
 
+import cn.edu.cuit.fatcat.message.Response;
 import java.io.*;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 
 public class FatCatWriter extends PrintWriter {
+    private StringBuilder buf;
+
+    private Response response;
+
+    private int bufferSize;
+
+    private static final byte[] nextLine = "\r\n".getBytes();
+
+    /**
+     * Clears the content of the underlying buffer in the response without
+     * clearing headers or status code. If the
+     * response has been committed, this method throws an
+     * <code>IllegalStateException</code>.
+     *
+     * @see #setBufferSize
+     * @see #getBufferSize
+     * @since Servlet 2.3
+     */
+    public void resetBuffer() {
+        bufferSize = 0;
+        if (buf != null) {
+            buf = new StringBuilder();
+        }
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
     /**
      * Creates a new PrintWriter, without automatic line flushing.
      *
@@ -75,44 +112,6 @@ public class FatCatWriter extends PrintWriter {
     @Override
     public void close() {
         super.close();
-    }
-
-    /**
-     * Flushes the stream if it's not closed and checks its error state.
-     *
-     * @return <code>true</code> if the print stream has encountered an error,
-     * either on the underlying output stream or during a format
-     * conversion.
-     */
-    @Override
-    public boolean checkError() {
-        return super.checkError();
-    }
-
-    /**
-     * Indicates that an error has occurred.
-     *
-     * <p> This method will cause subsequent invocations of {@link
-     * #checkError()} to return <tt>true</tt> until {@link
-     * #clearError()} is invoked.
-     */
-    @Override
-    protected void setError() {
-        super.setError();
-    }
-
-    /**
-     * Clears the error state of this stream.
-     *
-     * <p> This method will cause subsequent invocations of {@link
-     * #checkError()} to return <tt>false</tt> until another write
-     * operation fails and invokes {@link #setError()}.
-     *
-     * @since 1.6
-     */
-    @Override
-    protected void clearError() {
-        super.clearError();
     }
 
     /**
@@ -642,5 +641,12 @@ public class FatCatWriter extends PrintWriter {
     @Override
     public PrintWriter append(char c) {
         return super.append(c);
+    }
+
+    /**
+     * 刷新缓冲区
+     */
+    public void flushBuffer() {
+
     }
 }

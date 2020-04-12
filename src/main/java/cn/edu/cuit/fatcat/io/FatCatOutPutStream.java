@@ -1,11 +1,84 @@
 package cn.edu.cuit.fatcat.io;
 
+import cn.edu.cuit.fatcat.adapter.ResponseAdapter;
+import cn.edu.cuit.fatcat.message.Response;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.OutputStream;
 
+// TODO: 缓存
+
+/**
+ * ServletOutPutStream实现类
+ * @see javax.servlet.ServletOutputStream
+ */
 public class FatCatOutPutStream extends ServletOutputStream {
+    private static final String emptyChunkStr = "0\r\n\r\n";
+    private static final byte[] emptyChunk = emptyChunkStr.getBytes();
+    private static final String nextLineStr = "\r\n";
+    private static final byte[] nextLine = nextLineStr.getBytes();
+
+    /**
+     * 用于输出的输出流
+     */
+    private OutputStream out;
+
+    private Response response;
+
+    /**
+     * 缓冲区
+     */
+    private byte[] buffer;
+
+    /**
+     * 缓冲区大小
+     */
+    private int bufferSize;
+
+    /**
+     * 写入缓冲区的字节数
+     */
+    private int bufferCount;
+
+    private boolean initBuffer = false;
+
+    private boolean committed = false;
+
+    public FatCatOutPutStream(OutputStream out, int bufferSize) {
+        this.out = out;
+        this.bufferCount = 0;
+        this.bufferSize = bufferSize;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    /**
+     * 如果没有打印状态行和响应头和空行, 就打印
+     * @throws IOException
+     */
+    private void printHead() throws IOException {
+        if (!committed) {
+            byte[] head = ResponseAdapter.INSTANCE.getResponseHead(response).getBytes(response.getCharset());
+            out.write(head);
+            out.flush();
+            committed = true;
+            response.setCommitted();
+        }
+    }
+
+    /**
+     * 如果没有初始化buffer，就初始化
+     */
+    private void initBuffer() {
+        if (!initBuffer) {
+            buffer = new byte[bufferSize];
+            initBuffer = true;
+        }
+    }
+
     /**
      * Writes a <code>String</code> to the client,
      * without a carriage return-line feed (CRLF)
@@ -16,7 +89,12 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(String s) throws IOException {
-        super.print(s);
+        printHead();
+        initBuffer();
+        if (s == null) {
+            s = "null";
+        }
+        write(s.getBytes());
     }
 
     /**
@@ -30,7 +108,15 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(boolean b) throws IOException {
-        super.print(b);
+        printHead();
+        initBuffer();
+        String value;
+        if (b) {
+            value = "true";
+        } else {
+            value = "false";
+        }
+        write(value.getBytes());
     }
 
     /**
@@ -43,7 +129,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(char c) throws IOException {
-        super.print(c);
+        printHead();
+        initBuffer();
+        write(String.valueOf(c).getBytes());
     }
 
     /**
@@ -56,7 +144,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(int i) throws IOException {
-        super.print(i);
+        printHead();
+        initBuffer();
+        write(String.valueOf(i).getBytes());
     }
 
     /**
@@ -70,7 +160,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(long l) throws IOException {
-        super.print(l);
+        printHead();
+        initBuffer();
+        write(String.valueOf(l).getBytes());
     }
 
     /**
@@ -83,7 +175,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(float f) throws IOException {
-        super.print(f);
+        printHead();
+        initBuffer();
+        write(String.valueOf(f).getBytes());
     }
 
     /**
@@ -96,7 +190,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void print(double d) throws IOException {
-        super.print(d);
+        printHead();
+        initBuffer();
+        write(String.valueOf(d).getBytes());
     }
 
     /**
@@ -107,7 +203,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println() throws IOException {
-        super.println();
+        printHead();
+        initBuffer();
+        write(nextLine);
     }
 
     /**
@@ -119,7 +217,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(String s) throws IOException {
-        super.println(s);
+        print(s);
+        println();
     }
 
     /**
@@ -133,7 +232,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(boolean b) throws IOException {
-        super.println(b);
+        print(b);
+        println();
     }
 
     /**
@@ -145,7 +245,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(char c) throws IOException {
-        super.println(c);
+        print(c);
+        println();
     }
 
     /**
@@ -157,7 +258,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(int i) throws IOException {
-        super.println(i);
+        print(i);
+        println();
     }
 
     /**
@@ -169,7 +271,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(long l) throws IOException {
-        super.println(l);
+        print(l);
+        println();
     }
 
     /**
@@ -183,7 +286,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(float f) throws IOException {
-        super.println(f);
+        print(f);
+        println();
     }
 
     /**
@@ -196,7 +300,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void println(double d) throws IOException {
-        super.println(d);
+        print(d);
+        println();
     }
 
     /**
@@ -208,7 +313,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public boolean isReady() {
-        return false;
+        // TODO: isReady
+        return true;
     }
 
     /**
@@ -227,6 +333,7 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void setWriteListener(WriteListener writeListener) {
+        // TODO: setWriteListener
 
     }
 
@@ -239,6 +346,8 @@ public class FatCatOutPutStream extends ServletOutputStream {
      * <p>
      * Subclasses of <code>OutputStream</code> must provide an
      * implementation for this method.
+     * 这个意思是把b当作byte[32]的比特数组，只输出高8位，也就是byte[0] ~ byte[7],后24位忽略
+     * 不明为什么要这样做
      *
      * @param b the <code>byte</code>.
      * @throws IOException if an I/O error occurs. In particular,
@@ -247,7 +356,12 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void write(int b) throws IOException {
-
+        printHead();
+        initBuffer();
+        if (bufferCount >= buffer.length) {
+            flush();
+        }
+        buffer[bufferCount++] = (byte)b;
     }
 
     /**
@@ -262,7 +376,9 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void write(byte[] b) throws IOException {
-        super.write(b);
+        printHead();
+        initBuffer();
+        write(b, 0, b.length);
     }
 
     /**
@@ -295,7 +411,24 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        super.write(b, off, len);
+        printHead();
+        initBuffer();
+        if (len >= bufferSize) {
+            // 如果待写的长度大于缓冲区大小，那么就把缓冲区的数据flush后直接提交
+            /* If the request length exceeds the size of the output buffer,
+               flush the output buffer and then write the data directly.
+               In this way buffered streams will cascade harmlessly. */
+            flush();
+            writeChunk(b, off, len);
+            return;
+        }
+        if ((len + bufferCount) > bufferSize) {
+            // 如果缓冲区不够写
+            flush();
+        }
+        // 把数据写入buffer
+        System.arraycopy(b, off, buffer, bufferCount, len);
+        bufferCount += len;
     }
 
     /**
@@ -318,7 +451,58 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void flush() throws IOException {
-        super.flush();
+        printHead();
+        initBuffer();
+        if (bufferCount > 0) {
+            writeChunk(buffer, 0, bufferCount);
+            bufferCount = 0;
+        }
+    }
+
+    /**
+     * 块传输：边生成内容边传输
+     * 首先打印响应行、响应头、空行
+     * 再打印块，每个块分别是三个TCP帧：
+     * 第一个TCP帧：{十六进制的块长度}\r\n（声明需要接收的块长度，以\r\n开始）
+     * 第二个TCP帧：{块内容}（块内容，比特流）
+     * 第三个TCP帧：\r\n（当接收长度够了，碰到\r\n结束符时，收完一个块）
+     * 当服务器需要向浏览器告知已经传完时，需要传一个空块，这个块只需要一个TCP帧：
+     * 0\r\n\r\n，都是ASCII码
+     */
+    private void writeChunk(byte [] buf, int off, int len) throws IOException {
+        out.write((Integer.toHexString(len) + nextLineStr).getBytes());
+        out.flush();
+        out.write(buf, off, len);
+        out.flush();
+        out.write(nextLine);
+        out.flush();
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void writeEmptyChunk() throws IOException {
+        out.write(emptyChunk);
+        out.flush();
+    }
+
+    /**
+     * Clears the content of the underlying buffer in the response without
+     * clearing headers or status code. If the
+     * response has been committed, this method throws an
+     * <code>IllegalStateException</code>.
+     *
+     * @since Servlet 2.3
+     */
+    public void resetBuffer() {
+        if (response.isCommitted()) {
+            throw new IllegalStateException("Response has been committed !");
+        }
+        if (initBuffer) {
+            buffer = new byte[bufferSize];
+            bufferCount = 0;
+        }
     }
 
     /**
@@ -333,6 +517,6 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     @Override
     public void close() throws IOException {
-        super.close();
+        out.close();
     }
 }

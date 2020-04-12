@@ -13,10 +13,8 @@ package cn.edu.cuit.fatcat.container;
  *
  * 　　5 使用common类加载器在CATALINA_HOME/lib中加载
  */
-public class InstanceManager {
+public abstract class InstanceManager {
 
-    public Object getInstance(String clazzName){
-        return null;
-    }
+    public abstract Object getInstance(String className) throws Exception;
 
 }

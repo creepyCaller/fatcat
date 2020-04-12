@@ -1,6 +1,6 @@
 package cn.edu.cuit.fatcat;
 
-import cn.edu.cuit.fatcat.io.CacheImpl;
+import cn.edu.cuit.fatcat.io.Cache;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,19 +19,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * @date 2019/10/27
  * @since Fatcat 0.0.1
  */
-public class Dispatcher implements RequestDispatcher {
-    private Dispatcher() {}
+public enum Dispatcher implements RequestDispatcher {
+    INSTANCE;
 
     private final Map<String, String> dispatchMap = new HashMap<>();
-
-    private static Dispatcher instance;
-
-    public static Dispatcher getInstance() {
-        if (instance == null) {
-            instance = new Dispatcher();
-        }
-        return instance;
-    }
 
     // TODO: 在Setting.yml设置转发
 
@@ -80,7 +71,7 @@ public class Dispatcher implements RequestDispatcher {
     }
 
     private static boolean checkWelcomeFile(String welcome) {
-        if (CacheImpl.getInstance().get(welcome) != null) {
+        if (Cache.INSTANCE.get(welcome) != null) {
             return true;
         } else {
             File file = new File(Setting.SERVER_ROOT + welcome);

@@ -1,6 +1,5 @@
 package cn.edu.cuit.fatcat.container.servlet;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -10,31 +9,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-@Data
 @Slf4j
-public class ServletModel implements ServletConfig {
+public class ServletContainer implements ServletConfig {
     private String servletName; // Servlet的名字
     private String className; // 类名，连着包名的那种
-    private Integer loadOnStartup = -1; // 是否在容器初始化时加载的flag
+    private Integer loadOnStartup = 0; // 是否在容器初始化时加载的flag
     private Map<String, String> initParam; // 参数
-    private volatile Servlet servletInstance = null; // 实例，只允许单例
+    private Vector<String> InitParameterNames;
+    private volatile Servlet instance = null; // 实例，只允许单例
     private volatile boolean init = false; // 是否已经初始化
 
-    public ServletModel() {}
+    public ServletContainer() {}
 
     public void setInitParam(String paramName, String paramValue) {
-        if (this.initParam == null) {
-            this.initParam = new HashMap<>();
+        if (initParam == null) {
+            initParam = new HashMap<>();
         }
-        this.initParam.put(paramName, paramValue);
+        initParam.put(paramName, paramValue);
     }
 
     public Servlet getInstance() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        if (init) {
-            return servletInstance;
-        } else {
-            return ServletInstanceManager.getInstance().getServletInstance(this);
-    }
+        if (!init) {
+            synchronized (this) {
+                if (!init) {
+                    return ServletInstanceManager.INSTANCE.getServletInstance(this);
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -91,8 +93,56 @@ public class ServletModel implements ServletConfig {
      */
     @Override
     public Enumeration<String> getInitParameterNames() {
-        Vector<String> paramNames = new Vector<>();
-        initParam.forEach((key, value) -> paramNames.add(key));
-        return paramNames.elements();
+        if (initParam != null) {
+            if (InitParameterNames == null) {
+                InitParameterNames = new Vector<>(initParam.keySet());
+            }
+            return InitParameterNames.elements();
+        }
+        return null;
+    }
+
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Integer getLoadOnStartup() {
+        return loadOnStartup;
+    }
+
+    public void setLoadOnStartup(Integer loadOnStartup) {
+        this.loadOnStartup = loadOnStartup;
+    }
+
+    public Map<String, String> getInitParam() {
+        return initParam;
+    }
+
+    public void setInitParam(Map<String, String> initParam) {
+        this.initParam = initParam;
+    }
+
+    public void setInitParameterNames(Vector<String> initParameterNames) {
+        InitParameterNames = initParameterNames;
+    }
+
+    public void setInstance(Servlet instance) {
+        this.instance = instance;
+    }
+
+    public boolean isInit() {
+        return init;
+    }
+
+    public void setInit(boolean init) {
+        this.init = init;
     }
 }

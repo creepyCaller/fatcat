@@ -1,6 +1,7 @@
 package cn.edu.cuit.fatcat.message;
 
 import cn.edu.cuit.fatcat.RecycleAble;
+import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.http.*;
 import cn.edu.cuit.fatcat.io.FatCatOutPutStream;
 import cn.edu.cuit.fatcat.io.FatCatWriter;
@@ -9,14 +10,13 @@ import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -30,6 +30,10 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Response implements HttpServletResponse, RecycleAble {
+    private static final int defaultBufferSize = 8192;
+
+    private int bufferSize;
+
     private String protocol;
 
     private Integer code;
@@ -40,11 +44,11 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     private Boolean committed;
 
-    private Integer bufferSize;
+    private Charset charset;
 
     private String characterEncoding;
 
-    private Map<String, List<String>> headers; // TODO: Content-Length, Data, Server
+    private Map<String, List<String>> headers;
 
     private List<Cookie> cookies;
 
@@ -52,13 +56,13 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     private SocketWrapper socketWrapper;
 
-    private Boolean useWriter; // 如果使用writer，就不能使用OutputStream
+    private boolean useWriter; // 如果使用writer，就不能使用OutputStream
 
-    private PrintWriter printWriter;
+    private FatCatWriter fatCatWriter;
 
-    private Boolean useStream; // 如果使用stream，就不能使用writer
+    private boolean useStream; // 如果使用stream，就不能使用writer
 
-    private OutputStream outputStream;
+    private FatCatOutPutStream fatCatOutPutStream;
 
     /**
      * Adds the specified cookie to the response.  This method can be called
@@ -193,7 +197,9 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void sendError(int sc, String msg) throws IOException {
-
+        if (isCommitted()) {
+            throw new IllegalStateException("Already been committed !");
+        }
     }
 
     /**
@@ -219,7 +225,9 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void sendError(int sc) throws IOException {
-
+        if (isCommitted()) {
+            throw new IllegalStateException("Already been committed !");
+        }
     }
 
     /**
@@ -251,7 +259,9 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void sendRedirect(String location) throws IOException {
-
+        if (isCommitted()) {
+            throw new IllegalStateException("Already been committed !");
+        }
     }
 
     /**
@@ -515,6 +525,9 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void setBufferSize(int size) {
+        if (isCommitted()) {
+            throw new IllegalStateException("Already committed!");
+        }
         bufferSize = size;
     }
 
@@ -545,7 +558,12 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void flushBuffer() throws IOException {
-
+        if (useWriter) {
+            fatCatWriter.flushBuffer();
+        }
+        if (useStream) {
+            fatCatOutPutStream.flush();
+        }
     }
 
     /**
@@ -562,7 +580,12 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void resetBuffer() {
-
+        if (useWriter) {
+            fatCatWriter.resetBuffer();
+        }
+        if (useStream) {
+            fatCatOutPutStream.resetBuffer();
+        }
     }
 
     /**
@@ -580,6 +603,10 @@ public class Response implements HttpServletResponse, RecycleAble {
     @Override
     public boolean isCommitted() {
         return committed;
+    }
+
+    public void setCommitted() {
+        committed = true;
     }
 
     /**
@@ -603,7 +630,14 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void reset() {
-
+        if (isCommitted()) {
+            throw new IllegalStateException("Committed!");
+        }
+        fatCatWriter = null;
+        useWriter = false;
+        fatCatOutPutStream = null;
+        useStream = false;
+        bufferSize = defaultBufferSize;
     }
 
     /**
@@ -735,10 +769,16 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public PrintWriter getWriter() throws IOException {
-        if (printWriter == null) {
-            printWriter = socketWrapper.getPrintWriter();
+        if (useStream) {
+            throw new IllegalStateException("getOutputStream() has already been called !");
         }
-        return printWriter;
+        useWriter = true;
+        charset = getCharset();
+        if (fatCatWriter == null) {
+            fatCatWriter = socketWrapper.getFatCatWriter();
+            fatCatWriter.setResponse(this);
+        }
+        return fatCatWriter;
     }
 
     /**
@@ -761,10 +801,18 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
-        if (outputStream == null) {
-            outputStream = socketWrapper.getOutputStream();
+        if (useWriter) {
+            throw new IllegalStateException("getWriter() has already been called !");
         }
-        return (ServletOutputStream) outputStream;
+        useStream = true;
+        if (fatCatOutPutStream == null) {
+            if (bufferSize == 0) {
+                fatCatOutPutStream = socketWrapper.getFatCatOutPutStream(defaultBufferSize);
+            } else {
+                fatCatOutPutStream = socketWrapper.getFatCatOutPutStream(bufferSize);
+            }
+        }
+        return fatCatOutPutStream;
     }
 
     /**
@@ -805,7 +853,9 @@ public class Response implements HttpServletResponse, RecycleAble {
     public void setCharacterEncoding(String charset) {
         characterEncoding = charset;
         if (getContentType() != null) {
-            setContentType(getContentType() + ";charset=" + charset);
+            if (getContentType().startsWith("text")) {
+                setContentType(getContentType() + ";charset=" + charset);
+            }
         }
     }
 
@@ -866,7 +916,7 @@ public class Response implements HttpServletResponse, RecycleAble {
     }
 
     public static Response standardResponse() {
-        Response resp = Response.builder()
+        return Response.builder()
                 .protocol(HttpProtocol.HTTP_1_1)
                 .code(HttpStatusCode.OK)
                 .status(HttpStatusDescription.OK)
@@ -875,27 +925,10 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .useWriter(false)
                 .useStream(false)
                 .build();
-        resp.setHeader("Server", "FatCat/0.2");
-        resp.setDateHeader("Data", System.currentTimeMillis());
-        return resp;
     }
 
-    /**
-     * 为静态代理部分保留
-     * @return 空体响应
-     */
-    public String getResponseHeadString() {
-        return protocol + " " + code + " " + status + "\r\n" +
-               this.getParamString() + "\r\n";
-    }
-
-    private String getParamString() {
-        if (headers != null) {
-            StringBuilder paramString = new StringBuilder();
-            headers.forEach((key, value) -> value.forEach(each -> paramString.append(key).append(": ").append(each).append("\r\n")));
-            return paramString.toString();
-        }
-        return "";
+    public Map<String, List<String>> getMapHeaders() {
+        return headers;
     }
 
     @Override
@@ -917,14 +950,6 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public void setCode(Integer code) {
         this.code = code;
-    }
-
-    public Boolean getCommitted() {
-        return committed;
-    }
-
-    public void setCommitted(Boolean committed) {
-        this.committed = committed;
     }
 
     public Request getRequest() {
@@ -949,5 +974,33 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public void setUseStream(Boolean useStream) {
         this.useStream = useStream;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getStatusMessage() {
+        return status;
+    }
+
+    public Charset getCharset() {
+        if (charset == null) {
+            String characterEncoding = getCharacterEncoding();
+            if (characterEncoding == null) {
+                charset = Setting.CHARSET;
+            } else {
+                Setting.CHARSET = Charset.forName(characterEncoding);
+            }
+        }
+        return charset;
+    }
+
+    public boolean isUseWriter() {
+        return useWriter;
+    }
+
+    public boolean isUseStream() {
+        return useStream;
     }
 }

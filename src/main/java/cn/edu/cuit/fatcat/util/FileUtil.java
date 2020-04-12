@@ -2,11 +2,8 @@ package cn.edu.cuit.fatcat.util;
 
 import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.Setting;
-import cn.edu.cuit.fatcat.handler.ExceptionHandler;
 import cn.edu.cuit.fatcat.http.HttpHeader;
-import cn.edu.cuit.fatcat.http.HttpStatusCode;
-import cn.edu.cuit.fatcat.http.HttpStatusDescription;
-import cn.edu.cuit.fatcat.io.CacheImpl;
+import cn.edu.cuit.fatcat.io.Cache;
 import cn.edu.cuit.fatcat.io.io.StandardReader;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
@@ -14,12 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -134,11 +126,12 @@ public class FileUtil {
         }
     }
 
+    // TODO: 拦截要访问WEB-INF文件夹的请求
     public static byte[] readBinStr(Request request, Response response) throws IOException {
-        String direction = Dispatcher.getInstance().dispatch(request.getDirection()); // 最先处理服务器端转发
+        String direction = Dispatcher.INSTANCE.dispatch(request.getDirection()); // 最先处理服务器端转发
         byte[] biStr;
         if (request.getHeader(HttpHeader.RANGE) != null) {
-            // TODO: 解耦!
+            // TODO: 解耦!使用责任链模式处理
             String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
             if (kv.length == 2) {
                 if (kv[0].equals("bytes")) {
@@ -191,7 +184,7 @@ public class FileUtil {
      */
     public static byte[] readBinStr(String direction) throws IOException {
 //        log.info("读取文件, 路径: {}", direction);
-        byte[] oBS = CacheImpl.getInstance().get(direction);
+        byte[] oBS = Cache.INSTANCE.get(direction);
         if (oBS != null) {
 //            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
             return oBS;
@@ -200,7 +193,7 @@ public class FileUtil {
             FileInputStream fIStr = new FileInputStream(file); // IOException
             StandardReader reader = new StandardReader(fIStr);
             oBS = reader.readBinStr();
-            CacheImpl.getInstance().put(direction, oBS);
+            Cache.INSTANCE.put(direction, oBS);
             return oBS;
         }
     }
