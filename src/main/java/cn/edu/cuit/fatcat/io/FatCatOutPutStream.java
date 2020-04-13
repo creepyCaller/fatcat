@@ -479,7 +479,7 @@ public class FatCatOutPutStream extends ServletOutputStream {
     }
 
     /**
-     *
+     * 空块
      * @throws IOException
      */
     public void writeEmptyChunk() throws IOException {

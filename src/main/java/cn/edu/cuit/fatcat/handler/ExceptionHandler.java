@@ -26,7 +26,7 @@ public class ExceptionHandler {
         try {
             // 读取错误页
             body = FileUtil.readBinStr(Setting.ERROR_PAGES.get(response.getCode()));
-        } catch (IOException ignore) {
+        } catch (IOException | InterruptedException ignore) {
             // 如果ERROR_PAGES中未指定错误页，就用容器自带的错误页
             log.warn("未设置或无法获取错误页: {} - {}", response.getCode(), response.getStatus());
             body = ErrorPage.getTomcatEmbeddedErrorPageBytes(request, response).getBytes(Setting.CHARSET);

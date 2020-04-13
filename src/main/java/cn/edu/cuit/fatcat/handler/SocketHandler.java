@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat.handler;
 
+import cn.edu.cuit.fatcat.RunnableFunctionalModule;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.io.SocketWrapper;
 import lombok.Data;
@@ -16,25 +17,21 @@ import java.net.ServerSocket;
  */
 @Data
 @Slf4j
-public class HttpRequestHandler implements Runnable {
+public class SocketHandler implements Handler {
 
-    /**
-     * Http请求处理
-     *
-     * @see Thread#run()
-     */
     @Override
-    public void run() {
+    public void handle() {
         try(ServerSocket serverSocket = new ServerSocket(Setting.PORT)) {
             log.info("正在监听端口：{}", Setting.PORT);
-            // TODO:使用线程池来做， getExecutor().execute(new HttpHandler(socketWrapper));
+            // TODO:使用线程池来做， getExecutor().execute(new ProtocolHandler(socketWrapper));
             // TODO:在实现线程池之后，改用非阻断式
             while (true) {
                 SocketWrapper socketWrapper = new SocketWrapper(serverSocket.accept());
-                HttpHandler httpHandler = new HttpHandler(socketWrapper);
-                (new Thread(httpHandler)).start();
+                Handler http11Handler = new Http11Handler(socketWrapper);
+                http11Handler.handle();
             }
         } catch (IOException e) {
+            log.error(e.toString());
             e.printStackTrace();
         }
     }

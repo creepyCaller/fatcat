@@ -18,13 +18,14 @@ import java.io.InputStream;
  */
 @Slf4j
 public class StandardReader implements AutoCloseable, RecycleAble {
+    private static final byte[] emptyByteArray = new byte[0];
     private InputStream iStr;
 
     public StandardReader(InputStream iStr) {
         this.iStr = iStr;
     }
 
-    public byte[] readBinStr() throws IOException {
+    public byte[] readBinStr() throws IOException, InterruptedException {
         return read(iStr);
     }
 
@@ -34,8 +35,12 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 输入流
      * @throws IOException IO异常
      */
-    public String readRequestContext() throws IOException {
-        return new String(read(iStr), Setting.CHARSET);
+    public String readRequestContext() throws IOException, InterruptedException {
+        byte[] read = read(iStr);
+        if (read.length == 0) {
+            return null;
+        }
+        return new String(read, Setting.CHARSET);
     }
 
     /**
@@ -45,12 +50,20 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 字节流数组
      * @throws IOException IO异常
      */
-    private byte[] read(InputStream is) throws IOException {
+    private byte[] read(InputStream is) throws IOException, InterruptedException {
         int length = getLength(is);
+        if (length == 0) {
+            return emptyByteArray;
+        }
         byte[] buf = new byte[length];
         int read = 0;
         while (read < length) {
-            read += is.read(buf, read, length - read);
+            int len = is.read(buf, read, length - read);
+            if (len == -1) {
+                break;
+            } else {
+                read += len;
+            }
         }
         return buf;
     }
@@ -63,10 +76,14 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 输入流可读长度
      * @throws IOException IO异常
      */
-    private int getLength(InputStream is) throws IOException {
-        int length = is.available();
+    private int getLength(InputStream is) throws IOException, InterruptedException {
+        int length = 0;
+        long start = System.currentTimeMillis();
         while (length == 0) {
             length = is.available();
+            if (length == 0 && (System.currentTimeMillis() - start) >  10000) {
+                break;
+            }
         }
         return length;
     }

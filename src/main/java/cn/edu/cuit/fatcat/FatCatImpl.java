@@ -1,6 +1,7 @@
 package cn.edu.cuit.fatcat;
 
-import cn.edu.cuit.fatcat.handler.HttpRequestHandler;
+import cn.edu.cuit.fatcat.handler.Handler;
+import cn.edu.cuit.fatcat.handler.SocketHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,8 +35,8 @@ public class FatCatImpl implements FatCat {
             setting.start();
             log.info("服务器初始化成功");
             log.info("正在启动服务器...");
-            HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
-            (new Thread(httpRequestHandler)).start();
+            Handler socketHandler = new SocketHandler();
+            socketHandler.handle();
             log.info("服务器启动成功, 共耗时: {}ms", (System.currentTimeMillis() - startTime));
         } catch (Throwable e) {
             log.error("服务器启动失败");

@@ -1,4 +1,5 @@
 port: 8080 # 服务端口号
 charset: UTF-8 # 服务器默认编码
 locale: zh_CN # 地址码
+timeout: 10000
 #war: hello.war # 指定WAR包

@@ -40,7 +40,7 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         oStr.flush();
     }
 
-    public void write(Request request, Response response) throws Throwable {
+    public void write(Request request, Response response) throws ClassNotFoundException, InstantiationException, IllegalAccessException, ServletException, IOException {
         try {
             byte[] responseBody = FileUtil.readBinStr(request, response);
             response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(responseBody.length));
@@ -49,7 +49,7 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         } catch (FileNotFoundException e) {
             // 404 Not Found
             exceptionHandler(request, response, 404);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             // 500 Internal Server Error
             exceptionHandler(request, response, 500);
         }

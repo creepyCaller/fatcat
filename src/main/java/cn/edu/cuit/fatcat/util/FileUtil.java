@@ -127,7 +127,7 @@ public class FileUtil {
     }
 
     // TODO: 拦截要访问WEB-INF文件夹的请求
-    public static byte[] readBinStr(Request request, Response response) throws IOException {
+    public static byte[] readBinStr(Request request, Response response) throws IOException, InterruptedException {
         String direction = Dispatcher.INSTANCE.dispatch(request.getDirection()); // 最先处理服务器端转发
         byte[] biStr;
         if (request.getHeader(HttpHeader.RANGE) != null) {
@@ -182,7 +182,7 @@ public class FileUtil {
      * @return 文件字节流
      * @throws IOException IO异常
      */
-    public static byte[] readBinStr(String direction) throws IOException {
+    public static byte[] readBinStr(String direction) throws IOException, InterruptedException {
 //        log.info("读取文件, 路径: {}", direction);
         byte[] oBS = Cache.INSTANCE.get(direction);
         if (oBS != null) {
@@ -213,7 +213,7 @@ public class FileUtil {
             byte[] bs = reader.readBinStr();
             log.info("已读取{}的字节码二进制流，长度为: {}", clazzName, bs.length);
             return bs;
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             log.error("找不到文件: {}", path);
             throw new ClassNotFoundException(clazzName);
         }
