@@ -15,8 +15,9 @@ import java.util.*;
 /**
  * 服务器配置
  * WEB_APPLICATION: 网站根目录
- * timeout: 连接超时自动断开（ms）
+ * connection_keep: 长连接持续时间（ms）
  * port：服务端口
+ * auto_deploy: 是否自动部署
  * INDEX: 网站导航页
  * ERROR_PAGE: 网站错误页
  * UNPACK_WAR: 待解压的WAR包名称,放置在WAR目录下,解压到FatcatSetting.WEB_APPLICATION目录下
@@ -28,11 +29,13 @@ import java.util.*;
 @Slf4j
 public class Setting implements Caller {
     // TODO: 使用getter和setter包装
-    public static String HOST = "localhost";
+    public static String DISPLAY_NAME = "FatCat";
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
     public static String DEFAULT_FAVICON = "Resources/Default/Icon/favicon.ico";
     private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
     public static Integer PORT;
+    public static Integer DEFAULT_CONNECTION_KEEP = 10000;
+    public static Integer CONNECTION_KEEP;
     public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"
     public static List<String> WELCOME_LIST;
     public static String WAR; // 待解压的WAR包名,如果不存在就跳过解压
@@ -44,7 +47,6 @@ public class Setting implements Caller {
     private LinkedHashMap settings;
 
     public void init() throws IOException {
-        log.info("正在初始化服务器配置...");
         settings = YamlUtil.getSettings();
         Setting.ERROR_PAGES = new HashMap<>();
         Setting.CONTEXT_PARAM = new HashMap<>();
@@ -53,52 +55,66 @@ public class Setting implements Caller {
 
     @Override
     public void service() throws Throwable {
-        if (settings.get("port") == null) {
+        Object port = settings.get("port");
+        if (port == null) {
             log.warn("未设置服务端口, 使用默认值: {}", Setting.DEFAULT_PORT);
             Setting.PORT = Setting.DEFAULT_PORT;
         } else {
-            if (settings.get("port") instanceof java.lang.Integer) {
-                Setting.PORT = (Integer) settings.get("port");
+            if (port instanceof java.lang.Integer) {
+                Setting.PORT = (Integer) port;
                 log.info("服务端口: {}", Setting.PORT);
             } else {
                 log.warn("服务端口设置错误, 使用默认值: {}", Setting.DEFAULT_PORT);
                 Setting.PORT = Setting.DEFAULT_PORT;
             }
         }
-        if (settings.get("charset") == null) {
+        Object charset = settings.get("charset");
+        if (charset == null) {
             log.warn("未设置编码, 使用默认值: {}", Setting.DEFAULT_CHARSET);
             Setting.CHARSET_STRING = Setting.DEFAULT_CHARSET;
         } else {
-            if (settings.get("charset") instanceof java.lang.String) {
-                Setting.CHARSET_STRING = (String) settings.get("charset");
+            if (charset instanceof java.lang.String) {
+                Setting.CHARSET_STRING = (String) charset;
                 log.info("使用编码: {}", Setting.CHARSET_STRING);
             } else {
                 log.warn("编码设置错误, 使用默认值: {}", Setting.DEFAULT_CHARSET);
                 Setting.CHARSET_STRING = Setting.DEFAULT_CHARSET;
             }
+            // 通过编码实例化Charset对象
+            try {
+                Setting.CHARSET = Charset.forName(Setting.CHARSET_STRING);
+            } catch (UnsupportedCharsetException ignore) {
+                Setting.CHARSET = StandardCharsets.UTF_8;
+            }
         }
-        try {
-            Setting.CHARSET = Charset.forName(Setting.CHARSET_STRING);
-        } catch (UnsupportedCharsetException ignore) {
-            Setting.CHARSET = StandardCharsets.UTF_8;
+        Object connection_keep = settings.get("connection_keep");
+        if (connection_keep == null) {
+            log.warn("未设置长连接持续时间, 使用默认值: {}ms", Setting.DEFAULT_CONNECTION_KEEP);
+            Setting.CONNECTION_KEEP = Setting.DEFAULT_CONNECTION_KEEP;
+        } else {
+            if (connection_keep instanceof java.lang.Integer) {
+                Setting.CONNECTION_KEEP = (Integer) connection_keep;
+                log.info("长连接持续时间: {}ms", Setting.CONNECTION_KEEP);
+            } else {
+                log.warn("长连接持续时间设置错误, 使用默认值: {}ms", Setting.DEFAULT_CONNECTION_KEEP);
+                Setting.CONNECTION_KEEP = Setting.DEFAULT_CONNECTION_KEEP;
+            }
         }
         Setting.WAR = (String) settings.get("war");
-        if (Setting.WAR == null) {
-            log.warn("未设置待解压的WAR包");
-        } else {
-            FileUtil.clearServerRoot();
-            if (!Setting.WAR.startsWith("/")) {
-                Setting.WAR = "/" + Setting.WAR;
-            }
-            File file = new File("WAR" + Setting.WAR);
-            if (file.exists()) {
-                log.info("待解压WAR包位于: {}", file.getAbsolutePath());
-                log.info("开始解压WAR包...");
-                long start = System.currentTimeMillis();
-                FileUtil.unpack(file);
-                log.info("解压完成, 共耗时: {}ms", System.currentTimeMillis() - start);
-            } else {
-                log.info("待解压WAR包不存在");
+        if (Setting.WAR != null) {
+            Object auto_deploy = settings.get("auto_deploy");
+            if (Boolean.TRUE.equals(auto_deploy)) {
+                FileUtil.clearServerRoot();
+                if (!Setting.WAR.startsWith("/")) {
+                    Setting.WAR = "/" + Setting.WAR;
+                }
+                File file = new File("WAR" + Setting.WAR);
+                if (file.exists()) {
+                    log.info("部署WAR包: {}", Setting.WAR);
+                    FileUtil.unpack(file);
+                } else {
+                    log.info("待部署WAR包不存在");
+                }
             }
         }
         Caller webAppXMLLoader = new WebAppXMLLoader();

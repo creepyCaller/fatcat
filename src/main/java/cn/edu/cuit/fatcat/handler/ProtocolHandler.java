@@ -2,6 +2,7 @@ package cn.edu.cuit.fatcat.handler;
 
 import cn.edu.cuit.fatcat.RunnableFunctionalModule;
 
+
 public interface ProtocolHandler extends Handler, RunnableFunctionalModule {
 
     public default void handle() {
@@ -14,7 +15,11 @@ public interface ProtocolHandler extends Handler, RunnableFunctionalModule {
         prepare();
         do {
             // TODO: 限制同一个Client建立socket的数量
-            work();
+            try {
+                work();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
         } while (!isClose());
         done();
     }

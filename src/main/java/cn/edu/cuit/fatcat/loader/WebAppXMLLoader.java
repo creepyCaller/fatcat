@@ -10,6 +10,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * 加载web.xml文件的配置到Setting
+ */
 public class WebAppXMLLoader implements Caller {
     private Document webxml;
 
@@ -91,9 +94,13 @@ public class WebAppXMLLoader implements Caller {
                 Setting.CONTEXT_PARAM.put(paramName, paramValue);
             }
         }
+    }
+
+    private void initDisplayName() {
         NodeList displayName = webxml.getElementsByTagName("display-name");
-        if (displayName.getLength() > 0) {
-            Setting.CONTEXT_PARAM.put("display-name", displayName.item(0).getFirstChild().getNodeValue());
+        String displayNameStr = displayName.item(0).getFirstChild().getNodeValue();
+        if (displayNameStr != null) {
+            Setting.DISPLAY_NAME = displayNameStr;
         }
     }
 
@@ -124,6 +131,7 @@ public class WebAppXMLLoader implements Caller {
     @Override
     public void service() throws Throwable {
         if (webxml != null) {
+            initDisplayName();
             initContextParams();
             initWelcomeList();
             initErrorPages();

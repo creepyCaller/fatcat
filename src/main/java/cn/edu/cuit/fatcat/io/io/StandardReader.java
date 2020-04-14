@@ -10,7 +10,6 @@ import java.io.InputStream;
 /**
  * 对输入的处理类
  * TODO: 使用nio优化
- * TODO: MessageBytes
  *
  * @author fpc
  * @date 2019/10/27
@@ -25,7 +24,7 @@ public class StandardReader implements AutoCloseable, RecycleAble {
         this.iStr = iStr;
     }
 
-    public byte[] readBinStr() throws IOException, InterruptedException {
+    public byte[] readBinStr() throws IOException {
         return read(iStr);
     }
 
@@ -35,7 +34,7 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 输入流
      * @throws IOException IO异常
      */
-    public String readRequestContext() throws IOException, InterruptedException {
+    public String readRequestContext() throws IOException {
         byte[] read = read(iStr);
         if (read.length == 0) {
             return null;
@@ -50,7 +49,7 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 字节流数组
      * @throws IOException IO异常
      */
-    private byte[] read(InputStream is) throws IOException, InterruptedException {
+    private byte[] read(InputStream is) throws IOException {
         int length = getLength(is);
         if (length == 0) {
             return emptyByteArray;
@@ -76,12 +75,12 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      * @return 输入流可读长度
      * @throws IOException IO异常
      */
-    private int getLength(InputStream is) throws IOException, InterruptedException {
+    private int getLength(InputStream is) throws IOException {
         int length = 0;
         long start = System.currentTimeMillis();
         while (length == 0) {
             length = is.available();
-            if (length == 0 && (System.currentTimeMillis() - start) >  10000) {
+            if (length == 0 && (System.currentTimeMillis() - start) >  Setting.CONNECTION_KEEP) {
                 break;
             }
         }

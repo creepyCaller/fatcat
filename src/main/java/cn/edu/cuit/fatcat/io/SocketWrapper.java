@@ -19,8 +19,12 @@ public class SocketWrapper implements Closeable, RecycleAble {
     private Request request;
     private Response response;
 
-    public SocketWrapper(Socket socket) {
+    private SocketWrapper(Socket socket) {
         setSocket(socket);
+    }
+
+    public static SocketWrapper newInstance(Socket socket) {
+        return new SocketWrapper(socket);
     }
 
     public InputStream getInputStream() throws IOException {
@@ -59,9 +63,10 @@ public class SocketWrapper implements Closeable, RecycleAble {
         return fatCatOutPutStream;
     }
 
-    public FatCatWriter getFatCatWriter() throws IOException {
+    public FatCatWriter getFatCatWriter(int bufferSize) throws IOException {
         if (fatCatWriter == null) {
-            fatCatWriter = new FatCatWriter(getOutputStream());
+            fatCatWriter = new FatCatWriter(getFatCatOutPutStream(bufferSize));
+            fatCatWriter.setResponse(response);
         }
         return fatCatWriter;
     }
@@ -78,6 +83,14 @@ public class SocketWrapper implements Closeable, RecycleAble {
     @Override
     public void recycle() {
         socket = null;
+        iS = null;
+        oS = null;
+        iSR = null;
+        bR = null;
+        fatCatOutPutStream = null;
+        fatCatWriter = null;
+        request = null;
+        response = null;
     }
 
     public Socket getSocket() {
@@ -95,5 +108,23 @@ public class SocketWrapper implements Closeable, RecycleAble {
 
     public void setResponse(Response response) {
         this.response = response;
+        // 复用tcp连接时, 需要注意套接字包装类中的输出流或者writer中的response也要设置到
+        // 如果今后需要设置request, 那么也要注意
+        if (fatCatOutPutStream != null) {
+            fatCatOutPutStream.setResponse(response);
+        }
+        if (fatCatWriter != null) {
+            fatCatWriter.setResponse(response);
+        }
+    }
+
+    /**
+     * 重置状态flag
+     */
+    public void reuse() {
+        if (fatCatOutPutStream != null) {
+            // 如果已经实例化输出流，就重置输出流的commit状态（即打印响应头、响应行、空行的flag）, 因为上次commit后肯定设置为true了
+            fatCatOutPutStream.resetCommit();
+        }
     }
 }

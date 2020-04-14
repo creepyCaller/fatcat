@@ -2,67 +2,19 @@ package cn.edu.cuit.fatcat.io;
 
 import cn.edu.cuit.fatcat.message.Response;
 import java.io.*;
-import java.io.Writer;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 
+/**
+ * 用输出流包装出来的writer类
+ * 2020/4/14
+ * @author fpc
+ * @see javax.servlet.http.HttpServletResponse#getWriter
+ */
 public class FatCatWriter extends PrintWriter {
-    private StringBuilder buf;
+    private FatCatOutPutStream out;
 
     private Response response;
-
-    private int bufferSize;
-
-    private static final byte[] nextLine = "\r\n".getBytes();
-
-    /**
-     * Clears the content of the underlying buffer in the response without
-     * clearing headers or status code. If the
-     * response has been committed, this method throws an
-     * <code>IllegalStateException</code>.
-     *
-     * @see #setBufferSize
-     * @see #getBufferSize
-     * @since Servlet 2.3
-     */
-    public void resetBuffer() {
-        bufferSize = 0;
-        if (buf != null) {
-            buf = new StringBuilder();
-        }
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    public int getBufferSize() {
-        return bufferSize;
-    }
-
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
-    }
-
-    /**
-     * Creates a new PrintWriter, without automatic line flushing.
-     *
-     * @param out A character-output stream
-     */
-    public FatCatWriter(Writer out) {
-        super(out);
-    }
-
-    /**
-     * Creates a new PrintWriter.
-     *
-     * @param out       A character-output stream
-     * @param autoFlush A boolean; if true, the <tt>println</tt>,
-     *                  <tt>printf</tt>, or <tt>format</tt> methods will
-     */
-    public FatCatWriter(Writer out, boolean autoFlush) {
-        super(out, autoFlush);
-    }
 
     /**
      * Creates a new PrintWriter, without automatic line flushing, from an
@@ -73,24 +25,9 @@ public class FatCatWriter extends PrintWriter {
      * @param out An output stream
      * @see OutputStreamWriter#OutputStreamWriter(OutputStream)
      */
-    public FatCatWriter(OutputStream out) {
+    public FatCatWriter(FatCatOutPutStream out) {
         super(out);
-    }
-
-    /**
-     * Creates a new PrintWriter from an existing OutputStream.  This
-     * convenience constructor creates the necessary intermediate
-     * OutputStreamWriter, which will convert characters into bytes using the
-     * default character encoding.
-     *
-     * @param out       An output stream
-     * @param autoFlush A boolean; if true, the <tt>println</tt>,
-     *                  <tt>printf</tt>, or <tt>format</tt> methods will
-     *                  flush the output buffer
-     * @see OutputStreamWriter#OutputStreamWriter(OutputStream)
-     */
-    public FatCatWriter(OutputStream out, boolean autoFlush) {
-        super(out, autoFlush);
+        this.out = out;
     }
 
     /**
@@ -100,7 +37,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void flush() {
-        super.flush();
+        try {
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -111,7 +52,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void close() {
-        super.close();
+        try {
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -121,7 +66,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void write(int c) {
-        super.write(c);
+        try {
+            out.write(c);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -133,7 +82,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void write(char[] buf, int off, int len) {
-        super.write(buf, off, len);
+        try {
+            out.print(new String(buf, off, len));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -144,7 +97,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void write(char[] buf) {
-        super.write(buf);
+        write(buf, 0, buf.length);
     }
 
     /**
@@ -156,7 +109,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void write(String s, int off, int len) {
-        super.write(s, off, len);
+        try {
+            out.write(s.getBytes(response.getCharset()), off, len);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -167,7 +124,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void write(String s) {
-        super.write(s);
+        write(s, 0, s.length());
     }
 
     /**
@@ -181,7 +138,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(boolean b) {
-        super.print(b);
+        write(String.valueOf(b));
     }
 
     /**
@@ -194,7 +151,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(char c) {
-        super.print(c);
+        write(String.valueOf(c));
     }
 
     /**
@@ -209,7 +166,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(int i) {
-        super.print(i);
+        write(String.valueOf(i));
     }
 
     /**
@@ -224,7 +181,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(long l) {
-        super.print(l);
+        write(String.valueOf(l));
     }
 
     /**
@@ -239,7 +196,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(float f) {
-        super.print(f);
+        write(String.valueOf(f));
     }
 
     /**
@@ -254,7 +211,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(double d) {
-        super.print(d);
+        write(String.valueOf(d));
     }
 
     /**
@@ -268,7 +225,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(char[] s) {
-        super.print(s);
+        write(s);
     }
 
     /**
@@ -282,7 +239,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(String s) {
-        super.print(s);
+        write(s);
     }
 
     /**
@@ -297,7 +254,7 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void print(Object obj) {
-        super.print(obj);
+        write(String.valueOf(obj));
     }
 
     /**
@@ -308,7 +265,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println() {
-        super.println();
+        try {
+            out.println();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -320,7 +281,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(boolean x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -332,7 +297,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(char x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -344,7 +313,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(int x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -356,7 +329,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(long x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -368,7 +345,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(float x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -380,7 +361,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(double x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -392,7 +377,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(char[] x) {
-        super.println(x);
+        try {
+            out.println(new String(x));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -404,7 +393,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(String x) {
-        super.println(x);
+        try {
+            out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -418,7 +411,11 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public void println(Object x) {
-        super.println(x);
+        try {
+            out.println(String.valueOf(x));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -456,7 +453,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter printf(String format, Object... args) {
-        return super.printf(format, args);
+       write(String.format(format, args));
+        return this;
     }
 
     /**
@@ -497,7 +495,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter printf(Locale l, String format, Object... args) {
-        return super.printf(l, format, args);
+        write(String.format(l, format, args));
+        return this;
     }
 
     /**
@@ -533,7 +532,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter format(String format, Object... args) {
-        return super.format(format, args);
+        write(String.format(format, args));
+        return this;
     }
 
     /**
@@ -568,7 +568,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter format(Locale l, String format, Object... args) {
-        return super.format(l, format, args);
+        write(String.format(l, format, args));
+        return this;
     }
 
     /**
@@ -594,7 +595,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter append(CharSequence csq) {
-        return super.append(csq);
+        write(csq.toString());
+        return this;
     }
 
     /**
@@ -622,7 +624,8 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter append(CharSequence csq, int start, int end) {
-        return super.append(csq, start, end);
+        write(csq.subSequence(start, end).toString());
+        return this;
     }
 
     /**
@@ -640,13 +643,26 @@ public class FatCatWriter extends PrintWriter {
      */
     @Override
     public PrintWriter append(char c) {
-        return super.append(c);
+        write(c);
+        return this;
     }
 
     /**
      * 刷新缓冲区
      */
-    public void flushBuffer() {
+    public void flushBuffer() throws IOException {
+        out.flush();
+    }
 
+    public void resetBuffer() {
+        out.resetBuffer();
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    public void writeEmptyChunk() throws IOException {
+        out.writeEmptyChunk();
     }
 }

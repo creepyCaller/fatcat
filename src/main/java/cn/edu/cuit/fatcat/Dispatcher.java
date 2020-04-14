@@ -24,8 +24,6 @@ public enum Dispatcher implements RequestDispatcher {
 
     private final Map<String, String> dispatchMap = new HashMap<>();
 
-    // TODO: 在Setting.yml设置转发
-
     public void setDispatch(String srcDir, String dstDir) {
         dispatchMap.put(srcDir, dstDir);
     }
@@ -42,7 +40,6 @@ public enum Dispatcher implements RequestDispatcher {
     public String dispatch(String direction) {
         if ("/".equals(direction)) {
             //这是对于请求根目录的情况
-            // TODO: 改进？
             if (Setting.WELCOME_LIST.size() > 0) {
                 AtomicReference<String> ret = new AtomicReference<>();
                 Setting.WELCOME_LIST.stream()

@@ -13,7 +13,7 @@ public interface FunctionalModule {
     /**
      * 干活
      */
-    public void work();
+    public void work() throws Throwable;
 
     /**
      * 收工

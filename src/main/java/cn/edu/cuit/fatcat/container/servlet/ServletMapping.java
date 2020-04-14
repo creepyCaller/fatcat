@@ -25,4 +25,8 @@ public enum ServletMapping {
     public String getServletName(Request request) {
         return getServletName(request.getDirection());
     }
+
+    public boolean containsServlet(String urlPattern) {
+        return mapper.containsKey(urlPattern);
+    }
 }

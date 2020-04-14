@@ -2,13 +2,13 @@ package cn.edu.cuit.fatcat.container.servlet;
 
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.io.FatCatOutPutStream;
+import cn.edu.cuit.fatcat.io.FatCatWriter;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 用于初始化 + 调用Servlet
@@ -36,7 +36,8 @@ public enum ServletCaller {
             out.writeEmptyChunk();
         }
         if (response.isUseWriter()) {
-            PrintWriter out = response.getWriter();
+            FatCatWriter out = (FatCatWriter) response.getWriter();
+            out.writeEmptyChunk();
         }
     }
 }

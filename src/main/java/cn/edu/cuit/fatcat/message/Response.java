@@ -633,10 +633,12 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Committed!");
         }
-        fatCatWriter = null;
-        useWriter = false;
-        fatCatOutPutStream = null;
-        useStream = false;
+        if (useStream) {
+            useStream = false;
+        }
+        if (isUseWriter()) {
+            useWriter = false;
+        }
         bufferSize = defaultBufferSize;
     }
 
@@ -775,7 +777,11 @@ public class Response implements HttpServletResponse, RecycleAble {
         useWriter = true;
         charset = getCharset();
         if (fatCatWriter == null) {
-            fatCatWriter = socketWrapper.getFatCatWriter();
+            if (bufferSize == 0) {
+                fatCatWriter = socketWrapper.getFatCatWriter(defaultBufferSize);
+            } else {
+                fatCatWriter = socketWrapper.getFatCatWriter(bufferSize);
+            }
             fatCatWriter.setResponse(this);
         }
         return fatCatWriter;
@@ -915,25 +921,8 @@ public class Response implements HttpServletResponse, RecycleAble {
         setHeader("Content-Type", type);
     }
 
-    public static Response standardResponse() {
-        return Response.builder()
-                .protocol(HttpProtocol.HTTP_1_1)
-                .code(HttpStatusCode.OK)
-                .status(HttpStatusDescription.OK)
-                .headers(new HashMap<>())
-                .cookies(new ArrayList<>())
-                .useWriter(false)
-                .useStream(false)
-                .build();
-    }
-
     public Map<String, List<String>> getMapHeaders() {
         return headers;
-    }
-
-    @Override
-    public void recycle() {
-
     }
 
     public SocketWrapper getSocketWrapper() {
@@ -1002,5 +991,22 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public boolean isUseStream() {
         return useStream;
+    }
+
+    public static Response standardResponse() {
+        return Response.builder()
+                .protocol(HttpProtocol.HTTP_1_1)
+                .code(HttpStatusCode.OK)
+                .status(HttpStatusDescription.OK)
+                .headers(new HashMap<>())
+                .cookies(new ArrayList<>())
+                .useWriter(false)
+                .useStream(false)
+                .build();
+    }
+
+    @Override
+    public void recycle() {
+
     }
 }

@@ -1,6 +1,9 @@
 package cn.edu.cuit.fatcat.container.servlet;
 
+import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.Collector;
+import cn.edu.cuit.fatcat.loader.ContextClassLoader;
+import cn.edu.cuit.fatcat.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import javax.servlet.*;
 import javax.servlet.annotation.MultipartConfig;
@@ -18,7 +21,6 @@ import java.util.*;
 
 @Slf4j
 public class ServletCollector implements Collector, ServletContext {
-    // TODO: 设置锁防止脏数据
     private final Map<String, ServletContainer> servletCollector = new HashMap<>();
     private final Set<String> registered = new HashSet<>();
     private static ServletCollector instance;
@@ -124,7 +126,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public ServletContext getContext(String uripath) {
-        return null;
+        return this;
     }
 
     /**
@@ -136,7 +138,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public int getMajorVersion() {
-        return 0;
+        return 3;
     }
 
     /**
@@ -170,7 +172,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public int getEffectiveMajorVersion() {
-        return 0;
+        return 3;
     }
 
     /**
@@ -207,7 +209,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public String getMimeType(String file) {
-        return null;
+        return FileUtil.getMimeType(file);
     }
 
     /**
@@ -459,7 +461,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public void log(String msg) {
-
+        log.info(msg);
     }
 
     /**
@@ -475,7 +477,11 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public void log(Exception exception, String msg) {
-
+        log.info("Message: {}", msg);
+        log.info("Exception stack trace: ");
+        for (StackTraceElement sTE : exception.getStackTrace()) {
+            log.info(sTE.toString());
+        }
     }
 
     /**
@@ -490,7 +496,11 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public void log(String message, Throwable throwable) {
-
+        log.info("Message: {}", message);
+        log.info("Throwable stack trace: ");
+        for (StackTraceElement sTE : throwable.getStackTrace()) {
+            log.info(sTE.toString());
+        }
     }
 
     /**
@@ -547,7 +557,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public String getServerInfo() {
-        return null;
+        return "FatCat/0.2";
     }
 
     /**
@@ -568,7 +578,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public String getInitParameter(String name) {
-        return null;
+        return Setting.CONTEXT_PARAM.get(name);
     }
 
     /**
@@ -584,7 +594,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public Enumeration<String> getInitParameterNames() {
-        return null;
+        return (new Vector<>(Setting.CONTEXT_PARAM.keySet())).elements();
     }
 
     /**
@@ -608,7 +618,11 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public boolean setInitParameter(String name, String value) {
-        return false;
+        if (Setting.CONTEXT_PARAM.get(name) != null) {
+            return false;
+        }
+        Setting.CONTEXT_PARAM.put(name, value);
+        return true;
     }
 
     /**
@@ -711,7 +725,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public String getServletContextName() {
-        return null;
+        return Setting.DISPLAY_NAME;
     }
 
     /**
@@ -1476,7 +1490,7 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public ClassLoader getClassLoader() {
-        return null;
+        return ContextClassLoader.getInstance();
     }
 
     /**
@@ -1528,6 +1542,6 @@ public class ServletCollector implements Collector, ServletContext {
      */
     @Override
     public String getVirtualServerName() {
-        return null;
+        return Setting.DISPLAY_NAME;
     }
 }

@@ -145,4 +145,17 @@ public class ServletContainer implements ServletConfig {
     public void setInit(boolean init) {
         this.init = init;
     }
+
+    @Override
+    public String toString() {
+        return "ServletContainer{" +
+                "servletName='" + servletName + '\'' +
+                ", className='" + className + '\'' +
+                ", loadOnStartup=" + loadOnStartup +
+                ", initParam=" + initParam +
+                ", InitParameterNames=" + InitParameterNames +
+                ", instance=" + instance +
+                ", init=" + init +
+                '}';
+    }
 }

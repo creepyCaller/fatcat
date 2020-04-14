@@ -2,6 +2,7 @@ package cn.edu.cuit.fatcat.util;
 
 import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.Setting;
+import cn.edu.cuit.fatcat.http.HttpContentType;
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.io.Cache;
 import cn.edu.cuit.fatcat.io.io.StandardReader;
@@ -29,19 +30,47 @@ import java.util.zip.ZipFile;
 public class FileUtil {
 
     /**
-     * 获取一个文件名的后缀名，即最后一个点的右边内容
+     * 根据文件后缀名返回响应内容类型
      *
-     * @param FileName 传入文件名
-     * @return 文件的后缀名
+     * @param name 文件名
+     * @return 响应内容类型
      */
-    public static String getFileSuffix(String FileName) {
-        String[] a = FileName.split("\\.");
+    public static String getMimeType(String name) {
+        String[] a = name.split("\\.");
         if (a.length < 2) {
             // 如果拆分出来的数组长度小于2，即无后缀
             return "";
         } else {
             // 获取最后那串子串
-            return a[a.length - 1];
+            name = a[a.length - 1];
+            switch (name) {
+                case "css":
+                    return HttpContentType.TEXT_CSS;
+                case "js":
+                    return HttpContentType.APPLICATION_JS;
+                case "json":
+                    return HttpContentType.APPLICATION_JSON;
+                case "png":
+                    return HttpContentType.IMAGE_PNG;
+                case "jpg":
+                case "jpeg":
+                    return HttpContentType.IMAGE_JPEG;
+                case "ico":
+                    return HttpContentType.IMAGE_X_ICON;
+                case "gif":
+                    return HttpContentType.IMAGE_GIF;
+                case "svg":
+                    return HttpContentType.IMAGE_SVG;
+                case "xml":
+                    return HttpContentType.TEXT_XML;
+                case "txt":
+                    return HttpContentType.TEXT_PLAIN;
+                case "html":
+                case "htm":
+                    return HttpContentType.TEXT_HTML;
+                default:
+                    return HttpContentType.APPLICATION_OCTET_STREAM;
+            }
         }
     }
 
@@ -118,7 +147,6 @@ public class FileUtil {
         }
         zipFile.close();
         // 检测有没有图标,如果没有的话就把默认的图标复制过去
-        // TODO: 把默认图标以base64编码存在类里
         File dest = new File(Setting.SERVER_ROOT, "favicon.ico");
         if (!dest.exists()) {
             File src = new File(Setting.DEFAULT_FAVICON);
@@ -128,10 +156,9 @@ public class FileUtil {
 
     // TODO: 拦截要访问WEB-INF文件夹的请求
     public static byte[] readBinStr(Request request, Response response) throws IOException, InterruptedException {
-        String direction = Dispatcher.INSTANCE.dispatch(request.getDirection()); // 最先处理服务器端转发
+        String direction = Dispatcher.INSTANCE.dispatch(request.getDirection()); // 处理转发
         byte[] biStr;
         if (request.getHeader(HttpHeader.RANGE) != null) {
-            // TODO: 解耦!使用责任链模式处理
             String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
             if (kv.length == 2) {
                 if (kv[0].equals("bytes")) {
@@ -162,10 +189,9 @@ public class FileUtil {
             biStr = FileUtil.readBinStr(direction);
         }
         // 读出direction路径下的文件
-        String suffix = getFileSuffix(direction);
-        String contentType = ResponseMessageUtil.getContentType(suffix); // 判断文件类型
-        response.setContentType(contentType);
-        if (contentType.startsWith("text/") || contentType.startsWith("application/")) {
+        String mimeType = FileUtil.getMimeType(direction); // 判断文件类型
+        response.setContentType(mimeType);
+        if (mimeType.startsWith("text/") || mimeType.startsWith("application/")) {
             // 判断是二进制流还是文本文件
             // 如果是文本文件,就设置响应头的编码类型
             // TODO:这个判断需要改进（意思是多几个clause）
@@ -213,7 +239,7 @@ public class FileUtil {
             byte[] bs = reader.readBinStr();
             log.info("已读取{}的字节码二进制流，长度为: {}", clazzName, bs.length);
             return bs;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             log.error("找不到文件: {}", path);
             throw new ClassNotFoundException(clazzName);
         }

@@ -7,13 +7,12 @@
     <display-name>Hello</display-name>
 
     <welcome-file-list>
-        <welcome-file>/index.html</welcome-file>
-		<welcome-file>/helloworld.html</welcome-file>
+        <welcome-file>/hello</welcome-file>
     </welcome-file-list>
 
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>HelloServlet</servlet-class>
+        <servlet-class>cn.edu.cuit.fatcat.test.HelloServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HelloServlet</servlet-name>
@@ -21,17 +20,26 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>VCodeServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.VCodeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VCodeServlet</servlet-name>
+        <url-pattern>/code</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>NotFoundServlet</servlet-name>
-        <servlet-class>NotFoundServlet</servlet-class>
+        <servlet-class>cn.edu.cuit.fatcat.test.NotFoundServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>NotFoundServlet</servlet-name>
         <url-pattern>/404</url-pattern>
     </servlet-mapping>
-	
-	 <servlet>
+
+    <servlet>
         <servlet-name>ServerErrorServlet</servlet-name>
-        <servlet-class>ServerErrorServlet</servlet-class>
+        <servlet-class>cn.edu.cuit.fatcat.test.ServerErrorServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ServerErrorServlet</servlet-name>
@@ -42,8 +50,8 @@
         <error-code>404</error-code>
         <location>/404</location>
     </error-page>
-	
-	<error-page>
+
+    <error-page>
         <error-code>500</error-code>
         <location>/500</location>
     </error-page>

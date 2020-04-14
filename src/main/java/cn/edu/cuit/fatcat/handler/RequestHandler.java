@@ -17,18 +17,16 @@ import java.net.ServerSocket;
  */
 @Data
 @Slf4j
-public class SocketHandler implements Handler {
+public class RequestHandler implements Handler {
 
     @Override
     public void handle() {
         try(ServerSocket serverSocket = new ServerSocket(Setting.PORT)) {
-            log.info("正在监听端口：{}", Setting.PORT);
             // TODO:使用线程池来做， getExecutor().execute(new ProtocolHandler(socketWrapper));
             // TODO:在实现线程池之后，改用非阻断式
             while (true) {
-                SocketWrapper socketWrapper = new SocketWrapper(serverSocket.accept());
-                Handler http11Handler = new Http11Handler(socketWrapper);
-                http11Handler.handle();
+                SocketWrapper socketWrapper = SocketWrapper.newInstance(serverSocket.accept());
+                SocketHandler.newThread(socketWrapper);
             }
         } catch (IOException e) {
             log.error(e.toString());

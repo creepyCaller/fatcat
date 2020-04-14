@@ -1,5 +1,6 @@
-package cn.edu.cuit.fatcat.container.servlet;
+package cn.edu.cuit.fatcat.loader;
 
+import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.loader.FatCatClassLoader;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,7 @@ public class ServletClassLoader extends FatCatClassLoader {
             throw new ClassNotFoundException(name);
         }
         if (Servlet.class.isAssignableFrom(cls)) {
+            // 这里是为了验证servlet是否已经被注册
             if (ServletCollector.getInstance().isRegistered(cls.getName())) {
                 log.info("{} is registered", name);
                 return cls;

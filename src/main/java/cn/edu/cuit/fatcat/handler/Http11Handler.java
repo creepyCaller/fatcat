@@ -52,19 +52,19 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
         }
     }
 
-    private void execRequestAndResponse() throws IOException, InterruptedException {
+    private void execRequestAndResponse() throws IOException {
         String requestContext = reader.readRequestContext();
         if (requestContext == null) {
             fi = true;
             return;
         }
-        request = RequestAdapter.INSTANCE.getRequest(requestContext);
+        request = RequestAdapter.INSTANCE.getRequest(requestContext); // TODO: 修复request会被复用的问题
         request.setSocketWrapper(socketWrapper);
         socketWrapper.setRequest(request);
         response = Response.standardResponse();
         response.setSocketWrapper(socketWrapper);
         socketWrapper.setResponse(response);
-        if (request.getHeader(HttpHeader.CONNECTION) != null && HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION))) {
+        if (HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION))) {
             response.setHeader(HttpHeader.CONNECTION, HttpConnection.CLOSE);
             socketWrapper.getSocket().setKeepAlive(false);
         } else {
@@ -77,24 +77,19 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
      * 干活
      */
     @Override
-    public void work() {
-        try {
-            execRequestAndResponse();
-            if (!fi) {
-                if (ServletMapping.INSTANCE.getServletName(request) != null) {
-                    // Servlet容器:
-                    // TODO: 解决servlet请求的TCP连接无法复用的问题
-                    ServletCaller.INSTANCE.callServlet(request, response);
-                } else {
-                    // 反向代理:
-                    writer.write(request, response);
-                }
+    public void work() throws Throwable {
+        execRequestAndResponse();
+        if (!fi) {
+            if (ServletMapping.INSTANCE.containsServlet(request.getDirection())) {
+                // Servlet容器:
+                ServletCaller.INSTANCE.callServlet(request, response);
             } else {
-                close = true;
+                // 反向代理:
+                writer.write(request, response);
             }
-        } catch (Throwable e) {
-            log.error(e.toString());
-            e.printStackTrace();
+            socketWrapper.reuse();
+        } else {
+            close = true;
         }
     }
 

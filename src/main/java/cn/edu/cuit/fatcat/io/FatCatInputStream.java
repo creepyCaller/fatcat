@@ -4,6 +4,10 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
 
+/**
+ * Servlet输入流实现类
+ * @see javax.servlet.ServletInputStream
+ */
 public class FatCatInputStream extends ServletInputStream {
 
     @Override
