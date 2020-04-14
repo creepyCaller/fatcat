@@ -1,4 +1,4 @@
 package cn.edu.cuit.fatcat.handler;
 
-public class SocketHandler {
+public class ProtocolSwitcher {
 }
