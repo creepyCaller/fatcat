@@ -17,8 +17,7 @@ import java.io.IOException;
 public enum ServletCaller {
     INSTANCE;
 
-    public void callServlet(Request request, Response response) throws ServletException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
-        String servletName = ServletMapping.INSTANCE.getServletName(request.getDirection());
+    public void callServlet(Request request, Response response, String servletName) throws ServletException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
         ServletContainer servletContainer = ServletCollector.getInstance().getServletModel(servletName);
         log.info("URL: {}, 请求Servlet: {}", request.getDirection(), ServletCollector.getInstance().getServletModel(servletName));
         response.setHeader(HttpHeader.TRANSFER_ENCODING, "chunked");

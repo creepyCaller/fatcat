@@ -10,6 +10,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 加载web.xml文件的配置到Setting
  */
@@ -26,7 +29,7 @@ public class WebAppXMLLoader implements Caller {
         for (int i = 0; i < servletMapping.getLength() ; ++i) {
             Node mapping = servletMapping.item(i);
             String servletName = null;
-            String urlPattern = null;
+            List<String> urlPatterns = new ArrayList<>();
             for (Node iter = mapping.getFirstChild(); iter!= null; iter = iter.getNextSibling()) {
                 if (iter.getNodeType() == Node.ELEMENT_NODE) {
                     switch (iter.getNodeName()) {
@@ -34,11 +37,13 @@ public class WebAppXMLLoader implements Caller {
                             servletName = iter.getFirstChild().getNodeValue();
                             break;
                         case "url-pattern":
-                            urlPattern = iter.getFirstChild().getNodeValue();
+                            urlPatterns.add(iter.getFirstChild().getNodeValue());
                     }
                 }
             }
-            ServletMapping.INSTANCE.setMapping(urlPattern, servletName);
+            for (String each : urlPatterns) {
+                ServletMapping.INSTANCE.setMapping(each, servletName);
+            }
         }
     }
 

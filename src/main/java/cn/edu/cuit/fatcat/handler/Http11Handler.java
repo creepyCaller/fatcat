@@ -80,9 +80,11 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     public void work() throws Throwable {
         execRequestAndResponse();
         if (!fi) {
-            if (ServletMapping.INSTANCE.containsServlet(request.getDirection())) {
+            request.setDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
+            String servletName = ServletMapping.INSTANCE.getServletName(request.getDirection());
+            if (servletName != null) {
                 // Servlet容器:
-                ServletCaller.INSTANCE.callServlet(request, response);
+                ServletCaller.INSTANCE.callServlet(request, response, servletName);
             } else {
                 // 反向代理:
                 writer.write(request, response);

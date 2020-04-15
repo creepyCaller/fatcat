@@ -26,6 +26,8 @@
     <servlet-mapping>
         <servlet-name>VCodeServlet</servlet-name>
         <url-pattern>/code</url-pattern>
+        <url-pattern>/code/*</url-pattern>
+        <url-pattern>/code/p/*.get</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -34,6 +36,10 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>NotFoundServlet</servlet-name>
+        <url-pattern>/error/404</url-pattern>
+        <url-pattern>/error/404/*</url-pattern>
+        <url-pattern>/error/404/*.html</url-pattern>
+        <url-pattern>/error/not_found/*</url-pattern>
         <url-pattern>/404</url-pattern>
     </servlet-mapping>
 
@@ -46,9 +52,18 @@
         <url-pattern>/500</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+
     <error-page>
         <error-code>404</error-code>
-        <location>/404</location>
+        <location>/er4</location>
     </error-page>
 
     <error-page>

@@ -17,7 +17,6 @@ import java.io.InputStream;
  */
 @Slf4j
 public class StandardReader implements AutoCloseable, RecycleAble {
-    private static final byte[] emptyByteArray = new byte[0];
     private InputStream iStr;
 
     public StandardReader(InputStream iStr) {
@@ -36,7 +35,7 @@ public class StandardReader implements AutoCloseable, RecycleAble {
      */
     public String readRequestContext() throws IOException {
         byte[] read = read(iStr);
-        if (read.length == 0) {
+        if (read == null) {
             return null;
         }
         return new String(read, Setting.CHARSET);
@@ -52,7 +51,7 @@ public class StandardReader implements AutoCloseable, RecycleAble {
     private byte[] read(InputStream is) throws IOException {
         int length = getLength(is);
         if (length == 0) {
-            return emptyByteArray;
+            return null;
         }
         byte[] buf = new byte[length];
         int read = 0;

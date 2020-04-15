@@ -92,11 +92,14 @@ public enum RequestAdapter {
 
     private void addParamArray(Map<String, String[]> map, String key, String value) {
         String[] storedArray = map.get(key);
-        List<String> list;
         if (storedArray != null) {
-            list = Arrays.asList(storedArray);
+            List<String> list = new ArrayList<>(Arrays.asList(storedArray));
             list.add(value);
-            storedArray = list.toArray(emptyStringArray);
+            storedArray = new String[storedArray.length + 1];
+            for (int i = 0; i < storedArray.length; ++i) {
+                storedArray[i] = list.get(i);
+            }
+            map.put(key, storedArray);
         } else {
             storedArray = new String[1];
             storedArray[0] = value;

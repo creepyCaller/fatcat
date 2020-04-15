@@ -1,4 +1,4 @@
-port: 8080 # 服务端口号
+port: 8090 # 服务端口号
 charset: UTF-8 # 服务器默认编码
 locale: zh_CN # 地址码
 connection_keep: 10000

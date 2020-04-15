@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat;
 
+import cn.edu.cuit.fatcat.container.servlet.ServletMapping;
 import cn.edu.cuit.fatcat.io.Cache;
 
 import javax.servlet.RequestDispatcher;
@@ -68,7 +69,7 @@ public enum Dispatcher implements RequestDispatcher {
     }
 
     private static boolean checkWelcomeFile(String welcome) {
-        if (Cache.INSTANCE.get(welcome) != null) {
+        if (Cache.INSTANCE.get(welcome) != null || ServletMapping.INSTANCE.getServletName(welcome) != null) {
             return true;
         } else {
             File file = new File(Setting.SERVER_ROOT + welcome);

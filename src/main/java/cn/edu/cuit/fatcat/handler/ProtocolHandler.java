@@ -13,14 +13,15 @@ public interface ProtocolHandler extends Handler, RunnableFunctionalModule {
 
     public default void run() {
         prepare();
-        do {
-            // TODO: 限制同一个Client建立socket的数量
-            try {
-                work();
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        } while (!isClose());
+        try {
+            do {
+                // TODO: 限制同一个Client建立socket的数量
+                    work();
+
+            } while (!isClose());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         done();
     }
 }
