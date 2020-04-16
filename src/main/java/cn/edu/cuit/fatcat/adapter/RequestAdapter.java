@@ -10,8 +10,9 @@ public enum RequestAdapter {
 
     private static final String[] emptyStringArray = new String[0];
 
-    public Request getRequest(String requestContext) {
-        String[] requestSpiltHeaderAndBody = requestContext.split("\r\n\r\n", 2);
+    public Request getRequest(Request request, String context) {
+        request.setContext(context);
+        String[] requestSpiltHeaderAndBody = context.split("\r\n\r\n", 2);
         String body = "";
         if (requestSpiltHeaderAndBody.length == 2) {
             // 长度为2就说明存在body
@@ -19,32 +20,24 @@ public enum RequestAdapter {
         }
         String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request Headers
         String[] firstLine = requestHeaderLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
-        String method = firstLine[0];
+        request.setMethod(firstLine[0]);
         String[] s = firstLine[1].split("\\?", 2); // 根据问号拆分请求路径，格式为：真路径？参数
-        String path = s[0];
+        request.setDirection(s[0]);
         String pathVariable = "";
         if (s.length > 1) {
             pathVariable = s[1];
         }
-        Map<String, Vector<String>> headers = new HashMap<>();
-        getParamFromMessage(headers, requestHeaderLines);
-        String protocol = firstLine[2];
-        Map<String, String[]> parameters = new HashMap<>();
+        request.setHeaders(new HashMap<>());
+        getParamFromMessage(request.getHeaders(), requestHeaderLines);
+        request.setProtocol(firstLine[2]);
+        request.setParameters(new HashMap<>());
         if (s.length > 1) {
-            getParam(parameters, pathVariable);
+            getParam(request.getParameters(), pathVariable);
         }
-        if (!protocol.equals(HttpMethod.METHOD_GET)) {
-            getParam(parameters, body);
+        if (!request.getMethod().equals(HttpMethod.METHOD_GET)) {
+            getParam(request.getParameters(), body);
         }
-        return Request.builder()
-                .method(method)
-                .direction(path)
-                .protocol(protocol)
-                .headers(headers)
-                .parameters(parameters)
-                .context(requestContext)
-                .cookies(null) // TODO: Cookies
-                .build();
+        return request;
     }
 
     /**

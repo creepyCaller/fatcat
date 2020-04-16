@@ -31,10 +31,12 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     private boolean fi;
     private boolean close;
 
-    Http11Handler(SocketWrapper socketWrapper) {
+    public static Http11Handler newInstance() {
+        return new Http11Handler();
+    }
+
+    public void setSocketWrapper(SocketWrapper socketWrapper) {
         this.socketWrapper = socketWrapper;
-        fi = false;
-        close = false;
     }
 
     /**
@@ -46,6 +48,12 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
         try {
             reader = new StandardReader(socketWrapper.getInputStream());
             writer = new StandardWriter(socketWrapper.getOutputStream());
+            request = Request.builder().socketWrapper(socketWrapper).build();
+            response = Response.standardResponseBuilder().socketWrapper(socketWrapper).build();
+            socketWrapper.setRequest(request);
+            socketWrapper.setResponse(response);
+            fi = false;
+            close = false;
         } catch (IOException e) {
             log.error(e.toString());
             e.printStackTrace();
@@ -53,17 +61,12 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     }
 
     private void execRequestAndResponse() throws IOException {
-        String requestContext = reader.readRequestContext();
+        String requestContext = reader.readRequestContext(); // TODO: 异步?
         if (requestContext == null) {
             fi = true;
             return;
         }
-        request = RequestAdapter.INSTANCE.getRequest(requestContext); // TODO: 修复request会被复用的问题
-        request.setSocketWrapper(socketWrapper);
-        socketWrapper.setRequest(request);
-        response = Response.standardResponse();
-        response.setSocketWrapper(socketWrapper);
-        socketWrapper.setResponse(response);
+        RequestAdapter.INSTANCE.getRequest(request, requestContext);
         if (HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION))) {
             response.setHeader(HttpHeader.CONNECTION, HttpConnection.CLOSE);
             socketWrapper.getSocket().setKeepAlive(false);
@@ -80,8 +83,8 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     public void work() throws Throwable {
         execRequestAndResponse();
         if (!fi) {
-            request.setDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
-            String servletName = ServletMapping.INSTANCE.getServletName(request.getDirection());
+            request.setDispatchedDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
+            String servletName = ServletMapping.INSTANCE.getServletName(request.getDispatchedDirection());
             if (servletName != null) {
                 // Servlet容器:
                 ServletCaller.INSTANCE.callServlet(request, response, servletName);

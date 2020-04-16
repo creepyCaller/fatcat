@@ -58,7 +58,7 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
     private void exceptionHandler(Request request, Response response, Integer sc) throws ClassNotFoundException, IOException, InstantiationException, ServletException, IllegalAccessException {
         String direction = Setting.ERROR_PAGES.get(sc);
         String servletName = ServletMapping.INSTANCE.getServletName(direction);
-        request.setDirection(direction);
+        request.setDispatchedDirection(direction);
         if (servletName != null) {
             // 如果设置的错误页指向Servlet
             ServletCaller.INSTANCE.callServlet(request, response, servletName);

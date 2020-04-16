@@ -64,6 +64,17 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     private FatCatOutPutStream fatCatOutPutStream;
 
+    public static ResponseBuilder standardResponseBuilder() {
+        return Response.builder()
+                .protocol(HttpProtocol.HTTP_1_1)
+                .code(HttpStatusCode.OK)
+                .status(HttpStatusDescription.OK)
+                .headers(new HashMap<>())
+                .cookies(new ArrayList<>())
+                .useWriter(false)
+                .useStream(false);
+    }
+
     /**
      * Adds the specified cookie to the response.  This method can be called
      * multiple times to set more than one cookie.
@@ -991,18 +1002,6 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public boolean isUseStream() {
         return useStream;
-    }
-
-    public static Response standardResponse() {
-        return Response.builder()
-                .protocol(HttpProtocol.HTTP_1_1)
-                .code(HttpStatusCode.OK)
-                .status(HttpStatusDescription.OK)
-                .headers(new HashMap<>())
-                .cookies(new ArrayList<>())
-                .useWriter(false)
-                .useStream(false)
-                .build();
     }
 
     @Override

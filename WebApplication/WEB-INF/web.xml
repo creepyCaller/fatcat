@@ -63,7 +63,7 @@
 
     <error-page>
         <error-code>404</error-code>
-        <location>/er4</location>
+        <location>/error/404</location>
     </error-page>
 
     <error-page>

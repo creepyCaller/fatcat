@@ -23,7 +23,7 @@ public enum ServletMapping {
         }
     }
 
-    // TODO: 支持通配符*
+    // TODO: 修改使其免去每次的spilt步骤提高效率
     public String getServletName(String direction) {
         String servletName = mapper.get(direction);
         if (servletName != null) {

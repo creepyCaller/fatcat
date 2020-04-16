@@ -29,6 +29,8 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String direction;
 
+    private String dispatchedDirection;
+
     private String protocol;
 
     private Map<String, Vector<String>> headers;

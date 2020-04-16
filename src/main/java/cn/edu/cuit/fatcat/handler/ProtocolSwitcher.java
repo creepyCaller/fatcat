@@ -6,6 +6,8 @@ public enum ProtocolSwitcher {
     INSTANCE;
 
     public Handler getHandler(SocketWrapper socketWrapper) {
-        return new Http11Handler(socketWrapper);
+        Http11Handler handler = Http11Handler.newInstance();
+        handler.setSocketWrapper(socketWrapper);
+        return handler;
     }
 }

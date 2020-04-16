@@ -157,6 +157,7 @@ public class FileUtil {
     // TODO: 拦截要访问WEB-INF文件夹的请求
     public static byte[] readBinStr(Request request, Response response) throws IOException {
         byte[] biStr;
+        // TODO: 优化！
         if (request.getHeader(HttpHeader.RANGE) != null) {
             String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
             if (kv.length == 2) {
@@ -165,7 +166,7 @@ public class FileUtil {
                     if (kv1.length == 2) {
                         Integer src = Integer.parseInt(kv1[0]);
                         Integer dst = Integer.parseInt(kv1[1]);
-                        byte[] ctx = FileUtil.readBinStr(request.getDirection());
+                        byte[] ctx = FileUtil.readBinStr(request.getDispatchedDirection());
                         biStr = new byte[dst - src];
                         try {
                             for (int i = src, j = 0; i < dst; ++i, ++j) {
@@ -173,22 +174,22 @@ public class FileUtil {
                             }
                             response.setHeader(HttpHeader.CONTENT_RANGE, src.toString() + "-" + dst.toString() +  "/" + ctx.length);
                         } catch (ArrayIndexOutOfBoundsException ignore) {
-                            biStr = FileUtil.readBinStr(request.getDirection());
+                            biStr = FileUtil.readBinStr(request.getDispatchedDirection());
                         }
                     } else {
-                        biStr = FileUtil.readBinStr(request.getDirection());
+                        biStr = FileUtil.readBinStr(request.getDispatchedDirection());
                     }
                 } else {
-                    biStr = FileUtil.readBinStr(request.getDirection());
+                    biStr = FileUtil.readBinStr(request.getDispatchedDirection());
                 }
             } else {
-                biStr = FileUtil.readBinStr(request.getDirection());
+                biStr = FileUtil.readBinStr(request.getDispatchedDirection());
             }
         } else {
-            biStr = FileUtil.readBinStr(request.getDirection());
+            biStr = FileUtil.readBinStr(request.getDispatchedDirection());
         }
         // 读出direction路径下的文件
-        String mimeType = FileUtil.getMimeType(request.getDirection()); // 判断文件类型
+        String mimeType = FileUtil.getMimeType(request.getDispatchedDirection()); // 判断文件类型
         response.setContentType(mimeType);
         if (mimeType.startsWith("text/") || mimeType.startsWith("application/")) {
             // 判断是二进制流还是文本文件
@@ -208,7 +209,7 @@ public class FileUtil {
      * @throws IOException IO异常
      */
     public static byte[] readBinStr(String direction) throws IOException {
-        log.info("读取文件, 路径: {}", direction);
+//        log.info("读取文件, 路径: {}", direction);
         byte[] oBS = Cache.INSTANCE.get(direction);
         if (oBS != null) {
 //            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
