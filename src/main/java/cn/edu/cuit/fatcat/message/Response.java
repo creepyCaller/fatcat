@@ -42,7 +42,7 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     private Locale locale;
 
-    private Boolean committed;
+    private boolean committed;
 
     private Charset charset;
 
@@ -73,6 +73,22 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .cookies(new ArrayList<>())
                 .useWriter(false)
                 .useStream(false);
+    }
+
+    @Override
+    public void recycle() {
+        protocol = request.getProtocol();
+        code = HttpStatusCode.OK;
+        status = HttpStatusDescription.OK;
+        headers = new HashMap<>();
+        cookies = new ArrayList<>();
+        locale = null;
+        charset = null;
+        characterEncoding = null;
+        committed = false;
+        useStream = false;
+        useWriter = false;
+        bufferSize = defaultBufferSize;
     }
 
     /**
@@ -644,12 +660,8 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Committed!");
         }
-        if (useStream) {
-            useStream = false;
-        }
-        if (isUseWriter()) {
-            useWriter = false;
-        }
+        useStream = false;
+        useWriter = false;
         bufferSize = defaultBufferSize;
     }
 
@@ -1002,10 +1014,5 @@ public class Response implements HttpServletResponse, RecycleAble {
 
     public boolean isUseStream() {
         return useStream;
-    }
-
-    @Override
-    public void recycle() {
-
     }
 }

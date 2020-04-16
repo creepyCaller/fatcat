@@ -17,7 +17,6 @@ public interface ProtocolHandler extends Handler, RunnableFunctionalModule {
             do {
                 // TODO: 限制同一个Client建立socket的数量
                     work();
-
             } while (!isClose());
         } catch (Throwable throwable) {
             throwable.printStackTrace();

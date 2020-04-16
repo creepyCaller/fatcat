@@ -30,8 +30,12 @@ import java.io.OutputStream;
 public class StandardWriter implements AutoCloseable, RecycleAble {
     private OutputStream oStr;
 
-    public StandardWriter(OutputStream oStr) {
+    private StandardWriter(OutputStream oStr) {
         this.oStr = oStr;
+    }
+
+    public static StandardWriter getWriter(OutputStream oStr) {
+        return new StandardWriter(oStr);
     }
 
     private void write(byte[] responseHead, byte[] responseBody) throws IOException {

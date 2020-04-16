@@ -1,6 +1,8 @@
 package cn.edu.cuit.fatcat.io;
 
 import cn.edu.cuit.fatcat.RecycleAble;
+import cn.edu.cuit.fatcat.io.io.StandardReader;
+import cn.edu.cuit.fatcat.io.io.StandardWriter;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,8 @@ import java.net.Socket;
 @Slf4j
 public class SocketWrapper implements Closeable, RecycleAble {
     private Socket socket;
+    private StandardReader reader;
+    private StandardWriter writer;
     private InputStream iS;
     private OutputStream oS;
     private InputStreamReader iSR;
@@ -126,5 +130,27 @@ public class SocketWrapper implements Closeable, RecycleAble {
             // 如果已经实例化输出流，就重置输出流的commit状态（即打印响应头、响应行、空行的flag）, 因为上次commit后肯定设置为true了
             fatCatOutPutStream.resetCommit();
         }
+    }
+
+    public StandardReader getReader() throws IOException {
+        if (reader == null) {
+            reader = StandardReader.getReader(getInputStream());
+        }
+        return reader;
+    }
+
+    public void setReader(StandardReader reader) {
+        this.reader = reader;
+    }
+
+    public StandardWriter getWriter() throws IOException {
+        if (writer == null) {
+            writer = StandardWriter.getWriter(getOutputStream());
+        }
+        return writer;
+    }
+
+    public void setWriter(StandardWriter writer) {
+        this.writer = writer;
     }
 }

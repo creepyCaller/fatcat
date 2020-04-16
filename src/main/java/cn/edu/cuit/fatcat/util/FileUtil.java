@@ -154,10 +154,13 @@ public class FileUtil {
         }
     }
 
-    // TODO: 拦截要访问WEB-INF文件夹的请求
     public static byte[] readBinStr(Request request, Response response) throws IOException {
         byte[] biStr;
-        // TODO: 优化！
+        // TODO: 优化分支结构！
+        if (request.getDirection().startsWith("/WEB-INF")) {
+            // 拦截要访问WEB-INF文件夹的请求, 意思是未经转发的请求以/WEB-INF开头的话就说找不到, 转发过的就不管
+            throw new FileNotFoundException();
+        }
         if (request.getHeader(HttpHeader.RANGE) != null) {
             String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
             if (kv.length == 2) {
@@ -217,7 +220,7 @@ public class FileUtil {
         } else {
             File file = new File(Setting.SERVER_ROOT + direction); // FileNotFoundException
             FileInputStream fIStr = new FileInputStream(file); // IOException
-            StandardReader reader = new StandardReader(fIStr);
+            StandardReader reader = StandardReader.getReader(fIStr);
             oBS = reader.readBinStr();
             Cache.INSTANCE.put(direction, oBS);
             return oBS;
@@ -235,7 +238,7 @@ public class FileUtil {
         String path = sb.toString();
         File f = new File(path);
         try (FileInputStream fIS = new FileInputStream(f);
-             StandardReader reader = new StandardReader(fIS)) {
+             StandardReader reader = StandardReader.getReader(fIS)) {
             byte[] bs = reader.readBinStr();
             log.info("已读取{}的字节码二进制流，长度为: {}", clazzName, bs.length);
             return bs;

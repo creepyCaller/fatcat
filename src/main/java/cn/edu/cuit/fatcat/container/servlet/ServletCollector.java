@@ -38,7 +38,7 @@ public class ServletCollector implements Collector, ServletContext {
         return instance;
     }
 
-    public void putServletModel(String servletName, ServletContainer servletContainer) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public void putServletModel(String servletName, ServletContainer servletContainer) throws IllegalAccessException, ClassNotFoundException, InstantiationException, ServletException {
         log.info("putServletModel({}, {})", servletName, servletContainer.toString());
         registered.add(servletContainer.getClassName());
         if (servletContainer.getLoadOnStartup() != null && servletContainer.getLoadOnStartup() != 0) {
@@ -47,7 +47,7 @@ public class ServletCollector implements Collector, ServletContext {
         servletCollector.put(servletName, servletContainer);
     }
 
-    public ServletContainer getServletModel(String servletName) throws ServletException {
+    public ServletContainer getServletContainer(String servletName) throws ServletException {
         ServletContainer servletContainer = servletCollector.get(servletName);
         if (servletContainer == null) {
             throw new ServletException("servlet not found : " + servletName);
@@ -61,7 +61,19 @@ public class ServletCollector implements Collector, ServletContext {
     }
 
     public String getClassName(String servletName) throws ServletException {
-        return getServletModel(servletName).getClassName();
+        return getServletContainer(servletName).getClassName();
+    }
+
+    /**
+     * 对所有Servlet的生命周期: 销毁
+     */
+    public void destroyServlets() {
+        for (Map.Entry<String, ServletContainer> e : servletCollector.entrySet()) {
+            Servlet servlet = e.getValue().getServlet();
+            if (servlet != null) {
+                servlet.destroy();;
+            }
+        }
     }
 
     /**

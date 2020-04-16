@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class WebAppXMLLoader implements Caller {
         }
     }
 
-    private void initServlets() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    private void initServlets() throws IllegalAccessException, InstantiationException, ClassNotFoundException, ServletException {
         NodeList servlets = webxml.getElementsByTagName("servlet");
         for (int i = 0; i < servlets.getLength() ; ++i) {
             Node servletInfo = servlets.item(i);

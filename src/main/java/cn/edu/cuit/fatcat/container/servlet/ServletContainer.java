@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,11 @@ public class ServletContainer implements ServletConfig {
         initParam.put(paramName, paramValue);
     }
 
-    public Servlet getInstance() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public Servlet getServlet() {
+        return instance;
+    }
+
+    public Servlet getInstance() throws IllegalAccessException, InstantiationException, ClassNotFoundException, ServletException {
         if (!init) {
             synchronized (this) {
                 if (!init) {

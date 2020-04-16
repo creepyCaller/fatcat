@@ -33,15 +33,19 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String protocol;
 
+    private String headersContext; // 头的整体，用于惰性转换优化
+
     private Map<String, Vector<String>> headers;
 
     private Vector<String> headerNames;
+
+    private String[] parametersContext; //参数块数组, 用于惰性转换优化
 
     private Map<String, String[]> parameters;
 
     private Vector<String> parameterNames;
 
-    private Cookie[] cookies;
+    private Cookie[] cookies; // TODO: 支持cookie
 
     private String context;
 

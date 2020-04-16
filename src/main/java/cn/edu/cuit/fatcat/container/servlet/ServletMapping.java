@@ -14,16 +14,18 @@ public enum ServletMapping {
 
     private Map<String, String> mapper = new HashMap<>();
     private Map<String, String> mapperWithWildcard = new HashMap<>();
+    private Map<String, String[]> divs = new HashMap<>(); // 提高效率
+
 
     public void setMapping(String urlPattern, String servletName) {
         log.info("setMapping({}, {})", urlPattern, servletName);
         mapper.put(urlPattern, servletName);
         if (urlPattern.contains("*")) {
             mapperWithWildcard.put(urlPattern, servletName);
+            divs.put(urlPattern, urlPattern.split("\\*"));
         }
     }
 
-    // TODO: 修改使其免去每次的spilt步骤提高效率
     public String getServletName(String direction) {
         String servletName = mapper.get(direction);
         if (servletName != null) {
@@ -38,7 +40,7 @@ public enum ServletMapping {
         for (Map.Entry entry : mapperWithWildcard.entrySet()) {
             // 遍历包含通配符的url看看有没有匹配的
             // 先分割
-            String[] div = entry.getKey().toString().split("\\*");
+            String[] div = divs.get(entry.getKey().toString());
             if (div.length == 1) {
                 // 前缀匹配
                 if (direction.startsWith(div[0])) {

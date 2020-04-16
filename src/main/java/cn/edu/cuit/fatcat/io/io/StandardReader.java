@@ -19,8 +19,12 @@ import java.io.InputStream;
 public class StandardReader implements AutoCloseable, RecycleAble {
     private InputStream iStr;
 
-    public StandardReader(InputStream iStr) {
+    private StandardReader(InputStream iStr) {
         this.iStr = iStr;
+    }
+
+    public static StandardReader getReader(InputStream iStr) {
+        return new StandardReader(iStr);
     }
 
     public byte[] readBinStr() throws IOException {
