@@ -12,7 +12,7 @@ import cn.edu.cuit.fatcat.message.Response;
  */
 public class ErrorPage {
 
-    public static String getTomcatEmbeddedErrorPageBytes(Request request, Response response) {
+    public static String getTomcatEmbeddedErrorPage(Request request, Response response) {
         return ("<!doctype html>\r\n" +
                 "<html>\r\n" +
                 "<head>\r\n" +

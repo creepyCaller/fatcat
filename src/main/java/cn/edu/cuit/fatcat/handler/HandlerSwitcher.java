@@ -14,14 +14,14 @@ public enum HandlerSwitcher {
     public Handler getHandler(SocketWrapper socketWrapper) throws IOException {
         Request request = Request.builder().socketWrapper(socketWrapper).build(); // 初始化request
         String requestContext = socketWrapper.getReader().readRequestContext(); // 读取请求报文
-        RequestAdapter.INSTANCE.getRequest(request, requestContext); // 获取请求对象
+        RequestAdapter.INSTANCE.setRequest(request, requestContext); // 设置请求对象
         Handler handler;
         switch (request.getProtocol()) {
             case HttpProtocol.AJP:
                 handler = null;
                 break;
             case HttpProtocol.HTTP_1_1:
-                handler = Http11Handler.newInstance(socketWrapper, request);
+                handler = Http11Handler.getHandler(socketWrapper, request);
                 break;
             case HttpProtocol.H2:
                 handler = null;

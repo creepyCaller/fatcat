@@ -18,7 +18,7 @@ public enum ServletMapping {
 
 
     public void setMapping(String urlPattern, String servletName) {
-        log.info("setMapping({}, {})", urlPattern, servletName);
+        log.info("设置URL映射: {} -> {}", urlPattern, servletName);
         mapper.put(urlPattern, servletName);
         if (urlPattern.contains("*")) {
             mapperWithWildcard.put(urlPattern, servletName);

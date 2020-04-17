@@ -62,7 +62,7 @@ public class FatCatOutPutStream extends ServletOutputStream {
      */
     private void commit() throws IOException {
         if (!committed) {
-            byte[] head = ResponseAdapter.INSTANCE.getResponseHead(response).getBytes(response.getCharset());
+            byte[] head = ResponseAdapter.INSTANCE.getResponseHead(response).getBytes();
             out.write(head);
             out.flush();
             committed = true;

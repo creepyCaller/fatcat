@@ -28,14 +28,13 @@ import java.util.*;
  */
 @Slf4j
 public class Setting implements Caller {
-    // TODO: 使用getter和setter包装
     public static String DISPLAY_NAME = "FatCat";
     public static String SERVER_ROOT = "WebApplication"; // 固定的服务器根目录名称
     public static String DEFAULT_FAVICON = "Resources/Default/Icon/favicon.ico";
-    private static Integer DEFAULT_PORT = 8080; // 默认的服务端口号
-    public static Integer PORT;
-    public static Integer DEFAULT_CONNECTION_KEEP = 10000;
-    public static Integer CONNECTION_KEEP;
+    private static int DEFAULT_PORT = 8080; // 默认的服务端口号
+    public static int PORT;
+    public static int DEFAULT_CONNECTION_KEEP = 10000;
+    public static int CONNECTION_KEEP;
     public static String DEFAULT_WELCOME = "/index.html"; // 从web.xml读取,默认为"/index.html"
     public static List<String> WELCOME_LIST;
     public static String WAR; // 待解压的WAR包名,如果不存在就跳过解压
@@ -57,14 +56,18 @@ public class Setting implements Caller {
     public void service() throws Throwable {
         Object port = settings.get("port");
         if (port == null) {
-            log.warn("未设置服务端口, 使用默认值: {}", Setting.DEFAULT_PORT);
+            log.warn("未设置监听端口, 使用默认值: {}", Setting.DEFAULT_PORT);
             Setting.PORT = Setting.DEFAULT_PORT;
         } else {
             if (port instanceof java.lang.Integer) {
                 Setting.PORT = (Integer) port;
-                log.info("服务端口: {}", Setting.PORT);
+                if (Setting.PORT != 0) {
+                    log.info("监听端口: {}", Setting.PORT);
+                } else {
+                    log.info("监听端口不能为0!将任意指派一个端口号");
+                }
             } else {
-                log.warn("服务端口设置错误, 使用默认值: {}", Setting.DEFAULT_PORT);
+                log.warn("监听端口设置错误, 使用默认值: {}", Setting.DEFAULT_PORT);
                 Setting.PORT = Setting.DEFAULT_PORT;
             }
         }

@@ -6,9 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
- * 对输入的处理类
+ * 对输入的包装类
  * TODO: 使用nio优化
  *
  * @author fpc
@@ -18,6 +19,7 @@ import java.io.InputStream;
 @Slf4j
 public class StandardReader implements AutoCloseable, RecycleAble {
     private InputStream iStr;
+    private ByteBuffer bb;
 
     private StandardReader(InputStream iStr) {
         this.iStr = iStr;

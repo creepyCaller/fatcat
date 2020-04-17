@@ -1,6 +1,5 @@
 package cn.edu.cuit.fatcat.util;
 
-import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.http.HttpContentType;
 import cn.edu.cuit.fatcat.http.HttpHeader;
@@ -13,6 +12,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -156,51 +156,22 @@ public class FileUtil {
 
     public static byte[] readBinStr(Request request, Response response) throws IOException {
         byte[] biStr;
-        // TODO: 优化分支结构！
-        if (request.getDirection().startsWith("/WEB-INF")) {
-            // 拦截要访问WEB-INF文件夹的请求, 意思是未经转发的请求以/WEB-INF开头的话就说找不到, 转发过的就不管
-            throw new FileNotFoundException();
+        Cache.Entry entry = Cache.INSTANCE.get(request.getDispatchedDirection()); // 先尝试从cache获取
+        if (entry == null) {
+            // 如果cache里没有记录, 就尝试新增记录
+            FileUtil.putToCache(request.getDispatchedDirection());
+            // 如果新增记录途中没有抛出异常, 说明把文件放入cache成功了
+            entry = Cache.INSTANCE.get(request.getDispatchedDirection());
         }
-        if (request.getHeader(HttpHeader.RANGE) != null) {
-            String[] kv = request.getHeader(HttpHeader.RANGE).split("=");
-            if (kv.length == 2) {
-                if (kv[0].equals("bytes")) {
-                    String[] kv1 = kv[1].split("-");
-                    if (kv1.length == 2) {
-                        Integer src = Integer.parseInt(kv1[0]);
-                        Integer dst = Integer.parseInt(kv1[1]);
-                        byte[] ctx = FileUtil.readBinStr(request.getDispatchedDirection());
-                        biStr = new byte[dst - src];
-                        try {
-                            for (int i = src, j = 0; i < dst; ++i, ++j) {
-                                biStr[j] = ctx[i];
-                            }
-                            response.setHeader(HttpHeader.CONTENT_RANGE, src.toString() + "-" + dst.toString() +  "/" + ctx.length);
-                        } catch (ArrayIndexOutOfBoundsException ignore) {
-                            biStr = FileUtil.readBinStr(request.getDispatchedDirection());
-                        }
-                    } else {
-                        biStr = FileUtil.readBinStr(request.getDispatchedDirection());
-                    }
-                } else {
-                    biStr = FileUtil.readBinStr(request.getDispatchedDirection());
-                }
-            } else {
-                biStr = FileUtil.readBinStr(request.getDispatchedDirection());
-            }
-        } else {
-            biStr = FileUtil.readBinStr(request.getDispatchedDirection());
-        }
-        // 读出direction路径下的文件
-        String mimeType = FileUtil.getMimeType(request.getDispatchedDirection()); // 判断文件类型
-        response.setContentType(mimeType);
+        biStr = entry.getContext(); // 读出direction路径下的文件
+        String mimeType = FileUtil.getMimeType(request.getDispatchedDirection()); // 通过后缀名判断文件类型
+        response.setContentType(mimeType); // 设置响应报文的Content-Type
+        response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(entry.getSize()));
         if (mimeType.startsWith("text/") || mimeType.startsWith("application/")) {
-            // 判断是二进制流还是文本文件
             // 如果是文本文件,就设置响应头的编码类型
             // TODO:这个判断需要改进（意思是多几个clause）
             response.setCharacterEncoding(Setting.CHARSET_STRING);
         }
-        response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
         return biStr;
     }
 
@@ -211,51 +182,40 @@ public class FileUtil {
      * @return 文件字节流
      * @throws IOException IO异常
      */
-    public static byte[] readBinStr(String direction) throws IOException {
-//        log.info("读取文件, 路径: {}", direction);
-        byte[] oBS = Cache.INSTANCE.get(direction);
-        if (oBS != null) {
-//            log.info("从缓存获取: {}, 成功! 比特流长度为: {}", direction, oBS.length);
-            return oBS;
-        } else {
-            File file = new File(Setting.SERVER_ROOT + direction); // FileNotFoundException
-            FileInputStream fIStr = new FileInputStream(file); // IOException
-            StandardReader reader = StandardReader.getReader(fIStr);
-            oBS = reader.readBinStr();
-            Cache.INSTANCE.put(direction, oBS);
-            return oBS;
-        }
+    public static void putToCache(String direction) throws IOException {
+        File file = new File(Setting.SERVER_ROOT + direction);
+        Cache.INSTANCE.put(direction, file);
     }
 
-    public static byte[] readClassRawFromClazzName(String clazzName) throws ClassNotFoundException {
+    public static byte[] readClassRawFromClazzName(String className) throws ClassNotFoundException {
         StringBuilder sb = new StringBuilder();
         sb.append(Setting.SERVER_ROOT).append(File.separatorChar).append("WEB-INF").append(File.separatorChar).append("classes").append(File.separatorChar);
-        if (clazzName.contains(".")) {
-            sb.append(clazzName.replace('.', File.separatorChar)).append(".class");
+        if (className.contains(".")) {
+            sb.append(className.replace('.', File.separatorChar)).append(".class");
         } else {
-            sb.append(clazzName).append(".class");
+            sb.append(className).append(".class");
         }
         String path = sb.toString();
         File f = new File(path);
         try (FileInputStream fIS = new FileInputStream(f);
              StandardReader reader = StandardReader.getReader(fIS)) {
-            byte[] bs = reader.readBinStr();
-            log.info("已读取{}的字节码二进制流，长度为: {}", clazzName, bs.length);
-            return bs;
+            return reader.readBinStr();
         } catch (IOException e) {
-            log.error("找不到文件: {}", path);
-            throw new ClassNotFoundException(clazzName);
+            log.error("找不到字节码文件: {}", path);
+            throw new ClassNotFoundException(className);
         }
     }
 
     public static Document getWebXML() {
-        File webxml = new File(Setting.SERVER_ROOT + "/WEB-INF/web.xml");
+        StringBuilder sb = new StringBuilder();
+        sb.append(Setting.SERVER_ROOT).append(File.separatorChar).append("WEB-INF").append(File.separatorChar).append("web.xml");
+        File webxml = new File(sb.toString());
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(webxml);
         } catch (Exception e) {
-            log.info("读取web.XML失败");
+            log.error("读取web.XML失败");
         }
         return null;
     }

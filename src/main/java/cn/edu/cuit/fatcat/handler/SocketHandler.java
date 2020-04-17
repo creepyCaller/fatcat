@@ -13,7 +13,7 @@ public class SocketHandler implements Runnable {
 
     @Override
     public void run() {
-        // 从套接字读取请求对象, 调用switcher, 返回Handler后调用handle
+        // 调用switcher, 返回Handler后调用handle
         try {
             Handler handler = HandlerSwitcher.INSTANCE.getHandler(socketWrapper);
             handler.handle();
@@ -22,7 +22,7 @@ public class SocketHandler implements Runnable {
         }
     }
 
-    public static void newThread(SocketWrapper socketWrapper) {
+    public static void handleSocket(SocketWrapper socketWrapper) {
         (new Thread(new SocketHandler(socketWrapper))).start();
     }
 }

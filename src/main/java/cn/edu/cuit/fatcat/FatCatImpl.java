@@ -36,7 +36,7 @@ public class FatCatImpl implements FatCat {
     @Override
     public void work() {
         log.info("启动Request Handler...");
-        Handler requestHandler = new RequestHandler();
+        Handler requestHandler = RequestHandler.build(Setting.PORT);
         requestHandler.handle();
     }
 

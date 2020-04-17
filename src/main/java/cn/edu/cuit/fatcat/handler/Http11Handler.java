@@ -32,9 +32,7 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
         this.socketWrapper = socketWrapper;
     }
 
-
-    // TODO: 池分配
-    public static Http11Handler newInstance(SocketWrapper socketWrapper, Request request) {
+    public static Http11Handler getHandler(SocketWrapper socketWrapper, Request request) {
         return new Http11Handler(request, socketWrapper);
     }
 
@@ -43,7 +41,7 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
      */
     @Override
     public void prepare() {
-        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).build();
+        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).build(); // 构造响应对象
         request.setResponse(response);
         socketWrapper.setRequest(request);
         socketWrapper.setResponse(response);
@@ -52,12 +50,12 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     }
 
     private void getNextRequest() throws IOException {
-        String requestContext = socketWrapper.getReader().readRequestContext(); // TODO: 异步?
+        String requestContext = socketWrapper.getReader().readRequestContext();
         if (requestContext == null) {
             fi = true;
             return;
         }
-        RequestAdapter.INSTANCE.getRequest(request, requestContext);
+        RequestAdapter.INSTANCE.setRequest(request, requestContext);
         response.recycle();
         if (HttpConnection.CLOSE.equals(request.getHeader(HttpHeader.CONNECTION))) {
             response.setHeader(HttpHeader.CONNECTION, HttpConnection.CLOSE);
@@ -74,6 +72,7 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     public void work() throws Throwable {
         if (!fi) {
             String servletName = ServletMapping.INSTANCE.getServletName(request.getDispatchedDirection());
+            // TODO: 捕获异常然后输出
             if (servletName != null) {
                 // Servlet容器:
                 ServletCaller.INSTANCE.callServlet(request, response, servletName);
@@ -112,5 +111,10 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
      */
     @Override
     public void recycle() {
+        socketWrapper = null;
+        request = null;
+        response = null;
+        fi = false;
+        close = false;
     }
 }

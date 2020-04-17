@@ -19,7 +19,7 @@ public enum ServletCaller {
 
     public void callServlet(Request request, Response response, String servletName) throws ServletException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
         ServletContainer servletContainer = ServletCollector.getInstance().getServletContainer(servletName);
-        log.info("URL: {}, 请求Servlet: {}", request.getDispatchedDirection(), ServletCollector.getInstance().getServletContainer(servletName));
+        log.info("URL: {}, 请求Servlet: {}", request.getDirection(), ServletCollector.getInstance().getServletContainer(servletName));
         response.setHeader(HttpHeader.TRANSFER_ENCODING, "chunked");
         Servlet servlet = servletContainer.getInstance(); // 获取Servlet实例
         servlet.service(request, response); // 生命周期: 服务

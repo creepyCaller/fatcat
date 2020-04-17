@@ -8,10 +8,12 @@ import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.Socket;
+import java.nio.channels.SocketChannel;
 
 @Slf4j
 public class SocketWrapper implements Closeable, RecycleAble {
     private Socket socket;
+    private SocketChannel socketChannel;
     private StandardReader reader;
     private StandardWriter writer;
     private InputStream iS;
@@ -27,7 +29,11 @@ public class SocketWrapper implements Closeable, RecycleAble {
         setSocket(socket);
     }
 
-    public static SocketWrapper newInstance(Socket socket) {
+    private SocketWrapper(SocketChannel socketChannel) {
+        setSocketChannel(socketChannel);
+    }
+
+    public static SocketWrapper wrapSocket(Socket socket) {
         return new SocketWrapper(socket);
     }
 
@@ -78,7 +84,7 @@ public class SocketWrapper implements Closeable, RecycleAble {
 
     @Override
     public void close() throws IOException {
-        log.info("Socket Connection Close: {}", socket.toString());
+        log.info("关闭套接字连接: {}", socket.toString());
         socket.shutdownOutput();
         socket.shutdownInput();
         socket.close();
@@ -102,7 +108,7 @@ public class SocketWrapper implements Closeable, RecycleAble {
     }
 
     public void setSocket(Socket socket) {
-        log.info("Socket Connection Established: {}", socket.toString());
+        log.info("建立套接字连接: {}", socket.toString());
         this.socket = socket;
     }
 
@@ -152,5 +158,13 @@ public class SocketWrapper implements Closeable, RecycleAble {
 
     public void setWriter(StandardWriter writer) {
         this.writer = writer;
+    }
+
+    public SocketChannel getSocketChannel() {
+        return socketChannel;
+    }
+
+    public void setSocketChannel(SocketChannel socketChannel) {
+        this.socketChannel = socketChannel;
     }
 }

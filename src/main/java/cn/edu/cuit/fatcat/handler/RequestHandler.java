@@ -1,12 +1,16 @@
 package cn.edu.cuit.fatcat.handler;
 
-import cn.edu.cuit.fatcat.RunnableFunctionalModule;
 import cn.edu.cuit.fatcat.Setting;
+import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.io.SocketWrapper;
-import lombok.Data;
+import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 使用HTTP协议，监听端口port，接收HTTP请求报文、返回HTTP响应报文
@@ -15,18 +19,74 @@ import java.net.ServerSocket;
  * @date  2019/10/23
  * @since Fatcat 0.0.1
  */
-@Data
 @Slf4j
-public class RequestHandler implements Handler {
+public class RequestHandler implements Handler, Runnable {
+    private int port;
+    private long startTime = System.currentTimeMillis();
+    private final long gcTime = 10 * 60 * 1000;
+
+    private RequestHandler(int port) {
+        this.port = port;
+    }
+
+    /**
+     * 如果端口为0就随便指派一个端口号
+     * @param port 端口号
+     * @return 请求handler
+     */
+    public static RequestHandler build(int port) {
+        while (port == 0) {
+            port = (int) ((Math.random() * 100000) % 65535);
+        }
+        log.info("监听端口: {}", port);
+        return new RequestHandler(port);
+    }
+
+    /**
+     * pool存放在静态存储空间
+     */
+    private static ExecutorService pool;
+
+    /**
+     * 线程池getter
+     * @return
+     */
+    private static ExecutorService getExecutor() {
+        if (pool == null) {
+            // 避免并发场景多次实例化Executor, 使用双重锁机制
+            synchronized (RequestHandler.class) {
+                if (pool == null) {
+                    pool = new ThreadPoolExecutor(
+                            /*线程核心池大小=CPU核心数*/Runtime.getRuntime().availableProcessors(),
+                            /*最大池大小*/Runtime.getRuntime().availableProcessors() * 2,
+                            /*多余线程存活时间*/Setting.CONNECTION_KEEP,
+                            /*存活时间单位*/TimeUnit.MILLISECONDS,
+                            /*workQueue*/new LinkedBlockingQueue<>());
+                }
+            }
+        }
+        return pool;
+    }
 
     @Override
     public void handle() {
-        try(ServerSocket serverSocket = new ServerSocket(Setting.PORT)) {
-            // TODO:使用线程池来做， getExecutor().execute(new ProtocolHandler(socketWrapper));
-            // TODO:在实现线程池之后，改用非阻断式
+        (new Thread(this)).start();
+    }
+
+    @Override
+    public void run() {
+        log.info("开始时间: {}", FastHttpDateFormat.formatDate(startTime));
+        try(ServerSocket serverSocket = new ServerSocket(port)) {
+            // TODO: 非阻塞IO, 意思是换成ServerSocketChannel
             while (true) {
-                SocketWrapper socketWrapper = SocketWrapper.newInstance(serverSocket.accept());
-                SocketHandler.newThread(socketWrapper);
+                SocketWrapper socketWrapper = SocketWrapper.wrapSocket(serverSocket.accept()); // 通过监听的端口接受套接字连接
+                getExecutor().execute(() -> {
+                    SocketHandler.handleSocket(socketWrapper); // 开启新线程处理套接字连接
+                });
+                if (System.currentTimeMillis() - startTime > gcTime) {
+                    log.info("{}已经运行超过10分钟了!还有{}MB可用内存, 调用System.gc()清理内存...", ServletCollector.getInstance().getServletContextName(), (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) / 1024 / 1024);
+                    System.gc();
+                }
             }
         } catch (IOException e) {
             log.error(e.toString());
