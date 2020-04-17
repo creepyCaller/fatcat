@@ -21,7 +21,6 @@ public enum Cache {
         if (!cache.containsKey(direction)) {
             if (!file.exists() || !file.isFile()) {
                 // 不能请求文件夹和不存在的文件
-                log.error("访问不存在的文件活文件夹: {}", file.getName());
                 throw new FileNotFoundException(); // FileNotFoundException
             }
             synchronized (Cache.INSTANCE.cache) {

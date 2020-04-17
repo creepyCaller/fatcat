@@ -56,14 +56,11 @@ public class Setting implements Caller {
     public void service() throws Throwable {
         Object port = settings.get("port");
         if (port == null) {
-            log.warn("未设置监听端口, 使用默认值: {}", Setting.DEFAULT_PORT);
             Setting.PORT = Setting.DEFAULT_PORT;
         } else {
             if (port instanceof java.lang.Integer) {
                 Setting.PORT = (Integer) port;
-                if (Setting.PORT != 0) {
-                    log.info("监听端口: {}", Setting.PORT);
-                } else {
+                if (Setting.PORT == 0) {
                     log.info("监听端口不能为0!将任意指派一个端口号");
                 }
             } else {

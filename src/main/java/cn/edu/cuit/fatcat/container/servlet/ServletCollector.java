@@ -39,7 +39,7 @@ public class ServletCollector implements Collector, ServletContext {
     }
 
     public void putServletModel(String servletName, ServletContainer servletContainer) throws IllegalAccessException, ClassNotFoundException, InstantiationException, ServletException {
-        log.info("放入Servlet收集器:  名字={}, 内容={}", servletName, servletContainer.toString());
+        log.info("放入Servlet收集器: 名字={}, 内容={}", servletName, servletContainer.toString());
         registered.add(servletContainer.getClassName());
         if (servletContainer.getLoadOnStartup() != null && servletContainer.getLoadOnStartup() != 0) {
             servletContainer.setInstance(servletContainer.getInstance());
@@ -50,7 +50,7 @@ public class ServletCollector implements Collector, ServletContext {
     public ServletContainer getServletContainer(String servletName) throws ServletException {
         ServletContainer servletContainer = servletCollector.get(servletName);
         if (servletContainer == null) {
-            throw new ServletException("servlet not found : " + servletName);
+            throw new ServletException("找不到Servlet : " + servletName);
         } else {
             return servletContainer;
         }

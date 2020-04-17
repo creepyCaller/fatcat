@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RequestHandler implements Handler, Runnable {
     private int port;
-    private long startTime = System.currentTimeMillis();
-    private final long gcTime = 10 * 60 * 1000;
 
     private RequestHandler(int port) {
         this.port = port;
@@ -56,6 +54,10 @@ public class RequestHandler implements Handler, Runnable {
             // 避免并发场景多次实例化Executor, 使用双重锁机制
             synchronized (RequestHandler.class) {
                 if (pool == null) {
+                    log.info("初始化线程池: 核心池{}, 最大池{}, 多余线程存活时间: {}ms",
+                            Runtime.getRuntime().availableProcessors(),
+                            Runtime.getRuntime().availableProcessors() * 2,
+                            Setting.CONNECTION_KEEP);
                     pool = new ThreadPoolExecutor(
                             /*线程核心池大小=CPU核心数*/Runtime.getRuntime().availableProcessors(),
                             /*最大池大小*/Runtime.getRuntime().availableProcessors() * 2,
@@ -75,16 +77,25 @@ public class RequestHandler implements Handler, Runnable {
 
     @Override
     public void run() {
-        log.info("开始时间: {}", FastHttpDateFormat.formatDate(startTime));
+        long startTime = System.currentTimeMillis();
+        long gcTime = System.currentTimeMillis();
+//        long needGCTime = 10 * 60 * 1000;
+        long needGCTime = 10 * 1000;
         try(ServerSocket serverSocket = new ServerSocket(port)) {
             // TODO: 非阻塞IO, 意思是换成ServerSocketChannel
             while (true) {
                 SocketWrapper socketWrapper = SocketWrapper.wrapSocket(serverSocket.accept()); // 通过监听的端口接受套接字连接
                 getExecutor().execute(() -> {
-                    SocketHandler.handleSocket(socketWrapper); // 开启新线程处理套接字连接
+                    try {
+                        HandlerSwitcher.INSTANCE.getHandler(socketWrapper).handle(); // 调用switcher, 返回Handler后调用handle
+                    } catch (IOException e) {
+                        log.error(e.toString());
+                        e.printStackTrace();
+                    }
                 });
-                if (System.currentTimeMillis() - startTime > gcTime) {
-                    log.info("{}已经运行超过10分钟了!还有{}MB可用内存, 调用System.gc()清理内存...", ServletCollector.getInstance().getServletContextName(), (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) / 1024 / 1024);
+                if (System.currentTimeMillis() - gcTime > needGCTime) {
+                    log.info("{}已经运行{}分钟了!还有{}MB可用内存, 调用System.gc()清理内存...", ServletCollector.getInstance().getServletContextName(), (System.currentTimeMillis() - startTime) / 1000 / 60, (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) / 1024 / 1024);
+                    gcTime = System.currentTimeMillis();
                     System.gc();
                 }
             }

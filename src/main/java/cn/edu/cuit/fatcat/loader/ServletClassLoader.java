@@ -31,10 +31,10 @@ public class ServletClassLoader extends FatCatClassLoader {
         if (Servlet.class.isAssignableFrom(cls)) {
             // 这里是为了验证servlet是否已经被注册
             if (ServletCollector.getInstance().isRegistered(cls.getName())) {
-                log.info("{} is registered", name);
+                log.info("{}已经被注册", name);
                 return cls;
             } else {
-                log.info("{} is not registered!", name);
+                log.info("{}未被注册!", name);
                 throw new ClassNotFoundException(name);
             }
         }

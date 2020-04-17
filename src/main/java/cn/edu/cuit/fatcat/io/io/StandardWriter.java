@@ -56,10 +56,9 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         if (bb == null) {
             bb = ByteBuffer.allocateDirect(Cache.Entry.capacity); // 申请1M的bb
         }
-        int read;
         int len;
         byte[] byteArrayBuf; // 有点脱裤子放屁的意思, TODO: 把输出流换成Channel
-        while ((read = fileChannel.read(bb)) != -1) {
+        while (fileChannel.read(bb) != -1) {
             len = bb.limit() - bb.position(); // 获取ByteBuffer种已读取字节长度
             byteArrayBuf = new byte[len]; // 分配新的字节数组让输出流输出
             bb.get(byteArrayBuf);
@@ -71,7 +70,6 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
 
     public void write(Request request, Response response) throws ClassNotFoundException, InstantiationException, IllegalAccessException, ServletException, IOException {
         try {
-            log.info("URL: {}, 转发后的请求: {}", request.getDirection(), request.getDispatchedDirection());
             if (request.getDirection().startsWith("/WEB-INF")) {
                 // 拦截要访问WEB-INF文件夹的请求, 意思是未经转发的请求以/WEB-INF开头的话就说找不到, 转发过的就不管
                 throw new FileNotFoundException();

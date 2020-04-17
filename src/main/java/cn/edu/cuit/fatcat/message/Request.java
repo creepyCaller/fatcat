@@ -45,7 +45,7 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private Vector<String> parameterNames;
 
-    private Cookie[] cookies; // TODO: 支持cookie
+    private Cookie[] cookies;
 
     private String context;
 

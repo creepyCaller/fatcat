@@ -72,7 +72,6 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
     public void work() throws Throwable {
         if (!fi) {
             String servletName = ServletMapping.INSTANCE.getServletName(request.getDispatchedDirection());
-            // TODO: 捕获异常然后输出
             if (servletName != null) {
                 // Servlet容器:
                 ServletCaller.INSTANCE.callServlet(request, response, servletName);

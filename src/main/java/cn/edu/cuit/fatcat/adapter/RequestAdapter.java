@@ -4,6 +4,7 @@ import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.fatcat.message.Request;
 
+import javax.servlet.http.Cookie;
 import java.util.*;
 
 // TODO: 使用惰性转换优化！
@@ -39,6 +40,16 @@ public enum RequestAdapter {
         if (!HttpMethod.METHOD_GET.equals(request.getMethod())) {
             getParam(request.getParameters(), body); // 如果请求类型不是Get就找body里的参数
         }
+        addCookies(request);
+    }
+
+    /**
+     * 从请求头获取Cookies
+     * @param request
+     */
+    private void addCookies(Request request) {
+        Cookie[] cookies;
+
     }
 
     /**
