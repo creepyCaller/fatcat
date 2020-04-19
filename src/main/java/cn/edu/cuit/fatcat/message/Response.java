@@ -70,7 +70,7 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .code(HttpStatusCode.OK)
                 .status(HttpStatusDescription.OK)
                 .headers(new HashMap<>())
-                .cookies(new ArrayList<>())
+                .cookies(null)
                 .useWriter(false)
                 .useStream(false);
     }
@@ -81,7 +81,7 @@ public class Response implements HttpServletResponse, RecycleAble {
         code = HttpStatusCode.OK;
         status = HttpStatusDescription.OK;
         headers = new HashMap<>();
-        cookies = new ArrayList<>();
+        cookies = null;
         locale = null;
         charset = null;
         characterEncoding = null;
@@ -99,7 +99,18 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void addCookie(Cookie cookie) {
+        if (cookies == null) {
+            cookies = new ArrayList<>();
+        }
         cookies.add(cookie);
+    }
+
+    /**
+     * 获取cookie, 由适配器调用
+     * @return
+     */
+    public List<Cookie> getCookies() {
+        return cookies;
     }
 
     /**
@@ -587,9 +598,10 @@ public class Response implements HttpServletResponse, RecycleAble {
     public void flushBuffer() throws IOException {
         if (useWriter) {
             fatCatWriter.flushBuffer();
-        }
-        if (useStream) {
+        } else if (useStream) {
             fatCatOutPutStream.flush();
+        } else {
+            getOutputStream().flush();
         }
     }
 

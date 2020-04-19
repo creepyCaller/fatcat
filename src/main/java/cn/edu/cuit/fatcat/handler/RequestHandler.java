@@ -3,7 +3,6 @@ package cn.edu.cuit.fatcat.handler;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.io.SocketWrapper;
-import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
@@ -79,8 +78,7 @@ public class RequestHandler implements Handler, Runnable {
     public void run() {
         long startTime = System.currentTimeMillis();
         long gcTime = System.currentTimeMillis();
-//        long needGCTime = 10 * 60 * 1000;
-        long needGCTime = 10 * 1000;
+        long needGCTime = 10 * 60 * 1000; // 每10分钟调用一次gc
         try(ServerSocket serverSocket = new ServerSocket(port)) {
             // TODO: 非阻塞IO, 意思是换成ServerSocketChannel
             while (true) {

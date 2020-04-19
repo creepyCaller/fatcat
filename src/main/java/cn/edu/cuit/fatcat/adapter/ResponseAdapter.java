@@ -2,7 +2,11 @@ package cn.edu.cuit.fatcat.adapter;
 
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.message.Response;
+import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.Cookie;
+import java.util.List;
 
 /**
  * 响应报文适配器
@@ -21,16 +25,41 @@ public enum ResponseAdapter {
 
     private String getResponseHeadersLine(Response response) {
         if (response.getMapHeaders() != null) {
-            StringBuilder paramString = new StringBuilder();
-            response.getMapHeaders().forEach((key, value) -> value.forEach(each -> paramString.append(key).append(": ").append(each).append("\r\n")));
-            return paramString.toString();
+            StringBuilder sb = new StringBuilder();
+            response.getMapHeaders()
+                    .forEach((key, value) -> value
+                            .forEach(each ->
+                                    sb.append(key).append(": ").append(each).append("\r\n")));
+            return sb.toString();
+        }
+        return "";
+    }
+
+    private String getResponseCookiesLine(Response response) {
+        log.info("get cookies");
+        if (response.getCookies() != null) {
+            StringBuilder sb = new StringBuilder();
+            response.getCookies().forEach((cookie) -> {
+                // Set-Cookie:
+                sb.append(HttpHeader.SET_COOKIE).append(": ");
+                // key=value
+                sb.append(cookie.getName()).append("=").append(cookie.getValue());
+                if (cookie.getMaxAge() != -1) {
+                    // ; Expires=Sun, 19-Apr-2020 09:24:36 GMT
+                    long maxAgeMillis = cookie.getMaxAge() * 1000;
+                    sb.append("; Expires=").append(FastHttpDateFormat.formatDate(System.currentTimeMillis() + maxAgeMillis));
+                }
+                // TODO: 再在这里康康有没有设置别的, 就放进Cookie里
+                sb.append("\r\n");
+            });
+            return sb.toString();
         }
         return "";
     }
 
     public String getResponseHead(Response response) {
         if (response.getHeader("Server") == null) {
-            response.setHeader("Server", "FatCat/0.2");
+            response.setHeader("Server", "FatCat");
         }
         if (response.getHeader("Data") == null) {
             response.setDateHeader("Data", System.currentTimeMillis());
@@ -38,7 +67,7 @@ public enum ResponseAdapter {
         if (response.getHeader(HttpHeader.CONNECTION) == null) {
             response.setHeader(HttpHeader.CONNECTION, "keep-alive");
         }
-        return getResponseFirstLine(response) + getResponseHeadersLine(response) + "\r\n";
+        return getResponseFirstLine(response) + getResponseHeadersLine(response) + getResponseCookiesLine(response) + "\r\n";
     }
 
 }

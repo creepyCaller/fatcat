@@ -1,6 +1,6 @@
 port: 8080 # 服务端口号
 charset: UTF-8 # 服务器默认编码
 locale: zh_CN # 地址码
-connection_keep: 10000
-war: hello.war # 指定WAR包
-auto_deploy: false
+connection_keep: 10000 # 长连接保持时间
+war: cookie_test.war # 指定WAR包
+auto_deploy: true # 自动部署

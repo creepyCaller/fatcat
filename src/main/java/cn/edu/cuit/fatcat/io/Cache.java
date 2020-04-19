@@ -3,13 +3,10 @@ package cn.edu.cuit.fatcat.io;
 import cn.edu.cuit.fatcat.io.io.StandardReader;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public enum Cache {

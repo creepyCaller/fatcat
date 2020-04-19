@@ -1,14 +1,17 @@
 package cn.edu.cuit.fatcat.adapter;
 
 import cn.edu.cuit.fatcat.Dispatcher;
+import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.fatcat.message.Request;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.Cookie;
 import java.util.*;
 
 // TODO: 使用惰性转换优化！
 // TODO: 使用异步适配优化!
+@Slf4j
 public enum RequestAdapter {
     INSTANCE;
 
@@ -45,11 +48,23 @@ public enum RequestAdapter {
 
     /**
      * 从请求头获取Cookies
-     * @param request
+     * Cookie: key=value; key=value; key=value ...
+     * @param request 请求对象
      */
     private void addCookies(Request request) {
-        Cookie[] cookies;
-
+        String cookieHeaders = request.getHeader(HttpHeader.COOKIE);
+        if (cookieHeaders != null) {
+            String[] split = cookieHeaders.split("; "); // key=value; key1=value1
+            Cookie[] cookies = new Cookie[split.length];
+            log.info("add cookies {} {}", split.length, Arrays.toString(split));
+            for (int i = 0; i < split.length; ++i) {
+                String[] kv = split[i].split("=", 2);
+                if (kv.length == 2) {
+                    cookies[i] = new Cookie(kv[0], kv[1]);
+                }
+            }
+            request.setCookies(cookies);
+        }
     }
 
     /**

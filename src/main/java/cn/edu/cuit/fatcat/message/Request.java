@@ -35,9 +35,9 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String headersContext; // 头的整体，用于惰性转换优化
 
-    private Map<String, Vector<String>> headers;
+    private Map<String, Vector<String>> headers; // 一个key可能对应多个value, 所以要存成列表
 
-    private Vector<String> headerNames;
+    private Vector<String> headerNames; // 用于快速取值
 
     private String[] parametersContext; //参数块数组, 用于惰性转换优化
 
