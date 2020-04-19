@@ -44,12 +44,31 @@ public enum ResponseAdapter {
                 sb.append(HttpHeader.SET_COOKIE).append(": ");
                 // key=value
                 sb.append(cookie.getName()).append("=").append(cookie.getValue());
-                if (cookie.getMaxAge() != -1) {
-                    // ; Expires=Sun, 19-Apr-2020 09:24:36 GMT
-                    long maxAgeMillis = cookie.getMaxAge() * 1000;
-                    sb.append("; Expires=").append(FastHttpDateFormat.formatDate(System.currentTimeMillis() + maxAgeMillis));
+                if (cookie.getPath() != null) {
+                    // ; path=/
+                    sb.append("; path=").append(cookie.getPath());
                 }
-                // TODO: 再在这里康康有没有设置别的, 就放进Cookie里
+                if (cookie.getDomain() != null) {
+                    //; domain=www.example.com
+                    sb.append("; domain=").append(cookie.getDomain());
+                }
+                if (cookie.getMaxAge() != -1) {
+                    // ; expires=Sun, 19-Apr-2020 09:24:36 GMT
+                    long maxAgeMillis = cookie.getMaxAge() * 1000;
+                    sb.append("; expires=").append(FastHttpDateFormat.formatDate(System.currentTimeMillis() + maxAgeMillis));
+                }
+                if (cookie.getComment() != null) {
+                    // ; comment=purpose
+                    sb.append("; comment=").append(cookie.getComment());
+                }
+                if (cookie.getVersion() != 0) {
+                    // ; version=0
+                    sb.append("; comment=").append(cookie.getVersion());
+                }
+                if (cookie.getSecure()) {
+                    // ; secure
+                    sb.append("; secure");
+                }
                 sb.append("\r\n");
             });
             return sb.toString();
