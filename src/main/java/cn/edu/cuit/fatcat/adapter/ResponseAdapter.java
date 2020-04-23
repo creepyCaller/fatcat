@@ -54,7 +54,7 @@ public enum ResponseAdapter {
                 }
                 if (cookie.getMaxAge() != -1) {
                     // ; expires=Sun, 19-Apr-2020 09:24:36 GMT
-                    long maxAgeMillis = cookie.getMaxAge() * 1000;
+                    long maxAgeMillis = cookie.getMaxAge() * 1000L;
                     sb.append("; expires=").append(FastHttpDateFormat.formatDate(System.currentTimeMillis() + maxAgeMillis));
                 }
                 if (cookie.getComment() != null) {
@@ -68,6 +68,10 @@ public enum ResponseAdapter {
                 if (cookie.getSecure()) {
                     // ; secure
                     sb.append("; secure");
+                }
+                if (cookie.isHttpOnly()) {
+                    // ;
+                    sb.append("; HttpOnly");
                 }
                 sb.append("\r\n");
             });

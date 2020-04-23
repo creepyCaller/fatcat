@@ -56,13 +56,10 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         if (bb == null) {
             bb = ByteBuffer.allocateDirect(Cache.Entry.capacity); // 申请1M的bb
         }
-        int len;
-        byte[] byteArrayBuf; // 有点脱裤子放屁的意思, TODO: 把输出流换成Channel
+        byte[] byteArrayBuf = new byte[Cache.Entry.capacity]; // 申请1M大小的字节数组用作流输出的cache, 有点脱裤子放屁的意思, TODO: 把输出流换成Channel
         while (fileChannel.read(bb) != -1) {
-            len = bb.limit() - bb.position(); // 获取ByteBuffer种已读取字节长度
-            byteArrayBuf = new byte[len]; // 分配新的字节数组让输出流输出
             bb.get(byteArrayBuf);
-            oStr.write(byteArrayBuf);
+            oStr.write(byteArrayBuf, 0, bb.limit() - bb.position()); // 获取ByteBuffer种已读取字节长度
             bb.clear();
         }
         oStr.flush();

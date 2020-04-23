@@ -16,6 +16,9 @@ public enum RequestAdapter {
     INSTANCE;
 
     public void setRequest(Request request, String context) {
+        if (context == null) {
+            return;
+        }
         request.setContext(context);
         String[] requestSpiltHeaderAndBody = context.split("\r\n\r\n", 2); // 拆分头和body
         String body = "";
