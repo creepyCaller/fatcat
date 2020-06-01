@@ -35,6 +35,7 @@ import java.nio.channels.FileChannel;
 public class StandardWriter implements AutoCloseable, RecycleAble {
     private OutputStream oStr;
     private ByteBuffer bb;
+    private byte[] byteArrayBuf;
 
     private StandardWriter(OutputStream oStr) {
         this.oStr = oStr;
@@ -56,7 +57,7 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         if (bb == null) {
             bb = ByteBuffer.allocateDirect(Cache.Entry.capacity); // 申请1M的bb
         }
-        byte[] byteArrayBuf = new byte[Cache.Entry.capacity]; // 申请1M大小的字节数组用作流输出的cache, 有点脱裤子放屁的意思, TODO: 把输出流换成Channel
+        byteArrayBuf = new byte[Cache.Entry.capacity]; // 申请1M大小的字节数组用作流输出的cache, 有点脱裤子放屁的意思, TODO: 把输出流换成Channel
         while (fileChannel.read(bb) != -1) {
             bb.get(byteArrayBuf);
             oStr.write(byteArrayBuf, 0, bb.limit() - bb.position()); // 获取ByteBuffer种已读取字节长度

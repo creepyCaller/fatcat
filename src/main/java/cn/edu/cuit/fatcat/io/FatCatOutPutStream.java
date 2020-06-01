@@ -95,7 +95,7 @@ public class FatCatOutPutStream extends ServletOutputStream {
         if (s == null) {
             s = "null";
         }
-        write(s.getBytes());
+        write(s.getBytes(response.getCharset()));
     }
 
     /**
@@ -111,13 +111,7 @@ public class FatCatOutPutStream extends ServletOutputStream {
     public void print(boolean b) throws IOException {
         commit();
         initBuffer();
-        String value;
-        if (b) {
-            value = "true";
-        } else {
-            value = "false";
-        }
-        write(value.getBytes());
+        write(Boolean.toString(b).getBytes());
     }
 
     /**

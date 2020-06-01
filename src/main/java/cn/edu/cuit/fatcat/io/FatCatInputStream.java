@@ -3,12 +3,18 @@ package cn.edu.cuit.fatcat.io;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Servlet输入流实现类
  * @see javax.servlet.ServletInputStream
  */
 public class FatCatInputStream extends ServletInputStream {
+    private InputStream iS;
+
+    public FatCatInputStream(InputStream iS) {
+        this.iS = iS;
+    }
 
     @Override
     public boolean isFinished() {

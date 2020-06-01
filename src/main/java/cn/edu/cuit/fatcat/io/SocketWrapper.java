@@ -6,6 +6,8 @@ import cn.edu.cuit.fatcat.io.io.StandardWriter;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.ServletInputStream;
 import java.io.*;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
@@ -22,6 +24,7 @@ public class SocketWrapper implements Closeable, RecycleAble {
     private BufferedReader bR;
     private FatCatOutPutStream fatCatOutPutStream;
     private FatCatWriter fatCatWriter;
+    private FatCatInputStream fIS;
     private Request request;
     private Response response;
 
@@ -81,6 +84,12 @@ public class SocketWrapper implements Closeable, RecycleAble {
         return fatCatWriter;
     }
 
+    public FatCatInputStream getFatCatInputStream() throws IOException {
+        if (fIS == null) {
+            fIS = new FatCatInputStream(getInputStream());
+        }
+        return fIS;
+    }
 
     @Override
     public void close() throws IOException {

@@ -4,7 +4,11 @@ import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
+import cn.edu.cuit.fatcat.container.servlet.ServletContainer;
+import cn.edu.cuit.fatcat.container.servlet.ServletMapping;
+import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.io.SocketWrapper;
+import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.*;
 import javax.servlet.*;
 import javax.servlet.annotation.MultipartConfig;
@@ -33,19 +37,17 @@ public class Request implements HttpServletRequest, RecycleAble {
 
     private String protocol;
 
-    private String headersContext; // 头的整体，用于惰性转换优化
-
     private Map<String, Vector<String>> headers; // 一个key可能对应多个value, 所以要存成列表
 
     private Vector<String> headerNames; // 用于快速取值
-
-    private String[] parametersContext; //参数块数组, 用于惰性转换优化
 
     private Map<String, String[]> parameters;
 
     private Vector<String> parameterNames;
 
     private Cookie[] cookies;
+
+    private HttpSession session;
 
     private String context;
 
@@ -54,6 +56,8 @@ public class Request implements HttpServletRequest, RecycleAble {
     private Response response;
 
     private SocketWrapper socketWrapper;
+
+    private Integer contentLength;
 
     @Override
     public String toString() {
@@ -128,7 +132,11 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public long getDateHeader(String name) {
-        return 0;
+        String dateHeader = getHeader(name);
+        if (dateHeader != null) {
+            return FastHttpDateFormat.parseDate(dateHeader);
+        }
+        return -1;
     }
 
     /**
@@ -236,7 +244,11 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getIntHeader(String name) {
-        return Integer.parseInt(getHeader(name));
+        String intHeader = getHeader(name);
+        if (intHeader != null) {
+            return Integer.parseInt(getHeader(name));
+        }
+        return -1;
     }
 
     /**
@@ -283,6 +295,9 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getPathTranslated() {
+        if (dispatchedDirection != null) {
+            return dispatchedDirection;
+        }
         return null;
     }
 
@@ -310,7 +325,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getContextPath() {
-        return null;
+        return "/";
     }
 
     /**
@@ -404,7 +419,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRequestedSessionId() {
-        return null;
+        if (session == null) {
+            return null;
+        }
+        return session.getId();
     }
 
     /**
@@ -432,7 +450,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRequestURI() {
-        return null;
+        return direction;
     }
 
     /**
@@ -458,7 +476,13 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public StringBuffer getRequestURL() {
-        return null;
+        StringBuffer sb = new StringBuffer();
+        if (dispatchedDirection != null) {
+            sb.append(dispatchedDirection);
+            return sb;
+        }
+        sb.append(direction);
+        return sb;
     }
 
     /**
@@ -482,7 +506,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getServletPath() {
-        return null;
+        return dispatchedDirection;
     }
 
     /**
@@ -513,7 +537,11 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public HttpSession getSession(boolean create) {
-        return null;
+        if (create) {
+            return session;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -526,7 +554,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public HttpSession getSession() {
-        return null;
+        return session;
     }
 
     /**
@@ -808,7 +836,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getCharacterEncoding() {
-        return null;
+        return getHeader("");
     }
 
     /**
@@ -838,7 +866,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getContentLength() {
-        return 0;
+        if (contentLength == null) {
+            return -1;
+        }
+        return contentLength;
     }
 
     /**
@@ -852,7 +883,10 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public long getContentLengthLong() {
-        return 0;
+        if (contentLength == null) {
+            return -1L;
+        }
+        return contentLength;
     }
 
     /**
@@ -865,7 +899,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getContentType() {
-        return null;
+        return getHeader(HttpHeader.CONTENT_TYPE);
     }
 
     /**
@@ -881,7 +915,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return null;
+        return socketWrapper.getFatCatInputStream();
     }
 
     /**
@@ -984,7 +1018,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getScheme() {
-        return null;
+        return "http";
     }
 
     /**

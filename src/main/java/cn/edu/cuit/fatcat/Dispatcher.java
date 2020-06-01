@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 转发服务
+ * 转发、调度
  *
  * @author fpc
  * @date 2019/10/27
- * @since Fatcat 0.0.1
+ * @since Fatcat 0.1
  */
 public enum Dispatcher implements RequestDispatcher {
     INSTANCE;
@@ -68,6 +68,11 @@ public enum Dispatcher implements RequestDispatcher {
         return s != null && s.length() > 0;
     }
 
+    /**
+     * 检查欢迎文件页否存在
+     * @param welcome
+     * @return
+     */
     private static boolean checkWelcomeFile(String welcome) {
         if (Cache.INSTANCE.get(welcome) != null || ServletMapping.INSTANCE.getServletName(welcome) != null) {
             return true;

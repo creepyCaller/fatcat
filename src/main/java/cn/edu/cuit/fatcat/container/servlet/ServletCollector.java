@@ -19,6 +19,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Servlet Instance Collector
+ * Servlet实例收集器，用来收集ServletContainer实例，和存储已注册的Servlet列表
+ *
+ * @author fpc
+ * @since FatCat/0.2
+ */
 @Slf4j
 public class ServletCollector implements Collector, ServletContext {
     private final Map<String, ServletContainer> servletCollector = new HashMap<>();
@@ -27,6 +34,10 @@ public class ServletCollector implements Collector, ServletContext {
 
     private ServletCollector() {}
 
+    /**
+     * 获取实例，使用双重验证 + 锁机制确保单例
+     * @return Servlet实例收集器实例
+     */
     public static ServletCollector getInstance() {
         if (instance == null) {
             synchronized (ServletCollector.class) {

@@ -76,9 +76,6 @@ public class RequestHandler implements Handler, Runnable {
 
     @Override
     public void run() {
-        long startTime = System.currentTimeMillis();
-        long gcTime = System.currentTimeMillis();
-        long needGCTime = 10 * 60 * 1000; // 每10分钟调用一次gc
         try(ServerSocket serverSocket = new ServerSocket(port)) {
             // TODO: 非阻塞IO, 意思是换成ServerSocketChannel
             while (true) {
@@ -91,11 +88,6 @@ public class RequestHandler implements Handler, Runnable {
                         e.printStackTrace();
                     }
                 });
-                if (System.currentTimeMillis() - gcTime > needGCTime) {
-                    log.info("{}已经运行{}分钟了!还有{}MB可用内存, 调用System.gc()清理内存...", ServletCollector.getInstance().getServletContextName(), (System.currentTimeMillis() - startTime) / 1000 / 60, (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) / 1024 / 1024);
-                    gcTime = System.currentTimeMillis();
-                    System.gc();
-                }
             }
         } catch (IOException e) {
             log.error(e.toString());

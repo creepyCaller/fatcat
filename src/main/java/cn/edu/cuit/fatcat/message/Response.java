@@ -10,6 +10,8 @@ import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -26,14 +28,24 @@ import java.util.*;
  * @date 2019/10/23
  * @since Fatcat 0.0.1
  */
+@Slf4j
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Response implements HttpServletResponse, RecycleAble {
+    /**
+     * 默认缓冲区大小8K
+     */
     private static final int defaultBufferSize = 8192;
 
+    /**
+     * 缓冲区大小
+     */
     private int bufferSize;
 
+    /**
+     * 响应使用的协议
+     */
     private String protocol;
 
     private Integer code;
@@ -43,6 +55,8 @@ public class Response implements HttpServletResponse, RecycleAble {
     private Locale locale;
 
     private boolean committed;
+
+    private boolean setCharset;
 
     private Charset charset;
 
@@ -72,6 +86,7 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .headers(new HashMap<>())
                 .cookies(null)
                 .useWriter(false)
+                .setCharset(false)
                 .useStream(false);
     }
 
@@ -84,6 +99,7 @@ public class Response implements HttpServletResponse, RecycleAble {
         cookies = null;
         locale = null;
         charset = null;
+        setCharset = false;
         characterEncoding = null;
         committed = false;
         useStream = false;
@@ -238,6 +254,7 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
+        // TODO: 发送错误
     }
 
     /**
@@ -266,6 +283,7 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
+        // TODO: 发送错误
     }
 
     /**
@@ -300,6 +318,7 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
+        // TODO: 重定向
     }
 
     /**
@@ -353,7 +372,12 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void setHeader(String name, String value) {
-        headers.put(name, Collections.singletonList(value));
+        if ("Content-Type".equals(name)) {
+            // 如果Header是设置Content-Type
+            setContentType(value);
+        } else {
+            headers.put(name, Collections.singletonList(value));
+        }
     }
 
     /**
@@ -894,10 +918,13 @@ public class Response implements HttpServletResponse, RecycleAble {
     public void setCharacterEncoding(String charset) {
         characterEncoding = charset;
         if (getContentType() != null) {
-            if (getContentType().startsWith("text")) {
-                setContentType(getContentType() + ";charset=" + charset);
+            if (!getContentType().contains(";charset=")) {
+                if (getContentType().startsWith("text")) {
+                    setContentType(getContentType() + ";charset=" + charset);
+                }
             }
         }
+        setCharset = true;
     }
 
     /**
@@ -952,9 +979,21 @@ public class Response implements HttpServletResponse, RecycleAble {
      * @see #getWriter
      */
     @Override
-    public void setContentType(String type) {
-        setHeader("Content-Type", type);
+public void setContentType(String type) {
+    setHeader("Content-Type", type);
+    // 判断字符格式
+    String[] div = type.split(";");
+    if (!setCharset) {
+        if (div.length == 2) {
+            if (div[1] != null && div[1].startsWith("charset=")) {
+                String[] div1 = div[1].split("=");
+                if (div1.length == 2) {
+                    setCharacterEncoding(div1[1]);
+                }
+            }
+        }
     }
+}
 
     public Map<String, List<String>> getMapHeaders() {
         return headers;
@@ -1014,7 +1053,7 @@ public class Response implements HttpServletResponse, RecycleAble {
             if (characterEncoding == null) {
                 charset = Setting.CHARSET;
             } else {
-                Setting.CHARSET = Charset.forName(characterEncoding);
+                charset = Charset.forName(characterEncoding);
             }
         }
         return charset;

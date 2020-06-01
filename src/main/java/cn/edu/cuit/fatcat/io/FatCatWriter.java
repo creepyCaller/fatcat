@@ -654,14 +654,23 @@ public class FatCatWriter extends PrintWriter {
         out.flush();
     }
 
+    /**
+     * 重置缓冲区
+     */
     public void resetBuffer() {
         out.resetBuffer();
     }
 
+    /**
+     * 设置响应对象
+     */
     public void setResponse(Response response) {
         this.response = response;
     }
 
+    /**
+     * 输出空块
+     */
     public void writeEmptyChunk() throws IOException {
         out.writeEmptyChunk();
     }

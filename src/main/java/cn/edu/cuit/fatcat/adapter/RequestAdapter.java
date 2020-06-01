@@ -19,34 +19,35 @@ public enum RequestAdapter {
         if (context == null) {
             return;
         }
-        request.setContext(context);
-        String[] requestSpiltHeaderAndBody = context.split("\r\n\r\n", 2); // 拆分头和body
-        String body = "";
-        if (requestSpiltHeaderAndBody.length == 2) {
-            // 长度为2就说明存在body
-            body = requestSpiltHeaderAndBody[1];
-        }
-        String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request Headers
-        String[] statusLine = requestHeaderLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
-        request.setMethod(statusLine[0]);
-        String[] requestDirectionDiv = statusLine[1].split("\\?", 2); // 根据问号拆分请求路径，格式为：真路径？参数
-        request.setProtocol(statusLine[2]); // 设置协议
-        request.setDirection(requestDirectionDiv[0]); // 设置请求路径
-        request.setDispatchedDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
-        String pathVariables = "";
-        if (requestDirectionDiv.length > 1) {
-            pathVariables = requestDirectionDiv[1];
-        }
-        request.setHeaders(new HashMap<>());
-        getParamFromMessage(request.getHeaders(), requestHeaderLines); // 初始化Header
-        request.setParameters(new HashMap<>());
-        if (requestDirectionDiv.length > 1) {
-            getParam(request.getParameters(), pathVariables); // 如果请求路径包含了参数
-        }
-        if (!HttpMethod.METHOD_GET.equals(request.getMethod())) {
-            getParam(request.getParameters(), body); // 如果请求类型不是Get就找body里的参数
-        }
-        addCookies(request);
+request.setContext(context);
+String[] requestSpiltHeaderAndBody = context.split("\r\n\r\n", 2); // 拆分头和body
+String body = "";
+if (requestSpiltHeaderAndBody.length == 2) {
+    // 长度为2就说明存在body
+    body = requestSpiltHeaderAndBody[1];
+    request.setContentLength(body.length());
+}
+String[] requestHeaderLines = requestSpiltHeaderAndBody[0].split("\r\n"); // 依据换行符拆分Request Headers
+String[] statusLine = requestHeaderLines[0].split(" "); // 根据空格拆分Request报文第一行，能拆出三个子串: 方法(动作) 请求路径[?参数] 协议名/版本号
+request.setMethod(statusLine[0]);
+String[] requestDirectionDiv = statusLine[1].split("\\?", 2); // 根据问号拆分请求路径，格式为：真路径？参数
+request.setProtocol(statusLine[2]); // 设置协议
+request.setDirection(requestDirectionDiv[0]); // 设置请求路径
+request.setDispatchedDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
+String pathVariables = "";
+if (requestDirectionDiv.length > 1) {
+    pathVariables = requestDirectionDiv[1];
+}
+request.setHeaders(new HashMap<>());
+getParamFromMessage(request.getHeaders(), requestHeaderLines); // 初始化Header
+request.setParameters(new HashMap<>());
+if (requestDirectionDiv.length > 1) {
+    getParam(request.getParameters(), pathVariables); // 如果请求路径包含了参数
+}
+if (!HttpMethod.METHOD_GET.equals(request.getMethod())) {
+    getParam(request.getParameters(), body); // 如果请求类型不是Get就找body里的参数
+}
+addCookies(request);
     }
 
     /**
