@@ -1,11 +1,36 @@
 package cn.edu.cuit.fatcat.container.session;
 
+import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
+import lombok.Builder;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import java.util.Enumeration;
+import java.util.*;
 
+@Builder
 public class SessionContainer implements HttpSession {
+    private String sessionId;
+    private long creationTime;
+    private long lastAccessTime;
+    private int maxInactiveInterval;
+    private Map<String, Object> attributes;
+
+    public static SessionContainer create() {
+        return SessionContainer.builder()
+                .sessionId(UUID.randomUUID().toString())
+                .creationTime(System.currentTimeMillis())
+                .lastAccessTime(-1)
+                .maxInactiveInterval(SessionConfig.INSTANCE.getSessionTimeout())
+                .attributes(new HashMap<>())
+                .build();
+    }
+
+    /**
+     * 从会话上下文获取后调用一次设置最近访问时间
+     */
+    public void setAccessTime() {
+        lastAccessTime = System.currentTimeMillis();
+    }
 
     /**
      * Returns the time when this session was created, measured in milliseconds
@@ -17,7 +42,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public long getCreationTime() {
-        return 0;
+        return creationTime;
     }
 
     /**
@@ -30,7 +55,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public String getId() {
-        return null;
+        return sessionId;
     }
 
     /**
@@ -48,7 +73,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public long getLastAccessedTime() {
-        return 0;
+        return lastAccessTime;
     }
 
     /**
@@ -59,7 +84,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return ServletCollector.getInstance();
     }
 
     /**
@@ -71,7 +96,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void setMaxInactiveInterval(int interval) {
-
+        maxInactiveInterval = interval;
     }
 
     /**
@@ -87,7 +112,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public int getMaxInactiveInterval() {
-        return 0;
+        return maxInactiveInterval;
     }
 
     /**
@@ -100,7 +125,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public HttpSessionContext getSessionContext() {
-        return null;
+        return SessionCollector.getInstance();
     }
 
     /**
@@ -113,7 +138,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public Object getAttribute(String name) {
-        return null;
+        return attributes.get(name);
     }
 
     /**
@@ -125,7 +150,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public Object getValue(String name) {
-        return null;
+        return attributes.get(name);
     }
 
     /**
@@ -138,7 +163,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public Enumeration<String> getAttributeNames() {
-        return null;
+        return new Vector<>(attributes.keySet()).elements();
     }
 
     /**
@@ -150,7 +175,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public String[] getValueNames() {
-        return new String[0];
+        return (String[]) attributes.keySet().toArray();
     }
 
     /**
@@ -176,7 +201,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void setAttribute(String name, Object value) {
-
+        attributes.put(name, value);
     }
 
     /**
@@ -188,7 +213,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void putValue(String name, Object value) {
-
+        attributes.put(name, value);
     }
 
     /**
@@ -207,7 +232,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void removeAttribute(String name) {
-
+        attributes.remove(name);
     }
 
     /**
@@ -218,7 +243,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void removeValue(String name) {
-
+        attributes.remove(name);
     }
 
     /**
@@ -228,7 +253,7 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void invalidate() {
-
+        // TODO: 移除此Session
     }
 
     /**
@@ -243,6 +268,6 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public boolean isNew() {
-        return false;
+        return lastAccessTime == -1;
     }
 }

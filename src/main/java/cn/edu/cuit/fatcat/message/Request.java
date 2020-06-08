@@ -2,10 +2,10 @@ package cn.edu.cuit.fatcat.message;
 
 import cn.edu.cuit.fatcat.Dispatcher;
 import cn.edu.cuit.fatcat.RecycleAble;
-import cn.edu.cuit.fatcat.Setting;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
-import cn.edu.cuit.fatcat.container.servlet.ServletContainer;
-import cn.edu.cuit.fatcat.container.servlet.ServletMapping;
+import cn.edu.cuit.fatcat.container.session.SessionCollector;
+import cn.edu.cuit.fatcat.container.session.SessionConfig;
+import cn.edu.cuit.fatcat.container.session.SessionContainer;
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.io.SocketWrapper;
 import cn.edu.cuit.fatcat.util.FastHttpDateFormat;
@@ -46,8 +46,6 @@ public class Request implements HttpServletRequest, RecycleAble {
     private Vector<String> parameterNames;
 
     private Cookie[] cookies;
-
-    private HttpSession session;
 
     private String context;
 
@@ -419,10 +417,12 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRequestedSessionId() {
-        if (session == null) {
-            return null;
+        for (Cookie cookie : getCookies()) {
+            if (SessionConfig.JSESSIONID.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
         }
-        return session.getId();
+        return null;
     }
 
     /**
@@ -537,11 +537,16 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public HttpSession getSession(boolean create) {
-        if (create) {
-            return session;
-        } else {
-            return null;
+        HttpSession session = SessionCollector.getInstance().getSessionContainer(getRequestedSessionId());
+        if (session == null) {
+            if (create) {
+                session = SessionCollector.getInstance().createSessionContainer();
+                response.changeSessionId(session.getId());
+            } else {
+                return null;
+            }
         }
+        return session;
     }
 
     /**
@@ -554,7 +559,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public HttpSession getSession() {
-        return session;
+        return getSession(true);
     }
 
     /**
@@ -568,7 +573,9 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String changeSessionId() {
-        return null;
+        SessionContainer session = SessionCollector.getInstance().createSessionContainer();
+        response.changeSessionId(session.getId());
+        return session.getId();
     }
 
     /**

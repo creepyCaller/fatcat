@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servlet Instance Collector
@@ -28,7 +29,7 @@ import java.util.*;
  */
 @Slf4j
 public class ServletCollector implements Collector, ServletContext {
-    private final Map<String, ServletContainer> servletCollector = new HashMap<>();
+    private final Map<String, ServletContainer> servletCollector = new ConcurrentHashMap<>();
     private final Set<String> registered = new HashSet<>();
     private static ServletCollector instance;
 

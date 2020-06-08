@@ -9,6 +9,7 @@ package cn.edu.cuit.fatcat.http;
  */
 public interface HttpStatusCode {
     public static final Integer OK = 200;
+    public static final Integer FOUND = 302;
     public static final Integer NOT_FOUND = 404;
     public static final Integer INTERNAL_SERVER_ERROR = 500;
     public static final Integer NOT_IMPLEMENTED = 501;

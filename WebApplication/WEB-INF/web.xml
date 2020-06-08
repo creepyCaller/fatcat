@@ -20,6 +20,24 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>SessionServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.SessionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SessionServlet</servlet-name>
+        <url-pattern>/session</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DispatchServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.DispatchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DispatchServlet</servlet-name>
+        <url-pattern>/dispatch</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>VCodeServlet</servlet-name>
         <servlet-class>cn.edu.cuit.fatcat.test.VCodeServlet</servlet-class>
     </servlet>

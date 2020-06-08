@@ -10,7 +10,11 @@ import cn.edu.cuit.fatcat.io.SocketWrapper;
 import cn.edu.cuit.fatcat.message.Request;
 import cn.edu.cuit.fatcat.message.Response;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.Cookie;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * 对处理一次HTTP请求的子线程
@@ -41,7 +45,7 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
      */
     @Override
     public void prepare() {
-        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).build(); // 构造响应对象
+        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).cookies(new ArrayList<>(Arrays.asList(request.getCookies()))).build(); // 构造响应对象
         request.setResponse(response);
         socketWrapper.setRequest(request);
         socketWrapper.setResponse(response);

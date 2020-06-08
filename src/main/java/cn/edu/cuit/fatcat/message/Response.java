@@ -2,6 +2,7 @@ package cn.edu.cuit.fatcat.message;
 
 import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.Setting;
+import cn.edu.cuit.fatcat.container.session.SessionConfig;
 import cn.edu.cuit.fatcat.http.*;
 import cn.edu.cuit.fatcat.io.FatCatOutPutStream;
 import cn.edu.cuit.fatcat.io.FatCatWriter;
@@ -84,7 +85,6 @@ public class Response implements HttpServletResponse, RecycleAble {
                 .code(HttpStatusCode.OK)
                 .status(HttpStatusDescription.OK)
                 .headers(new HashMap<>())
-                .cookies(null)
                 .useWriter(false)
                 .setCharset(false)
                 .useStream(false);
@@ -105,6 +105,21 @@ public class Response implements HttpServletResponse, RecycleAble {
         useStream = false;
         useWriter = false;
         bufferSize = defaultBufferSize;
+    }
+
+    public void changeSessionId(String jSessionId) {
+        boolean mod = false;
+        if (cookies != null && !cookies.isEmpty()) {
+            for (Cookie cookie : cookies) {
+                if (SessionConfig.JSESSIONID.equals(cookie.getName())) {
+                    mod = true;
+                    cookie.setValue(jSessionId);
+                }
+            }
+        }
+        if (!mod) {
+            addCookie(new Cookie(SessionConfig.JSESSIONID, jSessionId));
+        }
     }
 
     /**
@@ -254,7 +269,11 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
-        // TODO: 发送错误
+        setStatus(sc, msg);
+        setContentType(HttpContentType.TEXT_HTML);
+        setCharacterEncoding(characterEncoding);
+        socketWrapper.getWriter().exceptionHandler(request, this, sc);
+        setCommitted();
     }
 
     /**
@@ -283,7 +302,12 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
-        // TODO: 发送错误
+        setStatus(sc);
+        setStatus("SM STUB"); // TODO: getStatusMessageByStatusCode(sc);
+        setContentType(HttpContentType.TEXT_HTML);
+        setCharacterEncoding(characterEncoding);
+        socketWrapper.getWriter().exceptionHandler(request, this, sc);
+        setCommitted();
     }
 
     /**
@@ -318,7 +342,10 @@ public class Response implements HttpServletResponse, RecycleAble {
         if (isCommitted()) {
             throw new IllegalStateException("Already been committed !");
         }
-        // TODO: 重定向
+        setStatus(HttpStatusCode.FOUND);
+        setStatus(HttpStatusDescription.FOUND);
+        setHeader(HttpHeader.LOCATION, location);
+        setCommitted();
     }
 
     /**
@@ -372,12 +399,7 @@ public class Response implements HttpServletResponse, RecycleAble {
      */
     @Override
     public void setHeader(String name, String value) {
-        if ("Content-Type".equals(name)) {
-            // 如果Header是设置Content-Type
-            setContentType(value);
-        } else {
-            headers.put(name, Collections.singletonList(value));
-        }
+        headers.put(name, Collections.singletonList(value));
     }
 
     /**

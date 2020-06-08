@@ -70,7 +70,7 @@ public enum ResponseAdapter {
                     sb.append("; secure");
                 }
                 if (cookie.isHttpOnly()) {
-                    // ;
+                    // ; HttpOnly
                     sb.append("; HttpOnly");
                 }
                 sb.append("\r\n");

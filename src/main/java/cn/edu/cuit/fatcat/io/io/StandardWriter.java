@@ -100,13 +100,30 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         }
     }
 
-    private void exceptionHandler(Request request, Response response, Integer sc) throws ClassNotFoundException, IOException, InstantiationException, ServletException, IllegalAccessException {
+    /**
+     * 异常处理器，根据输入的对象返回错误页
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param sc 状态码
+     * @throws IOException 当输出通道被关闭时抛出异常
+     */
+    public void exceptionHandler(Request request, Response response, Integer sc) throws IOException {
         String direction = Setting.ERROR_PAGES.get(sc); // 获取错误页地址
         request.setDispatchedDirection(direction); // 设置请求地址为错误页地址
         String servletName = ServletMapping.INSTANCE.getServletName(direction); // 查看该地址是否映射向servlet
         if (servletName != null) {
             // 如果设置的错误页指向Servlet
-            ServletCaller.INSTANCE.callServlet(request, response, servletName);
+            try {
+                ServletCaller.INSTANCE.callServlet(request, response, servletName);
+            } catch (ServletException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
         } else {
             // 如果设置的错误页指向静态资源
             byte[] responseBody;
