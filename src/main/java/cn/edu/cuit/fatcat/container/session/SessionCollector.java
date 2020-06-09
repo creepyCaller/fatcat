@@ -1,15 +1,18 @@
 package cn.edu.cuit.fatcat.container.session;
 
 import cn.edu.cuit.fatcat.container.Collector;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class SessionCollector implements HttpSessionContext, Collector {
     private static SessionCollector instance;
-    private Map<String, SessionContainer> sessions = new ConcurrentHashMap<>(); // TODO: 轮询销毁过期会话
+    private Map<String, SessionContainer> sessions = new ConcurrentHashMap<>();
 
     public static SessionCollector getInstance() {
         if (instance == null) {
@@ -49,6 +52,20 @@ public class SessionCollector implements HttpSessionContext, Collector {
             return session;
         }
         return null;
+    }
+
+    /**
+     * 清理超过会话持续时间的会话
+     */
+    public void cleanOldSession() {
+        for (Map.Entry<String, SessionContainer> entry : sessions.entrySet()) {
+            if (entry.getValue().selfCheck()) {
+                // 让每个会话自检
+            } else {
+                // 当返回false就销毁
+                entry.getValue().invalidate();
+            }
+        }
     }
 
     /**

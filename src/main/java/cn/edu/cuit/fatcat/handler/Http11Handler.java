@@ -45,7 +45,8 @@ public class Http11Handler implements ProtocolHandler, RecycleAble {
      */
     @Override
     public void prepare() {
-        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).cookies(new ArrayList<>(Arrays.asList(request.getCookies()))).build(); // 构造响应对象
+        response = Response.standardResponseBuilder().socketWrapper(socketWrapper).request(request).build(); // 构造响应对象
+        response.putCookie(request.getCookies());
         request.setResponse(response);
         socketWrapper.setRequest(request);
         socketWrapper.setResponse(response);

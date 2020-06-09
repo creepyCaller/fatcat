@@ -22,7 +22,7 @@ public enum ServletCaller {
         log.info("URL: {}, 请求Servlet: {}", request.getDirection(), ServletCollector.getInstance().getServletContainer(servletName));
         response.setHeader(HttpHeader.TRANSFER_ENCODING, "chunked");
         Servlet servlet = servletContainer.getInstance(); // 获取Servlet实例
-        servlet.service(request, response); // 生命周期: 服务, TODO: 捕获异常输出
+        servlet.service(request, response); // 服务
         response.flushBuffer(); // 服务后刷新缓冲区
         sendEmptyChunk(response); // 输出空块向浏览器表示输出结束
     }

@@ -9,11 +9,11 @@ import java.util.*;
 
 @Builder
 public class SessionContainer implements HttpSession {
-    private String sessionId;
-    private long creationTime;
-    private long lastAccessTime;
-    private int maxInactiveInterval;
-    private Map<String, Object> attributes;
+    private String sessionId; // 会话ID
+    private long creationTime; // 创建时间
+    private long lastAccessTime; // 上次访问时间
+    private int maxInactiveInterval; // 会话持续时间
+    private Map<String, Object> attributes; // 属性
 
     public static SessionContainer create() {
         return SessionContainer.builder()
@@ -269,5 +269,9 @@ public class SessionContainer implements HttpSession {
     @Override
     public boolean isNew() {
         return lastAccessTime == -1;
+    }
+
+    public boolean selfCheck() {
+        return true;
     }
 }

@@ -19,4 +19,8 @@ public enum SessionConfig {
         }
         return SESSION_TIMEOUT;
     }
+
+    public long getSessionTimeoutMillis() {
+        return (long) getSessionTimeout() * 1000L;
+    }
 }

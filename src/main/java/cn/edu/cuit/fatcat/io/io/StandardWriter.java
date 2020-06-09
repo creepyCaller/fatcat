@@ -65,7 +65,6 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
         }
         oStr.flush();
     }
-
     public void write(Request request, Response response) throws ClassNotFoundException, InstantiationException, IllegalAccessException, ServletException, IOException {
         try {
             if (request.getDirection().startsWith("/WEB-INF")) {
@@ -83,14 +82,18 @@ public class StandardWriter implements AutoCloseable, RecycleAble {
             String mimeType = FileUtil.getMimeType(request.getDispatchedDirection()); // 通过后缀名判断文件类型
             response.setContentType(mimeType); // 设置响应报文的Content-Type
             byte[] responseHead = ResponseAdapter.INSTANCE.getResponseHead(response).getBytes(Setting.CHARSET);
-            if (entry.getSize() < Cache.Entry.capacity) {
-                // 如果文件大小小于缓冲块大小就直接读入context
-                byte[] responseBody = entry.getContext();
-                write(responseHead, responseBody);
-            } else {
-                // 如果文件太大就需要流输出
-                write(responseHead, entry);
-            }
+            // TODO: 完善输出
+            byte[] responseBody = entry.getContext();
+            write(responseHead, responseBody);
+
+//            if (entry.getSize() < Cache.Entry.capacity) {
+//                // 如果文件大小小于缓冲块大小就直接读入context
+//                byte[] responseBody = entry.getContext();
+//                write(responseHead, responseBody);
+//            } else {
+//                // 如果文件太大就需要流输出
+//                write(responseHead, entry);
+//            }
         } catch (FileNotFoundException e) {
             // 404 Not Found
             exceptionHandler(request, response, 404);

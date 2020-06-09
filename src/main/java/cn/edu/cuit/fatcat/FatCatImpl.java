@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat;
 
+import cn.edu.cuit.fatcat.container.session.SessionDaemon;
 import cn.edu.cuit.fatcat.handler.Handler;
 import cn.edu.cuit.fatcat.handler.RequestHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,9 @@ public class FatCatImpl implements FatCat {
         log.info("启动Request Handler...");
         if (!FatCatDaemon.getSetter().isStarted()) {
             FatCatDaemon.getSetter().startDaemonThread();
+        }
+        if (!SessionDaemon.getSetter().isStarted()) {
+            SessionDaemon.getSetter().startDaemonThread();
         }
         Handler requestHandler = RequestHandler.build(Setting.PORT);
         requestHandler.handle();

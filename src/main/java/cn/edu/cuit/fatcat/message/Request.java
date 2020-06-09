@@ -1,6 +1,7 @@
 package cn.edu.cuit.fatcat.message;
 
 import cn.edu.cuit.fatcat.Dispatcher;
+import cn.edu.cuit.fatcat.FatCatDispatcher;
 import cn.edu.cuit.fatcat.RecycleAble;
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import cn.edu.cuit.fatcat.container.session.SessionCollector;
@@ -56,6 +57,8 @@ public class Request implements HttpServletRequest, RecycleAble {
     private SocketWrapper socketWrapper;
 
     private Integer contentLength;
+
+    private DispatcherType dispatcherType;
 
     @Override
     public String toString() {
@@ -417,9 +420,11 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getRequestedSessionId() {
-        for (Cookie cookie : getCookies()) {
-            if (SessionConfig.JSESSIONID.equals(cookie.getName())) {
-                return cookie.getValue();
+        if (getCookies() != null) {
+            for (Cookie cookie : getCookies()) {
+                if (SessionConfig.JSESSIONID.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
         return null;
@@ -1218,7 +1223,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public RequestDispatcher getRequestDispatcher(String path) {
-        return Dispatcher.INSTANCE;
+        return Dispatcher.create(path);
     }
 
     /**
@@ -1240,7 +1245,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public int getRemotePort() {
-        return 0;
+        return socketWrapper.getSocket().getPort();
     }
 
     /**
@@ -1253,7 +1258,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getLocalName() {
-        return null;
+        return socketWrapper.getSocket().getLocalAddress().getHostName();
     }
 
     /**
@@ -1266,7 +1271,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public String getLocalAddr() {
-        return null;
+        return socketWrapper.getSocket().getLocalAddress().getHostAddress();
     }
 
     /**
@@ -1495,7 +1500,7 @@ public class Request implements HttpServletRequest, RecycleAble {
      */
     @Override
     public DispatcherType getDispatcherType() {
-        return null;
+        return dispatcherType;
     }
 
     @Override

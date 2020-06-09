@@ -4,88 +4,90 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-    <display-name>Hello</display-name>
+    <display-name>TestWebApp</display-name>
 
     <welcome-file-list>
-        <welcome-file>/hello</welcome-file>
+        <welcome-file>/index.html</welcome-file>
     </welcome-file-list>
 
+    <!-- Hello -->
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
         <servlet-class>cn.edu.cuit.fatcat.test.HelloServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
+        <url-pattern>/test/hello</url-pattern>
     </servlet-mapping>
 
+    <!-- 重定向 -->
+    <servlet>
+        <servlet-name>RedirectServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.RedirectServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/test/redirect</url-pattern>
+    </servlet-mapping>
+
+    <!-- 会话 -->
     <servlet>
         <servlet-name>SessionServlet</servlet-name>
         <servlet-class>cn.edu.cuit.fatcat.test.SessionServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SessionServlet</servlet-name>
-        <url-pattern>/session</url-pattern>
+        <url-pattern>/test/session</url-pattern>
     </servlet-mapping>
 
+    <!-- Http头 -->
     <servlet>
-        <servlet-name>DispatchServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.DispatchServlet</servlet-class>
+        <servlet-name>HeaderServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.HeaderServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DispatchServlet</servlet-name>
-        <url-pattern>/dispatch</url-pattern>
+        <servlet-name>HeaderServlet</servlet-name>
+        <url-pattern>/test/header</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>VCodeServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.VCodeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>VCodeServlet</servlet-name>
-        <url-pattern>/code</url-pattern>
-        <url-pattern>/code/*</url-pattern>
-        <url-pattern>/code/p/*.get</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>NotFoundServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.NotFoundServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>NotFoundServlet</servlet-name>
-        <url-pattern>/error/404</url-pattern>
-        <url-pattern>/error/404/*</url-pattern>
-        <url-pattern>/error/404/*.html</url-pattern>
-        <url-pattern>/error/not_found/*</url-pattern>
-        <url-pattern>/404</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ServerErrorServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.ServerErrorServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ServerErrorServlet</servlet-name>
-        <url-pattern>/500</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>TestServlet</servlet-name>
-        <servlet-class>cn.edu.cuit.fatcat.test.TestServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TestServlet</servlet-name>
-        <url-pattern>/test</url-pattern>
-    </servlet-mapping>
-
+    <!-- Cookie测试 -->
     <servlet>
         <servlet-name>CookieServlet</servlet-name>
         <servlet-class>cn.edu.cuit.fatcat.test.CookieServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CookieServlet</servlet-name>
-        <url-pattern>/cookie</url-pattern>
+        <url-pattern>/test/cookie</url-pattern>
+    </servlet-mapping>
+
+    <!-- 流输出 -->
+    <servlet>
+        <servlet-name>StreamOutputServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.StreamOutputStreamServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StreamOutputServlet</servlet-name>
+        <url-pattern>/test/code</url-pattern>
+    </servlet-mapping>
+
+    <!-- 404错误页 -->
+    <servlet>
+        <servlet-name>NotFoundServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.error.NotFoundServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NotFoundServlet</servlet-name>
+        <url-pattern>/error/404</url-pattern>
+    </servlet-mapping>
+
+    <!-- 500错误页 -->
+    <servlet>
+        <servlet-name>ServerErrorServlet</servlet-name>
+        <servlet-class>cn.edu.cuit.fatcat.test.error.ServerErrorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServerErrorServlet</servlet-name>
+        <url-pattern>/error/500</url-pattern>
     </servlet-mapping>
 
     <error-page>
@@ -95,7 +97,7 @@
 
     <error-page>
         <error-code>500</error-code>
-        <location>/500</location>
+        <location>/error/500</location>
     </error-page>
 
 </web-app>

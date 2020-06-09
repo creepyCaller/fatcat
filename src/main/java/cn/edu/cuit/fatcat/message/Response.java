@@ -122,6 +122,12 @@ public class Response implements HttpServletResponse, RecycleAble {
         }
     }
 
+    public void putCookie(Cookie[] cookies) {
+        if (cookies != null) {
+            this.cookies = new ArrayList<>(Arrays.asList(cookies));
+        }
+    }
+
     /**
      * Adds the specified cookie to the response.  This method can be called
      * multiple times to set more than one cookie.

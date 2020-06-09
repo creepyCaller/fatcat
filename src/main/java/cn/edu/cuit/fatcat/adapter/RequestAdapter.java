@@ -1,6 +1,6 @@
 package cn.edu.cuit.fatcat.adapter;
 
-import cn.edu.cuit.fatcat.Dispatcher;
+import cn.edu.cuit.fatcat.FatCatDispatcher;
 import cn.edu.cuit.fatcat.http.HttpHeader;
 import cn.edu.cuit.fatcat.http.HttpMethod;
 import cn.edu.cuit.fatcat.message.Request;
@@ -33,7 +33,7 @@ request.setMethod(statusLine[0]);
 String[] requestDirectionDiv = statusLine[1].split("\\?", 2); // 根据问号拆分请求路径，格式为：真路径？参数
 request.setProtocol(statusLine[2]); // 设置协议
 request.setDirection(requestDirectionDiv[0]); // 设置请求路径
-request.setDispatchedDirection(Dispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
+request.setDispatchedDirection(FatCatDispatcher.INSTANCE.dispatch(request.getDirection())); // 处理转发
 String pathVariables = "";
 if (requestDirectionDiv.length > 1) {
     pathVariables = requestDirectionDiv[1];
