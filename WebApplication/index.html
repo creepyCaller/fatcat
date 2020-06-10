@@ -2,16 +2,58 @@
 <html lang="Zh">
 <head>
     <meta charset="UTF-8">
-    <title>Web应用服务器测试</title>
+    <title>橘猫Web应用服务器功能测试</title>
+    <script src="js/vue.js"></script>
+    <script src="js/vue-resource.js"></script>
 </head>
 <body>
-    <a href="test/hello">Hello功能测试</a><br/>
-    <a href="test/redirect">重定向测试</a><br/>
-    <a href="test/session">会话测试</a><br/>
-    <a href="test/header">HTTP请求头获取测试</a><br/>
-    <a href="test/cookie">Cookie测试</a><br/>
-    <a href="test/code">流输出测试(验证码)</a><br/>
-    <a href="error/404">404页</a><br/>
-    <a href="error/500">500页</a><br/>
+    <h1>橘猫Web应用服务器功能测试</h1>
+    <div id="app">
+        <span>{{ msg }}</span>
+        <div v-if="show_logout">
+            <form action="/logout" method="POST"><button>注销</button></form><br/>
+        </div>
+        <div v-if="!show_logout">
+            <br/>
+        </div>
+    </div>
+    <a href="/hello">Hello功能测试</a><br/>
+    <a href="/auth">登陆测试</a><br/>
+    <a href="/test/mysql">MySQL连接测试</a><br/>
+    <a href="/test/redirect">重定向测试</a><br/>
+    <a href="/test/session">会话测试</a><br/>
+    <a href="/test/header">HTTP请求头获取测试</a><br/>
+    <a href="/test/cookie">Cookie测试</a><br/>
+    <a href="/test/code">流输出测试(验证码)</a><br/>
+    <hr/>
+    <a href="/error/404">404 Not Found(错误页)</a><br/>
+    <a href="/error/500">500 Server Error(错误页)</a><br/>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                msg: '加载中...',
+                show_logout: false
+            },
+            created: function () {
+                var url = window.location.origin + '/login';
+                this.curl(url);
+            },
+            methods: {
+                curl: function(url) {
+                    this.$http.get(url).then(function(response) {
+                        if (response.body === 'false') {
+                            this.msg = '用户未登录';
+                        } else {
+                            this.msg = '用户' + response.body + '已登陆';
+                            this.show_logout = true;
+                        }
+                    }).catch(function(result) {
+                        this.msg = '请求' + result.url + '失败';
+                    });
+                }
+            }
+        });
+    </script>
 </body>
 </html>

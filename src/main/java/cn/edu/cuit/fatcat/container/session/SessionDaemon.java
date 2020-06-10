@@ -15,7 +15,7 @@ public class SessionDaemon implements Runnable {
         long lastCleanTime = System.currentTimeMillis();
         long sleepTime = 60 * 1000; // 每1分钟进行轮询
         while (true) {
-            if (System.currentTimeMillis() - lastCleanTime > SessionConfig.INSTANCE.getSessionTimeoutMillis()) {
+            if (System.currentTimeMillis() - lastCleanTime > sleepTime) {
                 log.info("开始清理过期会话...");
                 cleanSession();
                 lastCleanTime = System.currentTimeMillis();

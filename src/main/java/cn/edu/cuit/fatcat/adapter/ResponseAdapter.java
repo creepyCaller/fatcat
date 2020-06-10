@@ -36,7 +36,6 @@ public enum ResponseAdapter {
     }
 
     private String getResponseCookiesLine(Response response) {
-        log.info("get cookies");
         if (response.getCookies() != null) {
             StringBuilder sb = new StringBuilder();
             response.getCookies().forEach((cookie) -> {

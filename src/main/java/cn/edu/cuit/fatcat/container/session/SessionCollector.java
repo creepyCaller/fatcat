@@ -68,6 +68,10 @@ public class SessionCollector implements HttpSessionContext, Collector {
         }
     }
 
+    public void removeSession(SessionContainer sessionContainer) {
+        sessions.remove(sessionContainer.getId());
+    }
+
     /**
      * Do not use.
      *

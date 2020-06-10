@@ -168,8 +168,6 @@ public class FileUtil {
         response.setContentType(mimeType); // 设置响应报文的Content-Type
         response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(entry.getSize()));
         if (mimeType.startsWith("text/") || mimeType.startsWith("application/")) {
-            // 如果是文本文件,就设置响应头的编码类型
-            // TODO:这个判断需要改进（意思是多几个clause）
             response.setCharacterEncoding(Setting.CHARSET_STRING);
         }
         return biStr;

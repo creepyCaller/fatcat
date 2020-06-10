@@ -1,5 +1,6 @@
 package cn.edu.cuit.fatcat;
 
+import cn.edu.cuit.fatcat.container.session.SessionConfig;
 import cn.edu.cuit.fatcat.loader.WebAppXMLLoader;
 import cn.edu.cuit.fatcat.util.FileUtil;
 import cn.edu.cuit.fatcat.util.YamlUtil;
@@ -99,6 +100,10 @@ public class Setting implements Caller {
                 log.warn("长连接持续时间设置错误, 使用默认值: {}ms", Setting.DEFAULT_CONNECTION_KEEP);
                 Setting.CONNECTION_KEEP = Setting.DEFAULT_CONNECTION_KEEP;
             }
+        }
+        Object session_timeout = settings.get("session_timeout");
+        if (session_timeout instanceof java.lang.Integer) {
+            SessionConfig.INSTANCE.setSessionTimeout((Integer) session_timeout);
         }
         Setting.WAR = (String) settings.get("war");
         if (Setting.WAR != null) {

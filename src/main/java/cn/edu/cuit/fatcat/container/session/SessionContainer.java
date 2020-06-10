@@ -2,12 +2,15 @@ package cn.edu.cuit.fatcat.container.session;
 
 import cn.edu.cuit.fatcat.container.servlet.ServletCollector;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 import java.util.*;
 
 @Builder
+@Slf4j
 public class SessionContainer implements HttpSession {
     private String sessionId; // 会话ID
     private long creationTime; // 创建时间
@@ -16,8 +19,10 @@ public class SessionContainer implements HttpSession {
     private Map<String, Object> attributes; // 属性
 
     public static SessionContainer create() {
+        String uuid = UUID.randomUUID().toString();
+        log.info("创建会话{}", uuid);
         return SessionContainer.builder()
-                .sessionId(UUID.randomUUID().toString())
+                .sessionId(uuid)
                 .creationTime(System.currentTimeMillis())
                 .lastAccessTime(-1)
                 .maxInactiveInterval(SessionConfig.INSTANCE.getSessionTimeout())
@@ -253,7 +258,8 @@ public class SessionContainer implements HttpSession {
      */
     @Override
     public void invalidate() {
-        // TODO: 移除此Session
+        log.info("会话“{}”超时，销毁", getId());
+        SessionCollector.getInstance().removeSession(this);
     }
 
     /**
@@ -271,7 +277,24 @@ public class SessionContainer implements HttpSession {
         return lastAccessTime == -1;
     }
 
+    /**
+     * 自检
+     * 返回true时保留
+     * 返回false销毁
+     * @return
+     */
     public boolean selfCheck() {
-        return true;
+        if (lastAccessTime < 0) {
+            // 创建后未访问过，使用创建时间做决定
+            if (System.currentTimeMillis() - creationTime > SessionConfig.INSTANCE.getSessionTimeoutMillis()) {
+                return true;
+            }
+        } else {
+            // 创建后访问过的话使用访问时间决定
+            if (System.currentTimeMillis() - lastAccessTime > SessionConfig.INSTANCE.getSessionTimeoutMillis()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
