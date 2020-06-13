@@ -77,7 +77,6 @@ public class RequestHandler implements Handler, Runnable {
     @Override
     public void run() {
         try(ServerSocket serverSocket = new ServerSocket(port)) {
-            // TODO: 非阻塞IO, 意思是换成ServerSocketChannel
             while (true) {
                 SocketWrapper socketWrapper = SocketWrapper.wrapSocket(serverSocket.accept()); // 通过监听的端口接受套接字连接
                 getExecutor().execute(() -> {
