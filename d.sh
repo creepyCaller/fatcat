@@ -38,6 +38,7 @@ if [ $ref = $dev ]; then
 		if [ ! -d artifical ]; then
 			mkdir artifical
 		fi
+		rm -rf artifical/*
 		zip -r artifical/fatcat.zip fatcat
 		echo "Clean fatcat/"
 		rm -rf fatcat/*
