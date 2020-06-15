@@ -12,11 +12,17 @@ echo '${repo_name}'
 echo "${repo_name}"
 master="refs/heads/master"
 dev="refs/heads/dev"
+mavenSetting="m2/settings.xml"
 if [ $ref = $dev ]; then
 	echo "Develope Branch"
+	echo "Current directory:"
 	pwd
+	echo "Maven version:"
 	mvn -v
+	echo "Start maven package"
+	mvn -s ${mavenSetting} clean package
 fi
 if [ $ref = $master ]; then
 	echo "Master Branch"
+	echo "do nothing"
 fi

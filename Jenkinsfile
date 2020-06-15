@@ -44,7 +44,7 @@ pipeline {
                 sh """
                     mv target/fatcat-0.0.1.jar target/fatcat.jar
                     """
-                archiveArtifacts 'target/fatcat.jar'
+                archiveArtifacts '**/target/*.jar', fingerprint: true
             }
         }
     }
