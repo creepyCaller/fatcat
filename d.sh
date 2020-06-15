@@ -20,7 +20,7 @@ if [ $ref = $dev ]; then
 	echo "Maven version:"
 	mvn -v
 	echo "Start maven package"
-	mvn -s ${mavenSetting} clean package
+	mvn -Dmaven.test.skip=true -s ${mavenSetting} clean package
 fi
 if [ $ref = $master ]; then
 	echo "Master Branch"
