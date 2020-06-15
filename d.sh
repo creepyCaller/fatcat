@@ -2,14 +2,10 @@
 
 # 构建->执行Shell
 # pwd
-# sh d.sh ${ref} ${repository_name}
+# sh d.sh ${ref}
 
 ref=${1}
-repo_name=${2}
 echo "ref: ${ref}"
-echo "repo_name: ${repo_name}"
-echo '${repo_name}'
-echo "${repo_name}"
 master="refs/heads/master"
 dev="refs/heads/dev"
 mavenSetting="m2/settings.xml"
