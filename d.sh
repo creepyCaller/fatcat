@@ -32,7 +32,7 @@ if [ $ref = $dev ]; then
 		mv fatcat/Resources/Script/fatcat.bat fatcat/fatcat.bat
 		mv fatcat/Resources/Script/fatcat.sh fatcat/fatcat.sh
 		cp -r WAR fatcat
-		cp -r settings fatcat
+		cp -r Settings fatcat
 		cp -r WebApplication fatcat
 		echo "Zip artificals"
 		if [ ! -d artifical ]; then
